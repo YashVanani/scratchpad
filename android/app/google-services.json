@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "270192308039",
+    "project_id": "clarified-1501",
+    "storage_bucket": "clarified-1501.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270192308039:android:007c32f414537feb976662",
+        "android_client_info": {
+          "package_name": "com.scratchpad.clarified"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270192308039-gp1kusca6jql89c8bv4hn0ied7cjjrrj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.scratchpad.clarified",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "270192308039-3msa4nt3ku33jma5t2gb2thfgtv44i7a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPRriFlu4m8bzhZwR6TNoNi9it9-5hTco"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "270192308039-3msa4nt3ku33jma5t2gb2thfgtv44i7a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "270192308039-sh58kbn606hqonbaml89a56dddoimk7m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.scratchpadlabs.clarified.clarifiedMobile"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270192308039:android:0fac5204c4aa31e6976662",
+        "android_client_info": {
+          "package_name": "com.scratchpadlabs.clarified.clarified_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270192308039-3msa4nt3ku33jma5t2gb2thfgtv44i7a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPRriFlu4m8bzhZwR6TNoNi9it9-5hTco"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "270192308039-3msa4nt3ku33jma5t2gb2thfgtv44i7a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "270192308039-sh58kbn606hqonbaml89a56dddoimk7m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.scratchpadlabs.clarified.clarifiedMobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
