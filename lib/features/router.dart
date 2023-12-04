@@ -2,7 +2,12 @@ import 'package:clarified_mobile/features/profiles/screens/profile_password.dart
 import 'package:clarified_mobile/features/subjects/screen/case_study_view.dart';
 import 'package:clarified_mobile/features/subjects/screen/quiz_wizard.dart';
 import 'package:clarified_mobile/features/subjects/screen/study_materials.dart';
+import 'package:clarified_mobile/parents/features/community/screen/community.dart';
+import 'package:clarified_mobile/parents/features/community/screen/create_post.dart';
+import 'package:clarified_mobile/parents/features/community/screen/my_post.dart';
 import 'package:clarified_mobile/parents/features/home/screens/p_home.dart';
+import 'package:clarified_mobile/parents/features/playbook/screen/playbook_detail_view.dart';
+import 'package:clarified_mobile/parents/features/playbook/screen/playbook_view.dart';
 import 'package:clarified_mobile/parents/features/report/screen/p_report.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -153,6 +158,31 @@ GoRouter initRouter() {
         path: '/p_report',
         name: "parents-report",
         builder: (context, state) => const ParentsReport(),
+      ),
+      GoRoute(
+        path: '/p_playbook',
+        name: "parents-playbook",
+        builder: (context, state) => PlaybookScreen(),
+      ),
+      GoRoute(
+        path: '/p_playbook_detail',
+        name: "parents-playbook-detail",
+        builder: (context, state) => PlaybookDetailScreen(),
+      ),
+      GoRoute(
+        path: '/p_community',
+        name: "parents-community",
+        builder: (context, state) => CommunityScreen(),
+      ),
+       GoRoute(
+        path: '/p_my_post',
+        name: "parents-my-post",
+        builder: (context, state) => MyPostScreen(),
+      ),
+       GoRoute(
+        path: '/p_create_post',
+        name: "parents-create-post",
+        builder: (context, state) => CreatePostScreen(),
       ),
     ],
   );

@@ -66,7 +66,7 @@ class _ParentsReportState extends State<ParentsReport> {
         ),
       ),
       bottomNavigationBar: const ParentsBottomBar(
-        selected: 'reports',
+        selected: 'parents-report',
       ),
     );
   }

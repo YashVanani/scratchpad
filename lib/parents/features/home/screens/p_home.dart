@@ -567,20 +567,25 @@ class _ParentsHomeState extends State<ParentsHome> {
                                       ),
                                     ),
                                     SizedBox(height: 15),
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 16),
-                                      child: Container(
-                                        decoration: ShapeDecoration(
-                                          color: darkBlueColor,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                    InkWell(
+                                      onTap: (){
+                                        GoRouter.of(context).pushNamed("parents-community");
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(bottom: 16),
+                                        child: Container(
+                                          decoration: ShapeDecoration(
+                                            color: darkBlueColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
                                           ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                                          child: Text(
-                                            'Open community',
-                                            style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                                            child: Text(
+                                              'Open community',
+                                              style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -609,7 +614,7 @@ class _ParentsHomeState extends State<ParentsHome> {
         ),
       ),
       bottomNavigationBar: const ParentsBottomBar(
-        selected: 'home',
+        selected: 'parents-home',
       ),
     );
   }
