@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../consts/colors.dart';
+import '../../profile/screen/p_profile.dart';
 
 class ParentsHome extends StatefulWidget {
   const ParentsHome({super.key});
@@ -61,7 +62,11 @@ class _ParentsHomeState extends State<ParentsHome> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () => print('outline'),
+                        onPressed: () =>
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                              return ParentProfile();
+                            },)),
+                          //  print('outline'),
                         icon: const Icon(
                           Icons.help_outline_outlined,
                         ),
