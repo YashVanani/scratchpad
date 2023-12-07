@@ -1,12 +1,35 @@
+import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:video_player/video_player.dart';
+import 'package:autoscale_tabbarview/autoscale_tabbarview.dart';
 class PlaybookDetailScreen extends StatefulWidget {
+  PlaybookDetailScreen({Key? key, required this.playbook}) : super(key: key);
   @override
   _PlaybookDetailScreenState createState() => _PlaybookDetailScreenState();
+   
+    Playbook playbook;
 }
 
+
 class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
+  VideoPlayerController? _controller;
+
+  @override
+  void initState() {
+    _controller = VideoPlayerController.networkUrl(Uri.parse(
+        widget.playbook.videoUrl??""))
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
+  
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,15 +53,16 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
         ),
         body: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
+               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Text(
-                  'Different Perspectives in Literature',
+                  widget.playbook.title ?? "",
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                 ),
               ),
-              const Padding(
+               Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 16,
                   ),
@@ -53,21 +77,21 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
                         children: [
                           Icon(
                             Icons.crisis_alert,
-                            color: Color(0xff16B364),
+                            color: widget.playbook.effortLevel=='Easy'?Color(0xff16B364):widget.playbook.effortLevel=='Medium'?Colors.orange:Colors.red,
                             size: 16,
                           ),
                           SizedBox(
                             width: 5,
                           ),
                           Text(
-                            "Easy",
-                            style: TextStyle(color: Color(0xff16B364)),
+                           widget.playbook.effortLevel??"Easy",
+                            style: TextStyle(color: widget.playbook.effortLevel=='Easy'?Color(0xff16B364):widget.playbook.effortLevel=='Medium'?Colors.orange:Colors.red,),
                           ),
                         ],
                       )
                     ],
                   )),
-              const Padding(
+               Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -77,7 +101,7 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
                         style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                       Text(
-                        "6 - 7 - 8",
+                       widget.playbook.stages??"",
                       ),
                     ],
                   )),
@@ -92,45 +116,20 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
                         style: TextStyle(fontWeight: FontWeight.w500),
                       ),
                       Row(
-                        children: [
-                          ...['SEL', 'Growth Mindset', 'Learning']
-                              .take(2)
-                              .map((e) => Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 7, vertical: 4),
-                                  margin: const EdgeInsets.only(left: 5),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: const Color(0xffEAECF0)),
-                                  child: Text(
-                                    e,
-                                    style: const TextStyle(fontSize: 12),
-                                  )))
-                              .toList(),
-                          Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 4),
-                              margin: const EdgeInsets.only(left: 5),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: const Color(0xffEAECF0)),
-                              child: Text('+${[
-                                    'SEL',
-                                    'Growth Mindset',
-                                    'Learning'
-                                  ].length - 2}')),
-                        ],
-                      )
+                      children: [
+                        ...( widget.playbook.focusAreas??[]).take(2).map((e) => Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text(e,style: TextStyle(fontSize: 12),))).toList(),
+                        (( widget.playbook.focusAreas??[]).length - 2)!=0?Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text('+${( widget.playbook.focusAreas??[]).length - 2}')):SizedBox(),
+                    ],)
                     ],
                   )),
               const Divider(
                 thickness: 1,
                 color: Colors.grey,
               ),
-              const Padding(
+               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: Text(
-                  'Exploring different perspectives in literature is a crucial aspect of enhancing students understanding of texts. This approach encourages critical thinking, empathy, and a broader understanding of the human experience. By examining stories from various viewpoints, students can gain insights into cultural, social, and historical contexts that shape characters motivations and actions.',
+                 widget.playbook.desc ??""
                 ),
               ),
               Container(
@@ -155,17 +154,42 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
                       ),
                       ListView(
                         shrinkWrap: true,
-                        children: [
-                          const PlayBookPDFCard(),
-                          const PlayBookPDFCard(),
-                          const PlayBookPDFCard(),
-                        ],
+                        children:(widget.playbook.materialList??[]).map((e) => PlayBookPDFCard(materialList: e,)).toList(),
                       )
                     ],
                   ),
                 ),
               ),
-              const PlaybookTab(),
+              PlaybookTab(playbook: widget.playbook,),
+              _controller!=null?Container(
+                margin: EdgeInsets.symmetric(horizontal: 16,vertical: 10),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),),
+                height:200,
+              child: Stack(
+                children: [
+                         ClipRRect(borderRadius: BorderRadius.circular(20),child: VideoPlayer(_controller!)),
+                 Positioned(
+                    top: 80,
+                    left: MediaQuery.of(context).size.width*0.40,
+                   child: InkWell(
+                       onTap: () {
+                             setState(() {
+                               _controller!.value.isPlaying
+                    ? _controller!.pause()
+                    : _controller!.play();
+                             });
+                           },
+                           child: Icon(
+                             _controller!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                             size: 50,color: Colors.white,
+                           ),
+                    ),
+                 ),
+            
+                ],
+              )
+              ):SizedBox(),
+              SizedBox(height: 20,)
             ],
           ),
         ));
@@ -173,10 +197,11 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
 }
 
 class PlayBookPDFCard extends StatelessWidget {
-  const PlayBookPDFCard({
+  PlayBookPDFCard({
     super.key,
+    required this.materialList,
   });
-
+  MaterialList materialList;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -186,10 +211,10 @@ class PlayBookPDFCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade500, width: 1),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: const Row(
+      child:  Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("1. MATHS.pdf"),
+          Text("${materialList.name??""}"),
           SizedBox(
             width: 10,
           ),
@@ -204,8 +229,8 @@ class PlayBookPDFCard extends StatelessWidget {
 }
 
 class PlaybookTab extends StatelessWidget {
-  const PlaybookTab({super.key});
-
+   PlaybookTab({super.key, required this.playbook});
+  Playbook playbook;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -242,32 +267,26 @@ class PlaybookTab extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal:16.0,vertical: 24),
-                child: SizedBox(
-                    height: 300,
-                    child: const TabBarView(children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("1. Step into Others' Shoes:",style: TextStyle(fontWeight: FontWeight.w500),),
-                          Text("Imagine how characters from different backgrounds feel and think. This helps students understand and empathize with diverse experiences."),
-                          Text("1. Step into Others' Shoes:",style: TextStyle(fontWeight: FontWeight.w500),),
-                          Text("Imagine how characters from different backgrounds feel and think. This helps students understand and empathize with diverse experiences."),
-                          Text("1. Step into Others' Shoes:",style: TextStyle(fontWeight: FontWeight.w500),),
-                          Text("Imagine how characters from different backgrounds feel and think. This helps students understand and empathize with diverse experiences."),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("1. Action Steps",style: TextStyle(fontWeight: FontWeight.w500),),
-                          Text("Imagine how characters from different backgrounds feel and think. This helps students understand and empathize with diverse experiences."),
-                          Text("1. Step into Others' Shoes:",style: TextStyle(fontWeight: FontWeight.w500),),
-                          Text("Imagine how characters from different backgrounds feel and think. This helps students understand and empathize with diverse experiences."),
-                          Text("1. Step into Others' Shoes:",style: TextStyle(fontWeight: FontWeight.w500),),
-                          Text("Imagine how characters from different backgrounds feel and think. This helps students understand and empathize with diverse experiences."),
-                        ],
-                      ),])),
+                padding: const EdgeInsets.symmetric(horizontal:0.0,vertical: 5),
+                child: AutoScaleTabBarView(children: [
+                  MarkdownBody(data: playbook.goals??"",),
+                 Html(data: playbook.action??"",),
+                  // Column(
+                  //   mainAxisSize: MainAxisSize.min,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     //  Text(playbook.action??""),
+                  //     //  SizedBox(height: MediaQuery.of(context).size.height*0.5,child: Markdown(data: playbook.action??"",)),
+                  //     Html(data: playbook.action??"",),
+                  //     // Text("1. Action Steps",style: TextStyle(fontWeight: FontWeight.w500),),
+                  //     // Text("Imagine how characters from different backgrounds feel and think. This helps students understand and empathize with diverse experiences."),
+                  //     // Text("1. Step into Others' Shoes:",style: TextStyle(fontWeight: FontWeight.w500),),
+                  //     // Text("Imagine how characters from different backgrounds feel and think. This helps students understand and empathize with diverse experiences."),
+                  //     // Text("1. Step into Others' Shoes:",style: TextStyle(fontWeight: FontWeight.w500),),
+                  //     // Text("Imagine how characters from different backgrounds feel and think. This helps students understand and empathize with diverse experiences."),
+                  //   ],
+                  // ),
+                  ]),
               )
             ])));
   }

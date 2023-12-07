@@ -45,6 +45,7 @@ class PostSuccessPop extends StatelessWidget {
               InkWell(
                   onTap: () {
                     context.pop();
+                    GoRouter.of(context).pushReplacementNamed("parents-community");
                   },
                   child: Container(
                       padding: EdgeInsets.symmetric(vertical: 10),

@@ -1,13 +1,18 @@
 import 'package:clarified_mobile/consts/colors.dart';
+import 'package:clarified_mobile/parents/models/community.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class PostDeleteConfirm extends StatelessWidget {
-  const PostDeleteConfirm({
+   PostDeleteConfirm({
     super.key,
+    required this.ref,
+    required this.post,
   });
-
+  WidgetRef ref;
+  Post post;
   @override
   Widget build(BuildContext context) {
     return StatefulBuilder(
@@ -53,6 +58,7 @@ class PostDeleteConfirm extends StatelessWidget {
               context.pop();
             },child: Text("Cancel",style: TextStyle(color: greyTextColor),)),
             InkWell(onTap: (){
+               deletePost(post, ref);
               context.pop();
             },child: Text("Delete",style: TextStyle(color: Colors.red),)),
           ]),

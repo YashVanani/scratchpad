@@ -2,13 +2,20 @@ import 'package:clarified_mobile/features/profiles/screens/profile_password.dart
 import 'package:clarified_mobile/features/subjects/screen/case_study_view.dart';
 import 'package:clarified_mobile/features/subjects/screen/quiz_wizard.dart';
 import 'package:clarified_mobile/features/subjects/screen/study_materials.dart';
+import 'package:clarified_mobile/parents/features/auth/screens/login.dart';
 import 'package:clarified_mobile/parents/features/community/screen/community.dart';
 import 'package:clarified_mobile/parents/features/community/screen/create_post.dart';
 import 'package:clarified_mobile/parents/features/community/screen/my_post.dart';
+import 'package:clarified_mobile/parents/features/dashboard/screen/dashboard.dart';
+import 'package:clarified_mobile/parents/features/doubt/screen/doubt_detail_screen.dart';
+import 'package:clarified_mobile/parents/features/doubt/screen/doubt_screen.dart';
 import 'package:clarified_mobile/parents/features/home/screens/p_home.dart';
+import 'package:clarified_mobile/parents/features/notification/screen/notification.dart';
+import 'package:clarified_mobile/parents/features/notification/screen/notification_setting.dart';
 import 'package:clarified_mobile/parents/features/playbook/screen/playbook_detail_view.dart';
 import 'package:clarified_mobile/parents/features/playbook/screen/playbook_view.dart';
 import 'package:clarified_mobile/parents/features/report/screen/p_report.dart';
+import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
@@ -41,7 +48,7 @@ GoRouter initRouter() {
 
   return GoRouter(
     redirect: (ctx, state) {
-      return authWatcher.user?.uid.isNotEmpty == true ? state.path : "/login";
+      return authWatcher.user?.uid.isNotEmpty == true ? state.path : "/p_login";
     },
     refreshListenable: authWatcher,
     routes: [
@@ -149,10 +156,13 @@ GoRouter initRouter() {
         path: '/login',
         builder: (context, state) => const LoginPage(),
       ),
+      GoRoute(path: '/p_login',
+      builder: (context, state) => const ParentLoginPage(),
+      ),
       GoRoute(
         path: '/p_home',
         name: "parents-home",
-        builder: (context, state) => const ParentsHome(),
+        builder: (context, state) => ParentsHome(),
       ),
       GoRoute(
         path: '/p_report',
@@ -167,7 +177,7 @@ GoRouter initRouter() {
       GoRoute(
         path: '/p_playbook_detail',
         name: "parents-playbook-detail",
-        builder: (context, state) => PlaybookDetailScreen(),
+        builder: (context, state) => PlaybookDetailScreen(playbook:( state.extra! as Playbook),),
       ),
       GoRoute(
         path: '/p_community',
@@ -183,6 +193,31 @@ GoRouter initRouter() {
         path: '/p_create_post',
         name: "parents-create-post",
         builder: (context, state) => CreatePostScreen(),
+      ),
+      GoRoute(
+        path: '/p_dashboard',
+        name: "parents-dashboard",
+        builder: (context, state) => DashboardScreen(),
+      ),
+       GoRoute(
+        path: '/p_notification',
+        name: "parents-notification",
+        builder: (context, state) => NotificationScreen(),
+      ),
+       GoRoute(
+        path: '/p_doubt',
+        name: "parents-doubt",
+        builder: (context, state) => DoubtScreen(),
+      ),
+       GoRoute(
+        path: '/p_doubt',
+        name: "parents-doubt-details",
+        builder: (context, state) => DoubtDetailScreen(),
+      ),
+      GoRoute(
+        path: '/p_notification_settings',
+        name: "parents-notification-settings",
+        builder: (context, state) => NotificationSettingsScreen(),
       ),
     ],
   );

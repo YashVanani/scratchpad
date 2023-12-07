@@ -4,6 +4,7 @@ import 'package:clarified_mobile/consts/imageRes.dart';
 import 'package:clarified_mobile/features/shared/widgets/app_buttombar.dart';
 import 'package:clarified_mobile/parents/features/widgets/p_bottombar.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ParentsReport extends StatefulWidget {
   const ParentsReport({super.key});
@@ -20,7 +21,7 @@ class _ParentsReportState extends State<ParentsReport> {
         backgroundColor: Colors.white,
         leading: InkWell(
             onTap: () {
-              Navigator.pop(context);
+              // Navigator.pop(context);
             },
             child: const Icon(Icons.arrow_back_ios, size: 20)),
         centerTitle: true,
@@ -115,29 +116,34 @@ class _ParentsReportState extends State<ParentsReport> {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Container(
-                    decoration: ShapeDecoration(
-                      color: yellowColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(7),
+                InkWell(
+                  onTap: () {
+                    GoRouter.of(context).pushNamed('parents-dashboard');
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Container(
+                      decoration: ShapeDecoration(
+                        color: yellowColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7),
+                        ),
                       ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                      child: Row(
-                        children: [
-                          Text(
-                            'OPEN',
-                            style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14),
-                          ),
-                          SizedBox(width: 7),
-                          Icon(
-                            Icons.arrow_forward,
-                            size: 20,
-                          )
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                        child: Row(
+                          children: [
+                            Text(
+                              'OPEN',
+                              style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14),
+                            ),
+                            SizedBox(width: 7),
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 20,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

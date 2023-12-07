@@ -2,12 +2,24 @@ import 'package:clarified_mobile/consts/colors.dart';
 import 'package:flutter/material.dart';
 
 class PlayBookFilter extends StatelessWidget {
-  const PlayBookFilter({
+  PlayBookFilter({
     super.key,
+    required this.domain,
+    required this.developmentalStage,
   });
-
+  List<String> domain;
+  List<String> developmentalStage;
+  String selectedDomain = 'All';
+  String selectedDevelopmentalStage = 'All';
+  String selectedEffortLevel = 'All';
   @override
   Widget build(BuildContext context) {
+    if(!domain.contains('All')){
+      domain.add('All');
+    }
+    if(!developmentalStage.contains('All')){
+      developmentalStage.add('All');
+    }
     return StatefulBuilder(
       builder: (context, state) {
         return AlertDialog(
@@ -88,16 +100,18 @@ class PlayBookFilter extends StatelessWidget {
                     child: DropdownButton(
                       underline: SizedBox(),
                       isExpanded: true,
-                      items: [
-                        DropdownMenuItem(
-                          child: Text("All"),
-                          value: 'All',
-                        ),
-                        DropdownMenuItem(
-                            child: Text("TEst"))
-                      ],
-                      onChanged: (v) {},
-                      value: 'All',
+                      items:domain.map((e) {
+                        return DropdownMenuItem(
+                          child: Text(e),
+                          value: e,
+                        );
+                      }).toList(),
+                      onChanged: (v) {
+                        state(() {
+                          selectedDomain = v.toString();
+                        });
+                      },
+                      value: selectedDomain,
                     ),
                   ),
                 SizedBox(
@@ -129,16 +143,18 @@ class PlayBookFilter extends StatelessWidget {
                     child: DropdownButton(
                       underline: SizedBox(),
                       isExpanded: true,
-                      items: [
-                        DropdownMenuItem(
-                          child: Text("All"),
-                          value: 'All',
-                        ),
-                        DropdownMenuItem(
-                            child: Text("TEst"))
-                      ],
-                      onChanged: (v) {},
-                      value: 'All',
+                      items: developmentalStage.map((e) {
+                        return DropdownMenuItem(
+                          child: Text(e),
+                          value: e,
+                        );
+                      }).toList(),
+                      onChanged: (v) {
+                        state(() {
+                          selectedDevelopmentalStage = v.toString();
+                        });
+                      },
+                      value: selectedDevelopmentalStage,
                     ),
                   ),
                   SizedBox(
@@ -170,16 +186,19 @@ class PlayBookFilter extends StatelessWidget {
                     child: DropdownButton(
                       underline: SizedBox(),
                       isExpanded: true,
-                      items: [
-                        DropdownMenuItem(
-                          child: Text("All"),
-                          value: 'All',
-                        ),
-                        DropdownMenuItem(
-                            child: Text("TEst"))
-                      ],
-                      onChanged: (v) {},
-                      value: 'All',
+                      items: ['All', 'Easy', 'Medium', 'Highest']
+                          .map((e) {
+                        return DropdownMenuItem(
+                          child: Text(e),
+                          value: e,
+                        );
+                      }).toList(),
+                      onChanged: (v) {
+                        state(() {
+                          selectedEffortLevel = v.toString();
+                        });
+                      },
+                      value: selectedEffortLevel,
                     ),
                   ),
                   SizedBox(
@@ -193,6 +212,13 @@ class PlayBookFilter extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InkWell(
+                          onTap: (){
+                            state(() {
+                          selectedEffortLevel ='All';
+                          selectedDevelopmentalStage='All';
+                          selectedDomain='All';
+                        });
+                          },
                           child: Container(
                            
                             padding: EdgeInsets.symmetric(
@@ -220,6 +246,9 @@ class PlayBookFilter extends StatelessWidget {
                         ),
                   
                            InkWell(
+                            onTap: () {
+                              Navigator.pop(context,[selectedDomain,selectedDevelopmentalStage,selectedEffortLevel]);
+                            },
                           child: Container(
                           
                             padding: EdgeInsets.symmetric(
