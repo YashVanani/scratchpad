@@ -50,7 +50,7 @@ class SurveyQuestion {
 
   factory SurveyQuestion.fromMap(Map<String, dynamic> data) {
     return SurveyQuestion(
-      id: data["id"],
+      id: data["id"]??"",
       questionText: data["questionText"],
       description: data["description"] ?? "",
       type: QuestionType.values.firstWhere(
@@ -87,11 +87,11 @@ class Survey {
   factory Survey.fromMap(Map<String, dynamic> data) {
     return Survey(
       id: data["id"],
-      name: data["name"],
-      desc: data["desc"],
-      reward: data["reward"],
-      startAt: data["startAt"].toDate(),
-      endAt: data["expiresAt"].toDate(),
+      name: data["name"]??"",
+      desc: data["desc"]??"",
+      reward: data["reward"]??0,
+      startAt: (data["startAt"]??DateTime.now()).toDate(),
+      endAt:( data["expiresAt"]??DateTime.now()).toDate(),
       questions: data["questions"]
           .map<SurveyQuestion>((q) => SurveyQuestion.fromMap(q))
           .toList(),

@@ -75,6 +75,7 @@ final userDocProvider = FutureProvider((ref) {
   final userStream = ref.watch(userProvider);
 
   print(userStream.value?.uid);
+  print("HERE");
 
   return baseDoc
       .collection("students")

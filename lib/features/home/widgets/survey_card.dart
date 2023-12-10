@@ -14,6 +14,7 @@ class SurveyCard extends ConsumerWidget {
     return SizedBox(
       child: surveyData.when(
         data: (survey) {
+          print("+++++++++++SURVEY ${survey}");
           if (survey == null || survey.startAt.isAfter(DateTime.now())) {
             return Container(
               height: 112,

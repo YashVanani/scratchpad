@@ -1,3 +1,4 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart' show GoRouter;
@@ -7,7 +8,8 @@ import 'package:clarified_mobile/services/firebase.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initFirebase();
-
+ await FirebaseAppCheck.instance.activate();
+ 
   runApp(
     ProviderScope(
       child: ClarifiedApp(
