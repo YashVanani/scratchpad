@@ -1,20 +1,21 @@
 import 'package:clarified_mobile/features/home/model/entry.dart';
+import 'package:clarified_mobile/parents/models/survey_parent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-class SurveyCard extends ConsumerWidget {
-  const SurveyCard({super.key});
+class SurveyCardParent extends ConsumerWidget {
+  const SurveyCardParent({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
-    final surveyData = ref.watch(surveyInboxProvider);
+    final surveyData = ref.watch(surveyInboxParentProvider);
 
     return SizedBox(
       child: surveyData.when(
         data: (survey) {
-          print("+++++++++++SURVEY ${survey}");
+          print("+++++++++++SURVEY Parebt ${survey}");
           if (survey == null || survey.startAt.isAfter(DateTime.now())) {
             return Container(
               height: 112,
@@ -166,7 +167,7 @@ class SurveyCard extends ConsumerWidget {
                           ),
                           child: TextButton(
                             onPressed: () => GoRouter.of(context).pushNamed(
-                              "survey-wizard",
+                              "parent-survey-wizard",
                               pathParameters: {"surveyId": survey.id},
                               extra: survey,
                             ),

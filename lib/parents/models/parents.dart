@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:clarified_mobile/model/school.dart';
+import 'package:clarified_mobile/parents/features/profile/screen/p_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 @immutable
 class ParentInfo {
@@ -10,6 +15,7 @@ class ParentInfo {
   final String lastName;
   final String email;
   final String profileUrl;
+  final List<String?> surveyInbox;
 
   const ParentInfo({
     required this.id,
@@ -17,6 +23,7 @@ class ParentInfo {
     required this.lastName,
     required this.email,
     required this.profileUrl,
+    required this.surveyInbox,
   });
 
   get name {
@@ -36,6 +43,7 @@ class ParentInfo {
       firstName: data["firstName"],
       lastName: data["lastName"],
       profileUrl: data["profileUrl"],
+      surveyInbox: (data["surveyInbox"] ?? []).cast<String?>(),
     );
   }
 }
@@ -64,3 +72,42 @@ final parentProfileProvider = StreamProvider<ParentInfo>((ref) {
           ) ??
       const Stream.empty();
 });
+
+final updateProfileProvider = FutureProvider.family<void, ParentInfo>((ref, parentInfo) async {
+  final parentDoc = ref.watch(parentDocProvider);
+
+  if (parentDoc.value != null) {
+    await parentDoc.value!.update({
+      'firstName': parentInfo.firstName,
+      'lastName': parentInfo.lastName,
+      'email': parentInfo.email,
+      'profileUrl': parentInfo.profileUrl,
+    });
+    ScaffoldMessenger.of(ref.read(navigatorKeyProvider).currentContext!).showSnackBar(
+      const SnackBar(
+        content: Text("Profile updated successfully"),
+      ),
+    );
+  }
+});
+
+  Future<String?> uploadProfileToFirebase(XFile? postImage) async {
+    if (postImage != null) {
+      try {
+        final String fileName =
+            DateTime.now().millisecondsSinceEpoch.toString();
+        await FirebaseStorage.instance
+            .ref('/profilePic')
+            .child(fileName)
+            .putData(File(postImage!.path).readAsBytesSync());
+        final String downloadURL = await FirebaseStorage.instance
+            .ref('/profilePic')
+            .child(fileName)
+            .getDownloadURL();
+        return downloadURL;
+      } catch (e) {
+        print('Error uploading image: $e');
+        return null;
+      }
+    }
+  }

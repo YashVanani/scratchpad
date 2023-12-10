@@ -137,12 +137,15 @@ class MCQAnsewrComponent extends StatelessWidget {
           label: ans.label,
           isSelected: selectedAnswers?.contains(ans.id) == true,
           onSelected: () {
+            print(selectedAnswers);
+            print("+HERE ${ans.id} ${selectedAnswers?.contains(ans.id)}");
             if (selectedAnswers?.contains(ans.id) == true) {
+              print("MATCHED");
               selectedAnswers!.remove(ans.id);
               onAnswerSelected(selectedAnswers!);
               return;
             }
-
+            print("ANSWER SELECTED ${<String>{...(selectedAnswers ?? []), ans.id}}");
             onAnswerSelected(<String>{...(selectedAnswers ?? []), ans.id});
           },
         );

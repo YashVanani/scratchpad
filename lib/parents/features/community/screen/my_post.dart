@@ -38,7 +38,7 @@ class MyPostScreen extends ConsumerWidget {
                   },
                   itemCount: u.length,
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+               
                 ),
             error: (e, st) => SizedBox(),
             loading: () => CircularProgressIndicator()));

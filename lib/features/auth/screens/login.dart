@@ -28,8 +28,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             "${loginIdController.text}@$schoolId.clarified-school.scratchpad.com",
         password: passwordController.text,
       );
-
-      GoRouter.of(context).goNamed("home");
+      if (loginIdController.text.split('')[0].toUpperCase() == 'P') {
+        GoRouter.of(context).goNamed("parents-home");
+      }
+      if (loginIdController.text.split('')[0].toUpperCase() == 'S') {
+        GoRouter.of(context).goNamed("home");
+      }
     } catch (e) {
       print(e);
     }

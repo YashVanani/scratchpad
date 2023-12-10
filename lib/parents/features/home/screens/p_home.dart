@@ -1,6 +1,8 @@
 import 'package:clarified_mobile/consts/commonStyle.dart';
 import 'package:clarified_mobile/consts/imageRes.dart';
+import 'package:clarified_mobile/features/home/widgets/survey_card.dart';
 import 'package:clarified_mobile/model/user.dart';
+import 'package:clarified_mobile/parents/features/home/widgets/survey_card_parents.dart';
 import 'package:clarified_mobile/parents/features/widgets/p_bottombar.dart';
 import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:flutter/material.dart';
@@ -741,154 +743,13 @@ class ParentsHome extends ConsumerWidget{
                 child: Column(
                   children: [
                     SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        height: 112,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 16,
-                        ),
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFFFEE4E2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          shadows: const [
-                            BoxShadow(
-                              color: Color(0x0C101828),
-                              blurRadius: 2,
-                              offset: Offset(0, 1),
-                              spreadRadius: 0,
-                            )
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              "assets/svg/no_survey.svg",
-                              width: 80,
-                              height: 80,
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: SizedBox(
-                                // height: 51,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'No survey available',
-                                      style: CommonStyle.lexendMediumStyle.copyWith(
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      // mainAxisSize: MainAxisSize.min,
-                                      // mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        SvgPicture.asset("assets/svg/clock.svg"),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child:
-                                              Text('Next Survey Starts : 07/11/2023', style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 12, color: darkGreenColor)),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        height: 170,
-                        decoration: ShapeDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment(0.00, -1.00),
-                            end: Alignment(0, 1),
-                            colors: [
-                              Color(0xFFF28181),
-                              Color(0xFFB84848),
-                            ],
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              flex: 7,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Quest for Choices!",
-                                        style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 20, color: secondTextColor)),
-                                    Text(
-                                      "Let's Explore How We Decide",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 12, color: whiteTextColor),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        height: double.infinity,
-                                      ),
-                                    ),
-                                    Container(
-                                      decoration: ShapeDecoration(
-                                        color: yellowColor,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                        child: Text(
-                                          'Start Now',
-                                          style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/svg/survey_insight.svg",
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    const Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: 12.0,
+              horizontal: 16,
+            ),
+            child: SurveyCardParent(),
+          ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       child: Row(
