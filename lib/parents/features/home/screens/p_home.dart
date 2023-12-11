@@ -1,6 +1,7 @@
 import 'package:clarified_mobile/consts/commonStyle.dart';
 import 'package:clarified_mobile/consts/imageRes.dart';
 import 'package:clarified_mobile/features/home/widgets/survey_card.dart';
+import 'package:clarified_mobile/model/clazz.dart';
 import 'package:clarified_mobile/model/user.dart';
 import 'package:clarified_mobile/parents/features/home/widgets/survey_card_parents.dart';
 import 'package:clarified_mobile/parents/features/widgets/p_bottombar.dart';
@@ -20,7 +21,7 @@ import '../../../../consts/colors.dart';
 // }
 
 // class _ParentsHomeState extends State<ParentsHome> {
-  
+
 //   @override
 //   Widget build(BuildContext context) {
 //     final profile = ref.watch(profileProvider);
@@ -624,12 +625,17 @@ import '../../../../consts/colors.dart';
 
 //   }
 
-class ParentsHome extends ConsumerWidget{
+
+
+class ParentsHome extends ConsumerWidget {
   ParentsHome({super.key});
 
-@override
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-       final profile = ref.watch(parentProfileProvider);
+    final profile = ref.watch(parentProfileProvider);
+    final children = ref.watch(userListProvider);
+    final currentChild = ref.watch(myCurrentChild);
+    // final childClassroom = ref.watch(childClassroomProvider);
     print("+++++++PROFILE ${profile}");
     return Scaffold(
       body: SafeArea(
@@ -638,8 +644,15 @@ class ParentsHome extends ConsumerWidget{
             Container(
               decoration: const BoxDecoration(
                   color: whiteColor,
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 1, offset: Offset(0.0, 2))]),
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(15),
+                      bottomRight: Radius.circular(15)),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 1,
+                        offset: Offset(0.0, 2))
+                  ]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -651,12 +664,18 @@ class ParentsHome extends ConsumerWidget{
                           child: Text.rich(
                             TextSpan(
                               children: [
-                                TextSpan(text: "Hello\n", style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 12, color: liteGreenColor)),
+                                TextSpan(
+                                    text: "Hello\n",
+                                    style: CommonStyle.lexendMediumStyle
+                                        .copyWith(
+                                            fontSize: 12,
+                                            color: liteGreenColor)),
                                 //TextSpan(text: "Mrs. Smita Gupta", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold, letterSpacing: 1)),
                                 profile.when(
                                   data: (u) => TextSpan(text: u.name),
                                   error: (e, st) {
-                                    return const TextSpan(text: "Error Loading User");
+                                    return const TextSpan(
+                                        text: "Error Loading User");
                                   },
                                   loading: () => const TextSpan(text: "---"),
                                 ),
@@ -684,7 +703,8 @@ class ParentsHome extends ConsumerWidget{
                       ),
                       IconButton(
                         onPressed: () {
-                         GoRouter.of(context).pushNamed("parents-notification");
+                          GoRouter.of(context)
+                              .pushNamed("parents-notification");
                         },
                         icon: const Icon(
                           Icons.notifications_outlined,
@@ -696,7 +716,13 @@ class ParentsHome extends ConsumerWidget{
                     color: secondTextColor,
                     thickness: 1.5,
                   ),
-                  Padding(
+                  children.when(data: (d){
+                    // final childClassroom = ref.watch(childClassroomProvider);
+                    if(currentChild == null){
+                      //ref.read(myCurrentChild.notifier).state = (d[0] as UserInfo);
+                    }
+                    print(currentChild);
+                    return Padding(
                     padding: const EdgeInsets.only(bottom: 15, top: 5),
                     child: Row(
                       children: [
@@ -713,9 +739,16 @@ class ParentsHome extends ConsumerWidget{
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Arjun Gupta", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold)),
-                              Text("Class VII B", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 12, color: greyTextColor)),
-                            ],
+                              Text(currentChild?.name??'',
+                                  style: CommonStyle.lexendMediumStyle
+                                      .copyWith(fontWeight: FontWeight.bold)),
+                                FutureBuilder(future:getClassroom( currentChild?.currentClassId??'',ref), builder:((context, snapshot) => Text(snapshot.data?.name??"",
+                                        style: CommonStyle.lexendMediumStyle
+                                            .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                                color: greyTextColor))) ),
+                              ]
                           ),
                         ),
                         InkWell(
@@ -723,19 +756,24 @@ class ParentsHome extends ConsumerWidget{
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return childrenDialog();
+                                  return childrenDialog(ref);
                                 });
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(right: 15),
                             child: Text("Change",
-                                style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold, decoration: TextDecoration.underline, color: greenTextColor)),
+                                style: CommonStyle.lexendMediumStyle.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                    color: greenTextColor)),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                  );
+                  },
+                error: (e,j)=>Text(e.toString()), loading:()=> SizedBox())
+                 ],
               ),
             ),
             Expanded(
@@ -744,21 +782,26 @@ class ParentsHome extends ConsumerWidget{
                   children: [
                     SizedBox(height: 20),
                     const Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 12.0,
-              horizontal: 16,
-            ),
-            child: SurveyCardParent(),
-          ),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12.0,
+                        horizontal: 16,
+                      ),
+                      child: SurveyCardParent(),
+                    ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('Recent Reports', style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w500)),
+                          Text('Recent Reports',
+                              style: CommonStyle.lexendMediumStyle
+                                  .copyWith(fontWeight: FontWeight.w500)),
                           SizedBox(width: 16),
-                          Text('View all', style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14, color: greenTextColor)),
+                          Text('View all',
+                              style: CommonStyle.lexendMediumStyle.copyWith(
+                                  fontSize: 14, color: greenTextColor)),
                         ],
                       ),
                     ),
@@ -770,9 +813,11 @@ class ParentsHome extends ConsumerWidget{
                           itemCount: 3,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: EdgeInsets.only(left: 15, right: index == 2 ? 20 : 0),
+                              padding: EdgeInsets.only(
+                                  left: 15, right: index == 2 ? 20 : 0),
                               child: Container(
-                                height: MediaQuery.of(context).size.height * .18,
+                                height:
+                                    MediaQuery.of(context).size.height * .18,
                                 width: MediaQuery.of(context).size.width * .8,
                                 decoration: ShapeDecoration(
                                   gradient: const LinearGradient(
@@ -788,25 +833,40 @@ class ParentsHome extends ConsumerWidget{
                                   ),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     Expanded(
                                       flex: 7,
                                       child: Padding(
-                                        padding: const EdgeInsets.only(top: 16, bottom: 0, left: 16),
+                                        padding: const EdgeInsets.only(
+                                            top: 16, bottom: 0, left: 16),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text("Social Awareness",
-                                                style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 16, color: textMainColor)),
+                                                style: CommonStyle
+                                                    .lexendMediumStyle
+                                                    .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 16,
+                                                        color: textMainColor)),
                                             SizedBox(height: 5),
                                             Text(
                                               "16-Oct-2023",
-                                              style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 12, color: textMainColor),
+                                              style: CommonStyle
+                                                  .lexendMediumStyle
+                                                  .copyWith(
+                                                      fontSize: 12,
+                                                      color: textMainColor),
                                             ),
                                             Expanded(
                                               child: Container(
@@ -814,31 +874,49 @@ class ParentsHome extends ConsumerWidget{
                                               ),
                                             ),
                                             Row(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
                                               children: [
                                                 Padding(
-                                                  padding: const EdgeInsets.only(bottom: 16),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          bottom: 16),
                                                   child: Container(
                                                     decoration: ShapeDecoration(
                                                       color: yellowColor,
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(10),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
                                                       ),
                                                     ),
                                                     child: Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 15,
+                                                          vertical: 8),
                                                       child: Text(
                                                         'View Result',
-                                                        style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14),
+                                                        style: CommonStyle
+                                                            .lexendMediumStyle
+                                                            .copyWith(
+                                                                fontSize: 14),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                                 Expanded(
                                                   child: Column(
-                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                                    children: [Image.asset(ImageRes.manImage, height: 80)],
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: [
+                                                      Image.asset(
+                                                          ImageRes.manImage,
+                                                          height: 80)
+                                                    ],
                                                   ),
                                                 ),
                                               ],
@@ -863,7 +941,9 @@ class ParentsHome extends ConsumerWidget{
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SizedBox(height: 15),
-                            Text("School Corner", style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 16, fontWeight: FontWeight.w500)),
+                            Text("School Corner",
+                                style: CommonStyle.lexendMediumStyle.copyWith(
+                                    fontSize: 16, fontWeight: FontWeight.w500)),
                             SizedBox(height: 15),
                             Row(
                               children: [
@@ -896,18 +976,24 @@ class ParentsHome extends ConsumerWidget{
                                     child: InkWell(
                                       onTap: () {},
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           SizedBox.square(
                                             child: Container(
                                                 decoration: ShapeDecoration(
                                                   color: boxColor,
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(13),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            13),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 7,
+                                                      horizontal: 7),
                                                   child: Image.asset(
                                                     ImageRes.bookImage,
                                                     height: 25,
@@ -918,7 +1004,8 @@ class ParentsHome extends ConsumerWidget{
                                           SizedBox(height: 15),
                                           Text(
                                             "Playbook",
-                                            style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14),
+                                            style: CommonStyle.lexendMediumStyle
+                                                .copyWith(fontSize: 14),
                                           ),
                                           Align(
                                               alignment: Alignment.topRight,
@@ -962,18 +1049,24 @@ class ParentsHome extends ConsumerWidget{
                                     child: InkWell(
                                       onTap: () {},
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           SizedBox.square(
                                             child: Container(
                                                 decoration: ShapeDecoration(
                                                   color: orangeColor,
                                                   shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(13),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            13),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 7),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 7,
+                                                      horizontal: 7),
                                                   child: Image.asset(
                                                     ImageRes.bookImage,
                                                     height: 25,
@@ -987,7 +1080,9 @@ class ParentsHome extends ConsumerWidget{
                                               Expanded(
                                                 child: Text(
                                                   "Post lesson Doubt",
-                                                  style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14),
+                                                  style: CommonStyle
+                                                      .lexendMediumStyle
+                                                      .copyWith(fontSize: 14),
                                                 ),
                                               ),
                                               Align(
@@ -1015,7 +1110,10 @@ class ParentsHome extends ConsumerWidget{
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Container(
-                        decoration: BoxDecoration(color: blueColor, border: Border.all(color: blueBorderColor), borderRadius: BorderRadius.circular(8)),
+                        decoration: BoxDecoration(
+                            color: blueColor,
+                            border: Border.all(color: blueBorderColor),
+                            borderRadius: BorderRadius.circular(8)),
                         child: Padding(
                           padding: const EdgeInsets.only(top: 12, right: 10),
                           child: Row(
@@ -1027,34 +1125,48 @@ class ParentsHome extends ConsumerWidget{
                                   children: [
                                     Text(
                                       "Community",
-                                      style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 18, fontWeight: FontWeight.w600),
+                                      style: CommonStyle.lexendMediumStyle
+                                          .copyWith(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600),
                                     ),
                                     SizedBox(height: 15),
                                     Text(
                                       "Interact Engage and Share",
-                                      style: CommonStyle.lexendMediumStyle.copyWith(
+                                      style: CommonStyle.lexendMediumStyle
+                                          .copyWith(
                                         fontSize: 12,
                                       ),
                                     ),
                                     SizedBox(height: 15),
                                     InkWell(
-                                      onTap: (){
-                                        GoRouter.of(context).pushNamed("parents-community");
+                                      onTap: () {
+                                        GoRouter.of(context)
+                                            .pushNamed("parents-community");
                                       },
                                       child: Padding(
-                                        padding: const EdgeInsets.only(bottom: 16),
+                                        padding:
+                                            const EdgeInsets.only(bottom: 16),
                                         child: Container(
                                           decoration: ShapeDecoration(
                                             color: darkBlueColor,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(10),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 25, vertical: 12),
                                             child: Text(
                                               'Open community',
-                                              style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w500),
+                                              style: CommonStyle
+                                                  .lexendMediumStyle
+                                                  .copyWith(
+                                                      fontSize: 12,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w500),
                                             ),
                                           ),
                                         ),
@@ -1087,8 +1199,8 @@ class ParentsHome extends ConsumerWidget{
         selected: 'parents-home',
       ),
     );
-  
   }
+
   bottomsheet(context) {
     return SizedBox(
       height: 200,
@@ -1096,7 +1208,7 @@ class ParentsHome extends ConsumerWidget{
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _buildExpansionTile(1,context),
+            _buildExpansionTile(1, context),
           ],
         ),
       ),
@@ -1105,7 +1217,7 @@ class ParentsHome extends ConsumerWidget{
 
   final ScrollController _scrollController = ScrollController();
 
-  _buildExpansionTile(int index,context) {
+  _buildExpansionTile(int index, context) {
     final GlobalKey expansionTileKey = GlobalKey();
     double? previousOffset;
 
@@ -1113,10 +1225,10 @@ class ParentsHome extends ConsumerWidget{
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
         key: expansionTileKey,
-
         onExpansionChanged: (isExpanded) {
           if (isExpanded) previousOffset = _scrollController.offset;
-          _scrollToSelectedContent(isExpanded, previousOffset!, index, expansionTileKey);
+          _scrollToSelectedContent(
+              isExpanded, previousOffset!, index, expansionTileKey);
         },
         title: Text('My expansion tile $index'),
         children: _buildExpansionTileChildren(context),
@@ -1145,11 +1257,13 @@ class ParentsHome extends ConsumerWidget{
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 8),
                       child: Center(
                         child: Text(
                           'See Video',
-                          style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14, color: whiteColor),
+                          style: CommonStyle.lexendMediumStyle
+                              .copyWith(fontSize: 14, color: whiteColor),
                         ),
                       ),
                     ),
@@ -1161,59 +1275,85 @@ class ParentsHome extends ConsumerWidget{
         ),
       ];
 
-  void _scrollToSelectedContent(bool isExpanded, double previousOffset, int index, GlobalKey myKey) {
+  void _scrollToSelectedContent(
+      bool isExpanded, double previousOffset, int index, GlobalKey myKey) {
     final keyContext = myKey.currentContext;
 
     if (keyContext != null) {
       // make sure that your widget is visible
       final box = keyContext.findRenderObject() as RenderBox;
-      _scrollController.animateTo(isExpanded ? (box.size.height * index) : previousOffset, duration: Duration(milliseconds: 500), curve: Curves.linear);
+      _scrollController.animateTo(
+          isExpanded ? (box.size.height * index) : previousOffset,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.linear);
     }
   }
 
-  childrenDialog() {
+  childrenDialog(WidgetRef ref) {
+    
+    final children = ref.watch(userListProvider);
+    final currentChild = ref.watch(myCurrentChild);
     return StatefulBuilder(builder: (context, setState) {
       return AlertDialog(
         scrollable: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
         backgroundColor: whiteColor,
         content: Column(
           children: [
             Container(
               height: 240,
               width: 500,
-              child: ListView.builder(
-                  itemCount: 3,
+              child: children.when(data: (d){
+                return ListView.builder(
+                  itemCount: d.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
+                    
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5),
                       child: Container(
-                        decoration: BoxDecoration(color: secondTextColor, border: Border.all(color: whiteTextColor), borderRadius: BorderRadius.circular(10)),
+                        decoration: BoxDecoration(
+                            color: secondTextColor,
+                            border: Border.all(color: whiteTextColor),
+                            borderRadius: BorderRadius.circular(10)),
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                          padding: const EdgeInsets.only(
+                              left: 15, top: 10, bottom: 10),
                           child: Row(
                             children: [
                               CircleAvatar(
                                 radius: 22,
                                 backgroundColor: purpleColor,
-                                backgroundImage: AssetImage(ImageRes.profileImage),
+                                backgroundImage:
+                                    AssetImage(ImageRes.profileImage),
                               ),
                               SizedBox(width: 15),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Arjun Gupta", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold)),
-                                    Text("Class VII B", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 12, color: greyTextColor)),
+                                    Text(d[index].name,
+                                        style: CommonStyle.lexendMediumStyle
+                                            .copyWith(
+                                                fontWeight: FontWeight.bold)),
+                                                FutureBuilder(future:getClassroom(d[index].currentClassId, ref), builder:((context, snapshot) => Text(snapshot.data?.name??"",
+                                        style: CommonStyle.lexendMediumStyle
+                                            .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                                color: greyTextColor))) ),
+                                  
                                   ],
                                 ),
                               ),
                               Radio(
-                                value: true,
+                                value: ref.read(myCurrentChild.notifier).state?.id == d[index].id,
                                 groupValue: true,
                                 onChanged: (value) {
                                   setState(() {
+                                    ref.read(myCurrentChild.notifier).state = d[index];
+                                    Navigator.pop(context);
                                     // _site = value;
                                   });
                                 },
@@ -1223,13 +1363,12 @@ class ParentsHome extends ConsumerWidget{
                         ),
                       ),
                     );
-                  }),
+                  });
+              }, error: (e,j)=>Text("Something went wrong"), loading: ()=>SizedBox()),
             ),
           ],
         ),
       );
     });
   }
-
-
 }

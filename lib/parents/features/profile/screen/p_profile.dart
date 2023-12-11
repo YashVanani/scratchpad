@@ -267,7 +267,7 @@ class ParentProfile extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: InkWell(
                           onTap: (){
-                            ref.watch(updateProfileProvider(ParentInfo(id: profile.value?.id??'', firstName: nameController.text, lastName:lastNameController.text, email: emailController.text, profileUrl: profile.value?.profileUrl??'',surveyInbox: profile.value?.surveyInbox??[])));
+                            ref.watch(updateProfileProvider(ParentInfo(id: profile.value?.id??'', firstName: nameController.text, lastName:lastNameController.text, email: emailController.text, profileUrl: profile.value?.profileUrl??'',surveyInbox: profile.value?.surveyInbox??[],childrens:ref.read(parentProfileProvider).value?.childrens??[])));
                             },
                           child: Container(
                             alignment: Alignment.center,
@@ -439,14 +439,14 @@ class ParentProfile extends ConsumerWidget {
       /// camera Image
       XFile? photo = await _picker.pickImage(source: ImageSource.camera, maxWidth: 1280, maxHeight: 720, imageQuality: 60);
        String rres = await uploadProfileToFirebase(photo!)??'';
-      ref.read(updateProfileProvider(ParentInfo(id: ref.read(parentProfileProvider).value?.id??'', firstName: nameController.text, lastName:lastNameController.text, email: emailController.text, profileUrl: rres,surveyInbox:  ref.read(parentProfileProvider).value?.surveyInbox??[])));
+      ref.read(updateProfileProvider(ParentInfo(id: ref.read(parentProfileProvider).value?.id??'', firstName: nameController.text, lastName:lastNameController.text, email: emailController.text, profileUrl: rres,surveyInbox:  ref.read(parentProfileProvider).value?.surveyInbox??[],childrens:ref.read(parentProfileProvider).value?.childrens??[] )));
       print("+++++++>>$rres");
       return true;
     } else {
       /// gallery Image
       final XFile? selectedImages = await _picker.pickImage(source: ImageSource.gallery,maxWidth: 1280, maxHeight: 720, imageQuality: 60);
       String rres = await uploadProfileToFirebase(selectedImages!)??'';
-      ref.read(updateProfileProvider(ParentInfo(id: ref.read(parentProfileProvider).value?.id??'', firstName: nameController.text, lastName:lastNameController.text, email: emailController.text, profileUrl: rres,surveyInbox:  ref.read(parentProfileProvider).value?.surveyInbox??[])));
+      ref.read(updateProfileProvider(ParentInfo(id: ref.read(parentProfileProvider).value?.id??'', firstName: nameController.text, lastName:lastNameController.text, email: emailController.text, profileUrl: rres,surveyInbox:  ref.read(parentProfileProvider).value?.surveyInbox??[],childrens:ref.read(parentProfileProvider).value?.childrens??[])));
       print("+++++++>>$rres");
       return true;
       //return selectedImages;

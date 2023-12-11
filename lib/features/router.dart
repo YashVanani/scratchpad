@@ -2,6 +2,7 @@ import 'package:clarified_mobile/features/profiles/screens/profile_password.dart
 import 'package:clarified_mobile/features/subjects/screen/case_study_view.dart';
 import 'package:clarified_mobile/features/subjects/screen/quiz_wizard.dart';
 import 'package:clarified_mobile/features/subjects/screen/study_materials.dart';
+import 'package:clarified_mobile/model/clazz.dart';
 import 'package:clarified_mobile/parents/features/community/screen/community.dart';
 import 'package:clarified_mobile/parents/features/community/screen/create_post.dart';
 import 'package:clarified_mobile/parents/features/community/screen/my_post.dart';
@@ -197,7 +198,7 @@ GoRouter initRouter() {
       GoRoute(
         path: '/p_report',
         name: "parents-report",
-        builder: (context, state) => const ParentsReport(),
+        builder: (context, state) =>  ParentsReport(),
       ),
       GoRoute(
         path: '/p_playbook',
@@ -239,11 +240,7 @@ GoRouter initRouter() {
         name: "parents-doubt",
         builder: (context, state) => DoubtScreen(),
       ),
-       GoRoute(
-        path: '/p_doubt',
-        name: "parents-doubt-details",
-        builder: (context, state) => DoubtDetailScreen(),
-      ),
+      
       GoRoute(
         path: '/p_notification_settings',
         name: "parents-notification-settings",

@@ -1,19 +1,28 @@
 import 'package:clarified_mobile/consts/colors.dart';
+import 'package:clarified_mobile/model/clazz.dart';
+import 'package:clarified_mobile/parents/models/parents.dart';
+import 'package:clarified_mobile/parents/models/teacher.dart';
 import 'package:flutter/material.dart';
-
-class DoubtDetailScreen extends StatefulWidget {
-  const DoubtDetailScreen({super.key});
-
-  @override
-  State<DoubtDetailScreen> createState() => _DoubtDetailScreenState();
-}
-
-class _DoubtDetailScreenState extends State<DoubtDetailScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+class DoubtDetailScreen extends ConsumerWidget{
+  DoubtDetailScreen({
+    super.key,
+    required this.teacherId,
+    required this.subject,
+    required this.classSubject
+  });
+  ClassSubject classSubject;
+  Subject subject;
+  String teacherId;
+    @override
+  Widget build(BuildContext context,WidgetRef ref) {
+    
+    // final subjectItem = ref.watch(subjectItemProvider(subject.teacherId));
+    
+    final teacherData = ref.watch(teacherInfo(teacherId));
+     return Scaffold(
         appBar: AppBar(
-          title: Text('Geography'),
+          title: Text(subject.name),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -22,11 +31,11 @@ class _DoubtDetailScreenState extends State<DoubtDetailScreen> {
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 200,
-                child: Placeholder(),
+                child: Image.network(subject.bannerImage,fit: BoxFit.cover,),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: Row(children: const [
+                child: Row(children:  [
                   Text(
                     "Teacher Name :",
                     style: TextStyle(
@@ -35,20 +44,28 @@ class _DoubtDetailScreenState extends State<DoubtDetailScreen> {
                         fontSize: 16),
                   ),
                   Spacer(),
-                  CircleAvatar(
+                 
+                  FutureBuilder(future: getTeacherInfo(teacherId, ref), builder: ((context, snapshot) {
+                   return Row(
+                      children: [
+                         CircleAvatar(
                     radius: 16,
-                    backgroundImage: AssetImage('assets/man.png'),
+                    backgroundImage: NetworkImage(snapshot.data?.profileUrl??"",),
+                   
                   ),
                   SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    "Mr. John Doe",
-                    style: TextStyle(
-                        color: Color(0xff1D2939),
-                        fontWeight: FontWeight.w400,
-                        fontSize: 18),
-                  )
+                        Text(snapshot.data?.name??"",
+                                               style: TextStyle(
+                            color: Color(0xff1D2939),
+                            fontWeight: FontWeight.w400,
+                            fontSize: 18),),
+                      ],
+                    );
+                  }))
+                  
+                 
                 ]),
               ),
               SizedBox(
@@ -64,26 +81,26 @@ class _DoubtDetailScreenState extends State<DoubtDetailScreen> {
                       fontSize: 16),
                 ),
               ),
-              ListView(
+              ListView.builder(
+                itemCount: subject.topics.length??0,
+                itemBuilder: (context, index) =>TopicCard(topic: classSubject.topics[index],), 
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                children: [
-                  TopicCard(),
-                  TopicCard(),
-                  TopicCard(),
-                  TopicCard(),
-                ],
+                
               )
             ],
           ),
         ));
+ 
   }
 }
 
 class TopicCard extends StatelessWidget {
-  const TopicCard({
+  TopicCard({
     super.key,
+    required this.topic
   });
+  ClassTopic topic;
 
   @override
   Widget build(BuildContext context) {
@@ -96,10 +113,13 @@ class TopicCard extends StatelessWidget {
       child: ExpansionTile(
         shape: Border.all(color: Colors.transparent),
           collapsedShape: Border.all(color: Colors.transparent),
-          title: Text("1. Basic Ozone Layer Science"),
-          trailing: Icon(
+          title: Text(topic.topic),
+          trailing: topic.isCompleted? Icon(
             Icons.lock_open,
             color: Colors.green,
+          ):Icon(
+            Icons.lock,
+            color: Colors.orange,
           ),
           children: [
             Padding(
