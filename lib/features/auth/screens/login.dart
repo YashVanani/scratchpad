@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -194,11 +195,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       )
                                     ],
                                   ),
-                                  child: const Center(
+                                  child: Center(
                                     child: Padding(
                                       padding: EdgeInsets.all(8.0),
                                       child: Text(
-                                        'LOGIN',
+                                        // 'LOGIN',
+                                        AppLocalizations.of(context)!.login,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 18,
