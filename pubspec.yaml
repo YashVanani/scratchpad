@@ -21,7 +21,6 @@ dependencies:
   firebase_analytics: ^10.7.0
   firebase_messaging: ^14.7.4
   firebase_storage: ^11.5.1
-  firebase_dynamic_links: ^5.4.4
   firebase_remote_config: ^4.3.4
   flutter_svg: ^2.0.9
   awesome_bottom_bar: ^1.2.4
@@ -38,6 +37,9 @@ dependencies:
   autoscale_tabbarview: ^1.0.2
   flutter_localization:
   intl:
+  firebase_dynamic_links: ^5.4.8
+  share_plus: ^7.2.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

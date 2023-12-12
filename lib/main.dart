@@ -1,6 +1,8 @@
 import 'package:clarified_mobile/l10n/L10n.dart';
+import 'package:clarified_mobile/parents/features/community/screen/post_detail.dart';
 import 'package:clarified_mobile/services/app_pref.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart' show GoRouter;
@@ -44,6 +46,7 @@ class _ClarifiedAppState extends State<ClarifiedApp> {
       _locale = locale;
     });
   }
+ 
 
   @override
   void didChangeDependencies() {
@@ -51,6 +54,11 @@ class _ClarifiedAppState extends State<ClarifiedApp> {
       setLocale(value);
     });
     super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
   // This widget is the root of your application.
   @override

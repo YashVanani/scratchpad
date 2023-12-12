@@ -176,3 +176,16 @@ final playbookDevelopStageProvider =StreamProvider<List<String>>((ref) {
       const Stream.empty();
 });
 
+final dashboardPlaybookListProvider = StreamProvider<List<Playbook>>((ref) {
+  final playbookDocs = ref.watch(playbookColProvider);
+  final playbookIds = ref.watch(playbookIdsState.notifier).state;
+
+   return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
+    (v) => v.docs
+        .map((doc) => Playbook.fromJson(doc.data()))
+        .where((playbook) => (playbookIds).contains(playbook.id))
+        .toList(),
+  ) ?? const Stream.empty();
+});
+
+final playbookIdsState = StateProvider<List<String>>((ref) => []);

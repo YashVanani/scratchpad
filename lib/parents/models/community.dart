@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 
 Post postFromJson(String str) => Post.fromJson(json.decode(str));
 
@@ -180,4 +181,51 @@ Future<bool> deletePost(Post post, ref) async {
     print(e);
     return false;
   }
+}
+
+Future<Post?> getPostById(String id, WidgetRef ref)async{
+ try{
+  print("++++ID ${id}");
+  final baseDoc = ref.read(schoolDocProvider);
+  return await baseDoc.collection("community").doc(id).get().then((value) => Post.fromJson(value.data()!));
+ }catch(e){
+  print("++++++++++++ERRPR ${e}");
+  return null;
+ }
+}
+
+
+const _kDynamicLinksUrl = 'https://clarified.page.link';
+const _kAppBundleId = 'com.clarified.users';
+const _kIosAppId = '6466313350';
+
+Future<String> generateCurrentPageLink(
+  BuildContext context, {
+  String? id,
+  String? title,
+  bool isShortLink = true,
+  bool forceRedirect = false,
+}) async {
+  final dynamicLinkParams = DynamicLinkParameters(
+    link: Uri.parse('$_kDynamicLinksUrl/post/?id=$id'),
+    uriPrefix: _kDynamicLinksUrl,
+    androidParameters: const AndroidParameters(packageName: _kAppBundleId),
+    iosParameters: const IOSParameters(
+      bundleId: _kAppBundleId,
+      appStoreId: _kIosAppId,
+    ),
+    socialMetaTagParameters: SocialMetaTagParameters(
+      title: title,
+    ),
+    navigationInfoParameters: forceRedirect
+        ? NavigationInfoParameters(forcedRedirectEnabled: true)
+        : null,
+  );
+  return isShortLink
+      ? FirebaseDynamicLinks.instance
+          .buildShortLink(dynamicLinkParams)
+          .then((link) => link.shortUrl.toString())
+      : FirebaseDynamicLinks.instance
+          .buildLink(dynamicLinkParams)
+          .then((link) => link.toString());
 }

@@ -30,7 +30,7 @@ class HomePage extends ConsumerWidget {
             padding: EdgeInsets.zero,
             // onPressed: () => print("language"),
             onPressed: () {
-              GoRouter.of(context).pushNamed("parents-home");
+              // GoRouter.of(context).pushNamed("parents-home");
             },
             icon: const Icon(
               Icons.translate_outlined,

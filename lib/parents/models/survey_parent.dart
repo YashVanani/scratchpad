@@ -101,7 +101,7 @@ class SurveyAnswerSaverParent extends AutoDisposeAsyncNotifier<void> {
  final userProfile = ref.read(parentProfileProvider);
     final baseDoc = ref.read(schoolDocProvider);
     final userDoc = ref.read(parentDocProvider);
-
+    final currentChild = ref.read(myCurrentChild);
     final answerDoc = baseDoc
         .collection("parent_survey")
         .doc(survey.id)
@@ -115,6 +115,7 @@ class SurveyAnswerSaverParent extends AutoDisposeAsyncNotifier<void> {
     final data = {
       "created_at": Timestamp.now(),
       "updated_at": Timestamp.now(),
+      "student_id": currentChild?.id??"",
       "status": completed ? "submitted" : "pending",
       "answers": Map.fromEntries(
         answers.entries.map(

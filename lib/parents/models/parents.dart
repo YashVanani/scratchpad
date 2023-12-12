@@ -226,36 +226,6 @@ final childSubjectListProvider = FutureProvider((ref) async {
 });
 
 
-Future<List<MenuType>> getReportMenuType(WidgetRef ref)async{
-
-  final baseDoc = ref.watch(schoolDocProvider);
-  DocumentSnapshot doc = await baseDoc
-      .collection("config")
-      .doc("dashboard")
-      .get();
-      print("++++++++++++++>>>${doc.data()}");
-    List list = doc.get('types')??[];
-    List<MenuType> menu = [];
-    list.forEach((element) {
-      menu.add(MenuType.fromJson(element));
-    });
-    
-  return menu.toSet().toList();
-}
-
-
-final reportDashboardProvider = StreamProvider((ref) {
-  print("++REPORT DASHBOARD++");
-  final baseDoc = ref.watch(schoolDocProvider);
-  return baseDoc
-      .collection("dashboards")
-      .where('type',isEqualTo:"custom-social")
-      .snapshots()
-      .map((event) {
-      event.docs.map((e) => print(e));
-    // return event.docs.map((e) => ReportDashboard.fromMap(e.data())).toList();
-  });
-});
 
 final myCurrentReportType = StateProvider<MenuType?>((ref) => null);
 final myChildClassroom = StateProvider<Classroom>((_) => Classroom.empty());

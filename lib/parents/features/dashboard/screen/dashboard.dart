@@ -1,16 +1,20 @@
 import 'package:clarified_mobile/parents/features/playbook/screen/widgets/playbook_card.dart';
+import 'package:clarified_mobile/parents/models/dashboard.dart';
+import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class DashboardScreen extends StatefulWidget {
-  @override
-  _DashboardScreenState createState() => _DashboardScreenState();
-}
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class DashboardScreen extends ConsumerWidget{
+  const DashboardScreen({Key? key, required this.dashboardReport}) : super(key: key);
+  final DashboardReport dashboardReport;
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context, WidgetRef ref) {
+    
+    final playbook = ref.watch(dashboardPlaybookListProvider);
+    ref.refresh(dashboardPlaybookListProvider);
+     return Scaffold(
         appBar: AppBar(
           title: const Text('Dashboard'),
           leading: IconButton(
@@ -28,20 +32,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(
               height: 20,
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                "Social Awareness",
+                (dashboardReport.title ?? '').replaceAll('-', ' ').toUpperCase(),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(
               height: 10,
             ),
-            const Padding(
+             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
+                  dashboardReport.desc??"",),
+                  // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
             ),
             const SizedBox(
               height: 20,
@@ -101,16 +106,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 height: 10,
                               ),
                               Container(
-                                height: 280,
+                                height: 200 ,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 00, vertical: 2),
                                 width: MediaQuery.of(context).size.width,
                                 child: ListView.builder(
+                                  shrinkWrap: true,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: 5,
+                                  itemCount: dashboardReport.tips?.length??0,
                                   itemBuilder: (context, index) {
                                     return Container(
-                                      width: 280,
+                                      width: 230,
                                       margin: EdgeInsets.only(left: 10),
                                       decoration: BoxDecoration(
                                           color: Colors.white,
@@ -125,14 +131,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                "Tips name",
+                                                dashboardReport.tips?[index].title ?? "",
                                                 style: TextStyle(fontSize: 11),
                                               ),
                                               const SizedBox(
                                                 height: 6,
                                               ),
                                               Text(
-                                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                                                   dashboardReport.tips?[index].text ?? "",
+                                                // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
                                                 style: TextStyle(fontSize: 14),
                                               ),
                                             ]),
@@ -149,16 +156,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   style: TextStyle(fontWeight: FontWeight.w500),
                                 ),
                               ),
-                                ListView(
+                              playbook.when(data: (d)=>ListView(
                                       shrinkWrap: true,
                                       physics: NeverScrollableScrollPhysics(),
-                                      children: [
-                                        // PlayBookCard(),
-                                        // PlayBookCard(),
-                                        // PlayBookCard(),
-                                        // PlayBookCard(),
-                                      ],
-                                    )
+                                      children:d.map((e) => PlayBookCard(playbook: e)).toList(),
+                                    ),
+                                    error: (e,j)=>Text(''),
+                                    loading: ()=>Center(child: CircularProgressIndicator(),),
+                                     )
+                                
                                  
                             ],
                           ),
@@ -167,5 +173,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ]))
           ]),
         ));
+  
   }
+
 }
+
