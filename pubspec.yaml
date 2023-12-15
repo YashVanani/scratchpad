@@ -39,7 +39,8 @@ dependencies:
   intl:
   firebase_dynamic_links: ^5.4.8
   share_plus: ^7.2.1
-  
+  flutter_file_downloader: ^1.2.0
+  equatable: ^2.0.5
 dev_dependencies:
   flutter_test:
     sdk: flutter

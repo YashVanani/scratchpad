@@ -3,6 +3,7 @@ import 'package:clarified_mobile/parents/models/community.dart';
 import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostDetailScreen extends ConsumerWidget{
   const PostDetailScreen({super.key, required this.postId});
@@ -13,7 +14,7 @@ class PostDetailScreen extends ConsumerWidget{
     final user = ref.watch(parentProfileProvider);
     return  Scaffold(
         appBar: AppBar(
-            title: const Text('Community'),
+            title: Text(AppLocalizations.of(context)!.community),
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
@@ -28,7 +29,7 @@ class PostDetailScreen extends ConsumerWidget{
                     return const Center(child: CircularProgressIndicator(),);
                   }
                   if(snapshot.hasError){
-                    return const Center(child: Text('Something went wrong'),);
+                    return Center(child: Text(AppLocalizations.of(context)!.something_went_wrong),);
                   }
                   if(snapshot.hasData){
                   return PostCard(

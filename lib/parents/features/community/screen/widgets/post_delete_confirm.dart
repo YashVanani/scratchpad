@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostDeleteConfirm extends StatelessWidget {
    PostDeleteConfirm({
@@ -39,7 +40,7 @@ class PostDeleteConfirm extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  Text('Are you sure to delete this post from community?',textAlign: TextAlign.center,),
+                  Text('${AppLocalizations.of(context)!.are_you_sure_to_delete_this_post_from_community}',textAlign: TextAlign.center,),
                   const SizedBox(
                     height: 10,
                   ),
@@ -56,11 +57,11 @@ class PostDeleteConfirm extends StatelessWidget {
             children: [
             InkWell(onTap: (){
               context.pop();
-            },child: Text("Cancel",style: TextStyle(color: greyTextColor),)),
+            },child: Text(AppLocalizations.of(context)!.cancel,style: TextStyle(color: greyTextColor),)),
             InkWell(onTap: (){
                deletePost(post, ref);
               context.pop();
-            },child: Text("Delete",style: TextStyle(color: Colors.red),)),
+            },child: Text(AppLocalizations.of(context)!.delete,style: TextStyle(color: Colors.red),)),
           ]),
                   ]),
           ),

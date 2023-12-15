@@ -10,6 +10,7 @@ class AppPref {
   static Future<Locale> setLanguageCode(String lCode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(isLanguageCode, lCode);
+    await prefs.setBool('communityPopShown', false);
     return Locale(lCode);
   }
 

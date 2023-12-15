@@ -26,6 +26,7 @@ class Playbook {
     String? stages;
     String? id;
     String? categories;
+    String? whyThisWorks;
 
     Playbook({
         this.desc,
@@ -43,6 +44,7 @@ class Playbook {
         this.stages,
         this.id,
         this.categories,
+        this.whyThisWorks
     });
 
     factory Playbook.fromJson(Map<String, dynamic> json) => Playbook(
@@ -61,6 +63,7 @@ class Playbook {
         stages: json["stages"],
         id: json["id"],
         categories: json["categories"],
+        whyThisWorks:json['whyThisWorks']??""
     );
 
     Map<String, dynamic> toJson() => {
@@ -79,6 +82,7 @@ class Playbook {
         "stages": stages,
         "id": id,
         "categories": categories,
+        "whyThisWorks":whyThisWorks
     };
 }
 
@@ -188,4 +192,16 @@ final dashboardPlaybookListProvider = StreamProvider<List<Playbook>>((ref) {
   ) ?? const Stream.empty();
 });
 
+final favoriteActivityProvider = StreamProvider<List<Playbook>>((ref) {
+  final playbookDocs = ref.watch(playbookColProvider);
+  final playbookIds = ref.watch(favoriteActivityState.notifier).state;
+  print("++++PLAYBOOK SAVED ${playbookIds}");
+   return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
+    (v) => v.docs
+        .map((doc) => Playbook.fromJson(doc.data()))
+         .where((playbook) => (playbookIds).contains(playbook.id))
+        .toList(),
+  ) ?? const Stream.empty();
+});
+final favoriteActivityState = StateProvider<List<String>>((ref) => []);
 final playbookIdsState = StateProvider<List<String>>((ref) => []);

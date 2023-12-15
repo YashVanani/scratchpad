@@ -18,6 +18,7 @@ class ParentSurvey {
   final DateTime endAt;
   final List<SurveyQuestion> questions;
   final List<String> purpose;
+  final String imageUrl;
   const ParentSurvey({
     required this.id,
     required this.name,
@@ -27,6 +28,7 @@ class ParentSurvey {
     required this.endAt,
     required this.questions,
     required this.purpose,
+    required this.imageUrl
   });
 
   factory ParentSurvey.fromMap(Map<String, dynamic> data) {
@@ -41,6 +43,7 @@ class ParentSurvey {
           .map<SurveyQuestion>((q) => SurveyQuestion.fromMap(q))
           .toList(),
       purpose: (data["purpose"]??[]).cast<String>(),
+      imageUrl: data['imageUrl']??"",
     );
   }
 }
@@ -64,7 +67,7 @@ final surveyInboxParentProvider = StreamProvider((ref) {
       .snapshots()
       .map(
     (rec) {
-      print(rec.docChanges.first.doc.data());
+      // print(rec.docChanges.first.doc.data());
       return rec.size != 1 ? null : ParentSurvey.fromMap(rec.docs.first.data());
     },
   );

@@ -10,6 +10,7 @@ import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ParentsReport extends ConsumerWidget {
   const ParentsReport({super.key});
@@ -22,12 +23,13 @@ class ParentsReport extends ConsumerWidget {
         backgroundColor: Colors.white,
         leading: InkWell(
             onTap: () {
+              GoRouter.of(context).goNamed('parents-home');
               // Navigator.pop(context);
             },
             child: const Icon(Icons.arrow_back_ios, size: 20)),
         centerTitle: true,
         title: Text(
-          "Reports",
+          AppLocalizations.of(context)!.reports,
         ),
       ),
       body: SafeArea(
@@ -48,7 +50,7 @@ class ParentsReport extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("List of available dashboards",
+                      Text(AppLocalizations.of(context)!.list_of_available_dashboards,
                           style: CommonStyle.lexendMediumStyle
                               .copyWith(fontSize: 14)),
                       SizedBox(height: 15),
@@ -171,7 +173,7 @@ class ParentsReport extends ConsumerWidget {
                         child: Row(
                           children: [
                             Text(
-                              'OPEN',
+                              AppLocalizations.of(context)!.open,
                               style: CommonStyle.lexendMediumStyle
                                   .copyWith(fontSize: 14),
                             ),
@@ -189,7 +191,10 @@ class ParentsReport extends ConsumerWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [Image.asset(ImageRes.manImage, height: 80)],
+                  children: [
+                    (report.imageUrl!=null && (report.imageUrl?.isNotEmpty??false))?Image.network(report.imageUrl??"",height: 80,):
+                     Image.asset(ImageRes.manImage, height: 80)
+                    ],
                 ),
               ],
             ),

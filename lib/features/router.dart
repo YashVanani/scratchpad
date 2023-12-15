@@ -10,8 +10,9 @@ import 'package:clarified_mobile/parents/features/community/screen/post_detail.d
 import 'package:clarified_mobile/parents/features/dashboard/screen/dashboard.dart';
 import 'package:clarified_mobile/parents/features/doubt/screen/doubt_detail_screen.dart';
 import 'package:clarified_mobile/parents/features/doubt/screen/doubt_screen.dart';
+import 'package:clarified_mobile/parents/features/home/screens/p_favorite.dart';
 import 'package:clarified_mobile/parents/features/home/screens/p_home.dart';
-import 'package:clarified_mobile/parents/features/loading.dart';
+import 'package:clarified_mobile/parents/features/community/loading.dart';
 import 'package:clarified_mobile/parents/features/notification/screen/notification.dart';
 import 'package:clarified_mobile/parents/features/notification/screen/notification_setting.dart';
 import 'package:clarified_mobile/parents/features/playbook/screen/playbook_detail_view.dart';
@@ -269,6 +270,11 @@ GoRouter initRouter() {
         path: '/p_notification_settings',
         name: "parents-notification-settings",
         builder: (context, state) => NotificationSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/p_favorite_activity',
+        name: "parents-favorite-activity",
+        builder: (context, state) => FavoritePlaybookScreen(),
       ),
       GoRoute(
         path: '/p_profile',

@@ -1,16 +1,20 @@
+import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class PlayBookCard extends StatelessWidget {
-  PlayBookCard({
+
+class PlayBookCard extends ConsumerWidget{
+   PlayBookCard({
     super.key,
     required this.playbook,
   });
   Playbook playbook;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+     var profile = ref.watch(parentProfileProvider);
     return InkWell(
       onTap: () {
      GoRouter.of(context).pushNamed("parents-playbook-detail",extra: playbook);
@@ -37,10 +41,30 @@ class PlayBookCard extends StatelessWidget {
                   children: [
                     Text(playbook.title ?? "",
                         style: TextStyle(fontWeight: FontWeight.w500)),
+                      Row(children: [  InkWell(
+                          onTap: (){
+                            print("++++${playbook.id}");
+                            if( ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false){
+                              
+                              print("+++Re=mpved");
+                               ref.read(favoriteActivityState.notifier).state.remove(playbook.id);
+                            }else{
+                              print("+++ADDED");
+                               ref.read(favoriteActivityState.notifier).state.add(playbook.id??"");
+                            }
+                            ref.refresh(updatedFavoriteActivityProvider);
+                            
+                          },
+                          child: Icon(
+                      Icons.favorite,
+                      color:ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false?Colors.red: Colors.grey,
+                    ),
+                        ),
+                        SizedBox(width: 10,),
                     Icon(
                       Icons.star,
                       color:playbook.isActive??false?Colors.yellow: Colors.grey,
-                    ),
+                    ),],)
                   ]),
             ),
             Padding(
@@ -112,4 +136,5 @@ class PlayBookCard extends StatelessWidget {
       ),
     );
   }
+
 }

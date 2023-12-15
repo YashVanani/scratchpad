@@ -1,23 +1,23 @@
 import 'package:clarified_mobile/consts/commonStyle.dart';
 import 'package:clarified_mobile/consts/imageRes.dart';
-import 'package:clarified_mobile/features/home/widgets/survey_card.dart';
 import 'package:clarified_mobile/main.dart';
-import 'package:clarified_mobile/model/clazz.dart';
-import 'package:clarified_mobile/model/user.dart';
 import 'package:clarified_mobile/parents/features/dashboard/screen/dashboard.dart';
+import 'package:clarified_mobile/parents/features/home/widgets/faqPopUp.dart';
 import 'package:clarified_mobile/parents/features/home/widgets/survey_card_parents.dart';
+import 'package:clarified_mobile/parents/features/playbook/screen/widgets/playbook_card.dart';
 import 'package:clarified_mobile/parents/features/widgets/p_bottombar.dart';
 import 'package:clarified_mobile/parents/models/dashboard.dart';
 import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../consts/colors.dart';
 import '../../../../services/app_pref.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 // class ParentsHome extends ConsumerWidget {
 //   const ParentsHome({super.key});
 
@@ -632,17 +632,19 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ParentsHome extends ConsumerWidget {
   ParentsHome({super.key});
+
   List<String> languageName = ["English", "Hindi", "Marathi"];
   String selectedLanguage = 'English';
   String languageCode = '';
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(parentProfileProvider);
     final children = ref.watch(userListProvider);
     final currentChild = ref.watch(myCurrentChild);
     final dashboard = ref.watch(reportDashboardProvider);
-   
     // final childClassroom = ref.watch(childClassroomProvider);
+    final favoriteActivity = ref.watch(favoriteActivityProvider);
     print("+++++++PROFILE ${profile}");
     return Scaffold(
       body: SafeArea(
@@ -679,11 +681,15 @@ class ParentsHome extends ConsumerWidget {
                                             fontSize: 12,
                                             color: liteGreenColor)),
                                 //TextSpan(text: "Mrs. Smita Gupta", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold, letterSpacing: 1)),
+
                                 profile.when(
-                                  data: (u) => TextSpan(text: u.name),
+                                  data: (u) {
+                                    return TextSpan(text: u.name);
+                                  },
                                   error: (e, st) {
-                                    return const TextSpan(
-                                        text: "Error Loading User");
+                                    return TextSpan(
+                                        text: AppLocalizations.of(context)!
+                                            .error_loading_user);
                                   },
                                   loading: () => const TextSpan(text: "---"),
                                 ),
@@ -698,7 +704,7 @@ class ParentsHome extends ConsumerWidget {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return languageDialog();
+                                return languageDialog(ref);
                               });
                         },
                         icon: const Icon(
@@ -707,7 +713,13 @@ class ParentsHome extends ConsumerWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                      
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ParentFAQPopUp(
+                                  widgetRef: ref,
+                                );
+                              });
                         },
                         icon: const Icon(
                           Icons.help_outline_outlined,
@@ -784,7 +796,8 @@ class ParentsHome extends ConsumerWidget {
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 15),
-                                  child: Text("Change",
+                                  child: Text(
+                                      AppLocalizations.of(context)!.change,
                                       style: CommonStyle.lexendMediumStyle
                                           .copyWith(
                                               fontWeight: FontWeight.bold,
@@ -797,7 +810,7 @@ class ParentsHome extends ConsumerWidget {
                           ),
                         );
                       },
-                      error: (e, j) => Text(e.toString()),
+                      error: (e, j) => SizedBox(),
                       loading: () => const SizedBox())
                 ],
               ),
@@ -821,17 +834,17 @@ class ParentsHome extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('Recent Reports',
+                          Text(AppLocalizations.of(context)!.recent_report,
                               style: CommonStyle.lexendMediumStyle
                                   .copyWith(fontWeight: FontWeight.w500)),
                           const SizedBox(width: 16),
                           InkWell(
-                            onTap: (){
+                            onTap: () {
                               GoRouter.of(context).pushNamed("parents-report");
                             },
-                            child: Text('View all',
-                              style: CommonStyle.lexendMediumStyle.copyWith(
-                                  fontSize: 14, color: greenTextColor)),
+                            child: Text(AppLocalizations.of(context)!.view_all,
+                                style: CommonStyle.lexendMediumStyle.copyWith(
+                                    fontSize: 14, color: greenTextColor)),
                           )
                         ],
                       ),
@@ -906,7 +919,11 @@ class ParentsHome extends ConsumerWidget {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text((d[index].title ?? '').replaceAll('-', ' ').toUpperCase(),
+                                                    Text(
+                                                        (d[index].title ?? '')
+                                                            .replaceAll(
+                                                                '-', ' ')
+                                                            .toUpperCase(),
                                                         style: CommonStyle
                                                             .lexendMediumStyle
                                                             .copyWith(
@@ -918,8 +935,8 @@ class ParentsHome extends ConsumerWidget {
                                                                     textMainColor)),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                     d[index].desc??"",
-                                                     maxLines: 2,
+                                                      d[index].desc ?? "",
+                                                      maxLines: 2,
                                                       style: CommonStyle
                                                           .lexendMediumStyle
                                                           .copyWith(
@@ -938,10 +955,22 @@ class ParentsHome extends ConsumerWidget {
                                                               .end,
                                                       children: [
                                                         InkWell(
-                                                          onTap: (){
-                                                              ref.read(playbookIdsState.notifier).state = d[index].activities??[];
-                                                             Navigator.push(context, MaterialPageRoute(builder: (context)=> DashboardScreen(dashboardReport: d[index],)));
-                   
+                                                          onTap: () {
+                                                            ref
+                                                                .read(playbookIdsState
+                                                                    .notifier)
+                                                                .state = d[
+                                                                        index]
+                                                                    .activities ??
+                                                                [];
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            DashboardScreen(
+                                                                              dashboardReport: d[index],
+                                                                            )));
                                                           },
                                                           child: Padding(
                                                             padding:
@@ -962,15 +991,16 @@ class ParentsHome extends ConsumerWidget {
                                                                 ),
                                                               ),
                                                               child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal:
-                                                                            15,
-                                                                        vertical:
-                                                                            8),
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        15,
+                                                                    vertical:
+                                                                        8),
                                                                 child: Text(
-                                                                  'View Result',
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .view_result,
                                                                   style: CommonStyle
                                                                       .lexendMediumStyle
                                                                       .copyWith(
@@ -990,10 +1020,24 @@ class ParentsHome extends ConsumerWidget {
                                                                 CrossAxisAlignment
                                                                     .end,
                                                             children: [
-                                                              Image.asset(
-                                                                  ImageRes
-                                                                      .manImage,
-                                                                  height: 80)
+                                                              (d[index].imageUrl !=
+                                                                          null &&
+                                                                      (d[index]
+                                                                              .imageUrl
+                                                                              ?.isNotEmpty ??
+                                                                          false))
+                                                                  ? Image
+                                                                      .network(
+                                                                      d[index].imageUrl ??
+                                                                          "",
+                                                                      height:
+                                                                          80,
+                                                                    )
+                                                                  : Image.asset(
+                                                                      ImageRes
+                                                                          .manImage,
+                                                                      height:
+                                                                          80)
                                                             ],
                                                           ),
                                                         ),
@@ -1009,7 +1053,7 @@ class ParentsHome extends ConsumerWidget {
                                     );
                                   }),
                             ),
-                        error: (e, j) => Text(e.toString()),
+                        error: (e, j) => SizedBox(),
                         loading: () => SizedBox()),
                     const SizedBox(height: 20),
                     Container(
@@ -1021,7 +1065,7 @@ class ParentsHome extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             const SizedBox(height: 15),
-                            Text("School Corner",
+                            Text(AppLocalizations.of(context)!.school_corner,
                                 style: CommonStyle.lexendMediumStyle.copyWith(
                                     fontSize: 16, fontWeight: FontWeight.w500)),
                             const SizedBox(height: 15),
@@ -1030,6 +1074,7 @@ class ParentsHome extends ConsumerWidget {
                                 Expanded(
                                   flex: 1,
                                   child: Container(
+                                    height: 150,
                                     clipBehavior: Clip.antiAlias,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 16,
@@ -1055,11 +1100,14 @@ class ParentsHome extends ConsumerWidget {
                                     ),
                                     child: InkWell(
                                       onTap: () {
-                                            GoRouter.of(context).pushNamed("parents-playbook");
+                                        GoRouter.of(context)
+                                            .pushNamed("parents-playbook");
                                       },
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           SizedBox.square(
                                             child: Container(
@@ -1085,7 +1133,8 @@ class ParentsHome extends ConsumerWidget {
                                           ),
                                           const SizedBox(height: 15),
                                           Text(
-                                            "Playbook",
+                                            AppLocalizations.of(context)!
+                                                .playbook,
                                             style: CommonStyle.lexendMediumStyle
                                                 .copyWith(fontSize: 14),
                                           ),
@@ -1105,6 +1154,7 @@ class ParentsHome extends ConsumerWidget {
                                 Expanded(
                                   flex: 1,
                                   child: Container(
+                                    height: 150,
                                     clipBehavior: Clip.antiAlias,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 16,
@@ -1130,9 +1180,12 @@ class ParentsHome extends ConsumerWidget {
                                     ),
                                     child: InkWell(
                                       onTap: () {
-                                            GoRouter.of(context).pushNamed("parents-doubt");
+                                        GoRouter.of(context)
+                                            .pushNamed("parents-doubt");
                                       },
                                       child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
@@ -1163,7 +1216,8 @@ class ParentsHome extends ConsumerWidget {
                                             children: [
                                               Expanded(
                                                 child: Text(
-                                                  "Post lesson Doubt",
+                                                  AppLocalizations.of(context)!
+                                                      .post_lesson_doubt,
                                                   style: CommonStyle
                                                       .lexendMediumStyle
                                                       .copyWith(fontSize: 14),
@@ -1208,7 +1262,7 @@ class ParentsHome extends ConsumerWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Community",
+                                      AppLocalizations.of(context)!.community,
                                       style: CommonStyle.lexendMediumStyle
                                           .copyWith(
                                               fontSize: 18,
@@ -1216,7 +1270,8 @@ class ParentsHome extends ConsumerWidget {
                                     ),
                                     const SizedBox(height: 15),
                                     Text(
-                                      "Interact Engage and Share",
+                                      AppLocalizations.of(context)!
+                                          .interact_engage,
                                       style: CommonStyle.lexendMediumStyle
                                           .copyWith(
                                         fontSize: 12,
@@ -1243,7 +1298,8 @@ class ParentsHome extends ConsumerWidget {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 25, vertical: 12),
                                             child: Text(
-                                              'Open community',
+                                              AppLocalizations.of(context)!
+                                                  .open_community,
                                               style: CommonStyle
                                                   .lexendMediumStyle
                                                   .copyWith(
@@ -1272,6 +1328,41 @@ class ParentsHome extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text("Favorite Activity",
+                              style: CommonStyle.lexendMediumStyle
+                                  .copyWith(fontWeight: FontWeight.w500)),
+                          const SizedBox(width: 16),
+                          InkWell(
+                            onTap: () {
+                              GoRouter.of(context)
+                                  .pushNamed("parents-favorite-activity");
+                            },
+                            child: Text(AppLocalizations.of(context)!.view_all,
+                                style: CommonStyle.lexendMediumStyle.copyWith(
+                                    fontSize: 14, color: greenTextColor)),
+                          )
+                        ],
+                      ),
+                    ),
+                    favoriteActivity.when(
+                        data: (d) {
+                          return ListView.builder(
+                              itemCount: d.length <= 3 ? d.length : 3,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (cnt, index) {
+                                return PlayBookCard(playbook: d[index]);
+                              });
+                        },
+                        error: (i, j) => Text(i.toString()),
+                        loading: () => SizedBox())
                   ],
                 ),
               ),
@@ -1350,7 +1441,7 @@ class ParentsHome extends ConsumerWidget {
                           horizontal: 15, vertical: 8),
                       child: Center(
                         child: Text(
-                          'See Video',
+                          AppLocalizations.of(context)!.see_video,
                           style: CommonStyle.lexendMediumStyle
                               .copyWith(fontSize: 14, color: whiteColor),
                         ),
@@ -1456,6 +1547,8 @@ class ParentsHome extends ConsumerWidget {
                                           ref
                                               .read(myCurrentChild.notifier)
                                               .state = d[index];
+
+                                          ref.refresh(childClassroomProvider);
                                           Navigator.pop(context);
                                           // _site = value;
                                         });
@@ -1468,7 +1561,8 @@ class ParentsHome extends ConsumerWidget {
                           );
                         });
                   },
-                  error: (e, j) => const Text("Something went wrong"),
+                  error: (e, j) =>
+                      Text(AppLocalizations.of(context)!.something_went_wrong),
                   loading: () => const SizedBox()),
             ),
           ],
@@ -1477,7 +1571,7 @@ class ParentsHome extends ConsumerWidget {
     });
   }
 
-  languageDialog() {
+  languageDialog(WidgetRef ref) {
     return StatefulBuilder(builder: (context, setState) {
       return AlertDialog(
         scrollable: true,
@@ -1502,6 +1596,7 @@ class ParentsHome extends ConsumerWidget {
                         if (selectedLanguage == "English") {
                           languageCode = 'en';
                           ClarifiedApp.setLocal(context, const Locale('en'));
+
                           await AppPref.setLanguageCode('en');
                         } else if (selectedLanguage == "Hindi") {
                           languageCode = 'hi';
@@ -1512,6 +1607,8 @@ class ParentsHome extends ConsumerWidget {
                           ClarifiedApp.setLocal(context, const Locale('mr'));
                           await AppPref.setLanguageCode('mr');
                         }
+                        ref.read(selectedLanguageProvider.notifier).state =
+                            selectedLanguage;
                         setState(() {});
                         Navigator.pop(context);
                       },
@@ -1534,7 +1631,9 @@ class ParentsHome extends ConsumerWidget {
                               ),
                               Radio(
                                 value: languageName[index],
-                                groupValue: selectedLanguage,
+                                groupValue: ref
+                                    .read(selectedLanguageProvider.notifier)
+                                    .state,
                                 onChanged: (value) async {
                                   selectedLanguage = value.toString();
 
@@ -1554,6 +1653,9 @@ class ParentsHome extends ConsumerWidget {
                                         context, const Locale('mr'));
                                     await AppPref.setLanguageCode('mr');
                                   }
+                                  ref
+                                      .read(selectedLanguageProvider.notifier)
+                                      .state = selectedLanguage;
                                   setState(() {});
                                   Navigator.pop(context);
                                 },

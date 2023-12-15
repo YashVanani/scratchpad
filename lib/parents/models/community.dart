@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:clarified_mobile/model/school.dart';
-import 'package:clarified_mobile/model/user.dart';
+import 'package:clarified_mobile/model/user.dart' as u;
+import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -55,24 +56,24 @@ class Post {
 
 class PostBy {
   String? username;
-  String? userAvatar;
+  String? userType;
   String? userId;
 
   PostBy({
     this.username,
-    this.userAvatar,
+    this.userType,
     this.userId,
   });
 
   factory PostBy.fromJson(Map<String, dynamic> json) => PostBy(
         username: json["username"] ?? "",
-        userAvatar: json["userAvatar"] ?? "",
+        userType: json["userType"] ?? "",
         userId: json["userId"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
         "username": username,
-        "userAvatar": userAvatar,
+        "userType": userType,
         "userId": userId,
       };
 }
@@ -152,7 +153,7 @@ Future<bool> unLikePost(Post post, ref) async {
     final addPostProvider = FutureProvider.autoDispose<void>((ref) async {
       final baseDoc = ref.read(schoolDocProvider);
       await baseDoc.collection("community").doc(post.id).update({
-        "likes":(post.likes ?? 0)!=0? ((post.likes ?? 0) - 1):0,
+        "likes": (post.likes ?? 0) != 0 ? ((post.likes ?? 0) - 1) : 0,
         "likedBy": FieldValue.arrayRemove(
             [ref.read(userProvider).asData?.value?.uid.split(':').first])
       });
@@ -165,7 +166,6 @@ Future<bool> unLikePost(Post post, ref) async {
     return false;
   }
 }
-
 
 Future<bool> deletePost(Post post, ref) async {
   try {
@@ -183,17 +183,49 @@ Future<bool> deletePost(Post post, ref) async {
   }
 }
 
-Future<Post?> getPostById(String id, WidgetRef ref)async{
- try{
-  print("++++ID ${id}");
-  final baseDoc = ref.read(schoolDocProvider);
-  return await baseDoc.collection("community").doc(id).get().then((value) => Post.fromJson(value.data()!));
- }catch(e){
-  print("++++++++++++ERRPR ${e}");
-  return null;
- }
+Future<Post?> getPostById(String id, WidgetRef ref) async {
+  try {
+    print("++++ID ${id}");
+    final baseDoc = ref.read(schoolDocProvider);
+    return await baseDoc
+        .collection("community")
+        .doc(id)
+        .get()
+        .then((value) => Post.fromJson(value.data()!));
+  } catch (e) {
+    print("++++++++++++ERRPR ${e}");
+    return null;
+  }
 }
 
+Future<ParentInfo?> getPostParent(
+    String userId, String userType, WidgetRef ref) async {
+  try {
+    print("++++++++++GET PARENT ${userId}");
+    final baseDoc = ref.read(schoolDocProvider);
+    return await baseDoc
+        .collection("parents")
+        .doc(userId)
+        .get()
+        .then((value) => ParentInfo.fromMap(value.data()!));
+  } catch (e) {
+    null;
+  }
+}
+
+Future<u.UserInfo?> getPostStudent(
+    String userId, String userType, WidgetRef ref) async {
+  try {
+    final baseDoc = ref.read(schoolDocProvider);
+    return await baseDoc
+        .collection("students")
+        .doc(userId)
+        .get()
+        .then((value) => u.UserInfo.fromMap(value.data()!));
+  } catch (e) {
+    null;
+  }
+}
 
 const _kDynamicLinksUrl = 'https://clarified.page.link';
 const _kAppBundleId = 'com.clarified.users';
@@ -206,7 +238,8 @@ Future<String> generateCurrentPageLink(
   bool isShortLink = true,
   bool forceRedirect = false,
 }) async {
-  final dynamicLinkParams = DynamicLinkParameters(
+  try{
+    final dynamicLinkParams = DynamicLinkParameters(
     link: Uri.parse('$_kDynamicLinksUrl/post/?id=$id'),
     uriPrefix: _kDynamicLinksUrl,
     androidParameters: const AndroidParameters(packageName: _kAppBundleId),
@@ -214,12 +247,7 @@ Future<String> generateCurrentPageLink(
       bundleId: _kAppBundleId,
       appStoreId: _kIosAppId,
     ),
-    socialMetaTagParameters: SocialMetaTagParameters(
-      title: title,
-    ),
-    navigationInfoParameters: forceRedirect
-        ? NavigationInfoParameters(forcedRedirectEnabled: true)
-        : null,
+    
   );
   return isShortLink
       ? FirebaseDynamicLinks.instance
@@ -228,4 +256,8 @@ Future<String> generateCurrentPageLink(
       : FirebaseDynamicLinks.instance
           .buildLink(dynamicLinkParams)
           .then((link) => link.toString());
+  }catch(e){
+    print(e);
+    return '';
+  }
 }

@@ -4,14 +4,16 @@ import 'package:clarified_mobile/parents/features/community/screen/widgets/post_
 import 'package:clarified_mobile/parents/models/community.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class PostCard extends ConsumerWidget {
   PostCard({
     super.key,
-  required this.post,
-  required this.userId,
-  }
-  );
+    required this.post,
+    required this.userId,
+  });
   String userId;
   Post post;
 
@@ -20,7 +22,15 @@ class PostCard extends ConsumerWidget {
     print("++POST ID++${post.id}");
     return InkWell(
       onTap: () {
-        Navigator.push(context,MaterialPageRoute(builder: (context) => PostDetailScreen(postId: post.id??'')));
+        // if(GoRouter.of(context).)
+
+        if (GoRouterState.of(context).uri.toString() != '/post-detail') {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PostDetailScreen(postId: post.id ?? '')));
+        }
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -30,126 +40,186 @@ class PostCard extends ConsumerWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 CircleAvatar(
-                  radius: 20,
-                  backgroundImage:NetworkImage((post.postBy?.userAvatar)??'')
-                      
-                ),
+                post.postBy?.userType == 'student'
+                    ? FutureBuilder(
+                        future: getPostStudent(
+                            post.postBy?.userId ?? "", 'student', ref),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                    (snapshot.data?.profileUrl) ?? ''));
+                          }
+                          return SizedBox();
+                        })
+                    : post.postBy?.userType == 'parent'?FutureBuilder(
+                        future: getPostParent(
+                            post.postBy?.userId ?? "", 'parent', ref),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                    (snapshot.data?.profileUrl) ?? ''));
+                          }
+                          return SizedBox();
+                        }):SizedBox(),
                 const SizedBox(
                   width: 10,
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.75,
-                  child:  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start ,
-                    children: [
-                     Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                         (post.postBy?.username)??'',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            
+                            post.postBy?.userType == 'student'
+                    ? FutureBuilder(
+                        future: getPostStudent(
+                            post.postBy?.userId ?? "", 'student', ref),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                    (snapshot.data?.profileUrl) ?? ''));
+                          }
+                          return SizedBox();
+                        })
+                    : post.postBy?.userType == 'parent'?FutureBuilder(
+                        future: getPostParent(
+                            post.postBy?.userId ?? "", 'parent', ref),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              (snapshot.data?.name) ?? '',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            );
+                          }
+                          return SizedBox();
+                        }):SizedBox(),
+                           
+                            Text(
+                              post.postAt
+                                      ?.toDate()
+                                      .toString()
+                                      .substring(0, 10) ??
+                                  '',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: greyTextColor),
+                            ),
+                          ],
                         ),
                         Text(
-                          post.postAt?.toDate().toString().substring(0, 10)??'',
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: greyTextColor),
+                          post.content ?? '',
                         ),
-                      ],
-                    ),
-                     Text(
-                       post.content??'',),
-                      const SizedBox(
-                      height: 10,
-                    ),
-                    Visibility(
-                      visible: post.postImage?.isNotEmpty??false,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                  image: NetworkImage(post.postImage??''),
-                                  fit: BoxFit.cover)),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                         InkWell(
-                          onTap: (){
-                            if( !(post.likedBy?.contains(userId)??false)){
-                              likePost(post, ref);
-                            }else{
-                              unLikePost(post, ref);
-                            }
-                          },
-                           child: Row(
-                            children: [
-                              Icon(
-                                post.likedBy?.contains(userId)??false? Icons.favorite:Icons.favorite_border,
-                                color: Colors.red,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text("${post.likes??0} likes")
-                            ],
-                                               ),
-                         ),
-                        InkWell(
-                          onTap: ()async {
-                           String? res = await generateCurrentPageLink(context,id: post.id??"",title: post.content??"",);
-                           print("++RES++$res");
-                           Share.share(res??'');
-                          },
-                          child: const Row(
-                            children: [
-                              Icon(
-                                Icons.share,
-                                color: Colors.grey,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text("Share")
-                            ],
-                          ),
+                        const SizedBox(
+                          height: 10,
                         ),
                         Visibility(
-                          visible: post.postBy?.userId==userId,
-                          child: InkWell(
-                            onTap: () {
-                                  showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return PostDeleteConfirm(ref: ref,post: post,);
-                              });
-                            },
-                            child: const Row(
-                              children: [
-                                Icon(
-                                  Icons.delete,
-                                  color: Colors.grey,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text("Delete")
-                              ],
+                          visible: post.postImage?.isNotEmpty ?? false,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                      image: NetworkImage(post.postImage ?? ''),
+                                      fit: BoxFit.cover)),
                             ),
                           ),
                         ),
-                      ],
-                    )
-                  ]),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                if (!(post.likedBy?.contains(userId) ??
+                                    false)) {
+                                  likePost(post, ref);
+                                } else {
+                                  unLikePost(post, ref);
+                                }
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    post.likedBy?.contains(userId) ?? false
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: Colors.red,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                      "${(post.likedBy?.length) ?? 0} ${AppLocalizations.of(context)!.likes}")
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                String? res = await generateCurrentPageLink(
+                                  context,
+                                  id: post.id ?? "",
+                                  title: post.content ?? "",
+                                );
+                                print("++RES++$res");
+                                Share.share(res ?? '');
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.share,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text("${AppLocalizations.of(context)!.share}")
+                                ],
+                              ),
+                            ),
+                            Visibility(
+                              visible: post.postBy?.userId == userId,
+                              child: InkWell(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return PostDeleteConfirm(
+                                          ref: ref,
+                                          post: post,
+                                        );
+                                      });
+                                },
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.delete,
+                                      color: Colors.grey,
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                        "${AppLocalizations.of(context)!.delete}")
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ]),
                 ),
               ],
             ),

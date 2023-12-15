@@ -2,9 +2,11 @@ import 'package:clarified_mobile/parents/features/community/screen/widgets/commu
 import 'package:clarified_mobile/parents/features/community/screen/widgets/post_card.dart';
 import 'package:clarified_mobile/parents/models/community.dart';
 import 'package:clarified_mobile/parents/models/parents.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyPostScreen extends ConsumerWidget {
   MyPostScreen({Key? key}) : super(key: key);
@@ -15,7 +17,7 @@ class MyPostScreen extends ConsumerWidget {
 
     return Scaffold(
         appBar: AppBar(
-            title: const Text('Community'),
+            title: Text(AppLocalizations.of(context)!.community),
             centerTitle: true,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
@@ -25,7 +27,9 @@ class MyPostScreen extends ConsumerWidget {
             )),
         bottomNavigationBar: const CommunityNavBar(selected: 'parents-my-post'),
         body: post.when(
-            data: (u) => ListView.builder(
+            data: (u) {
+              u.sort((a,b)=>(b.postAt??Timestamp.now()).compareTo(a.postAt??Timestamp.now()));
+              return ListView.builder(
                   itemBuilder: (context, index) {
                     if (u[index].postBy?.userId == user.asData?.value.id) {
                       return PostCard(
@@ -39,8 +43,9 @@ class MyPostScreen extends ConsumerWidget {
                   itemCount: u.length,
                   shrinkWrap: true,
                
-                ),
-            error: (e, st) => SizedBox(),
+                );
+           
+            }, error: (e, st) => SizedBox(),
             loading: () => CircularProgressIndicator()));
   }
 }

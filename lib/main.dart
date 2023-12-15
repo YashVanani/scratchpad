@@ -60,6 +60,7 @@ class _ClarifiedAppState extends State<ClarifiedApp> {
   void initState() {
     super.initState();
   }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -73,6 +74,7 @@ class _ClarifiedAppState extends State<ClarifiedApp> {
         useMaterial3: true,
       ),
       locale: _locale,
+      
       supportedLocales: L10n.all,
       localizationsDelegates: const [
         AppLocalizations.delegate,

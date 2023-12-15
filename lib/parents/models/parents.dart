@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:clarified_mobile/model/clazz.dart';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/parents/features/profile/screen/p_profile.dart';
+import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,7 @@ MenuType menuTypeFromJson(String str) => MenuType.fromJson(json.decode(str));
 
 String menuTypeToJson(MenuType data) => json.encode(data.toJson());
 
-class MenuType {
+class MenuType extends Equatable  {
     String? category;
     String? label;
     String? value;
@@ -43,6 +45,9 @@ class MenuType {
         "label": label,
         "value": value,
     };
+    
+      @override
+      List<Object?> get props => [category,label,value];
 }
 
 @immutable
@@ -54,7 +59,9 @@ class ParentInfo {
   final String profileUrl;
   final List<String?> surveyInbox;
   final List<String> childrens;
-
+  final List<String> favoriteActivities;
+  final bool inAppNotification;
+  final bool appUpdateNotification;
   const ParentInfo({
     required this.id,
     required this.firstName,
@@ -63,6 +70,9 @@ class ParentInfo {
     required this.profileUrl,
     required this.surveyInbox,
     required this.childrens,
+    required this.appUpdateNotification,
+    required this.inAppNotification,
+    required this.favoriteActivities,
   });
 
   get name {
@@ -82,6 +92,9 @@ class ParentInfo {
       profileUrl: data["profileUrl"],
       surveyInbox: (data["surveyInbox"] ?? []).cast<String?>(),
       childrens: (data["childrens"] ?? []).cast<String>(),
+      inAppNotification: data['inAppNotification']??true,
+      appUpdateNotification: data['appUpdateNotification']??true,
+      favoriteActivities:( data['favoriteActivities']??[]).cast<String>(),
     );
   }
 }
@@ -102,7 +115,12 @@ final parentProfileProvider = StreamProvider<ParentInfo>((ref) {
   final parentDoc = ref.watch(parentDocProvider);
 
   return parentDoc.value?.snapshots().where((ev) => ev.exists).map(
-            (v) => ParentInfo.fromMap(v.data()!),
+            (v){
+             ParentInfo parentInfo = ParentInfo.fromMap(v.data()!);
+              ref.read(favoriteActivityState.notifier).state = parentInfo.favoriteActivities;
+               ref.refresh(favoriteActivityProvider);
+             return parentInfo;
+            },
           ) ??
       const Stream.empty();
 });
@@ -126,6 +144,35 @@ final updateProfileProvider =
     );
   }
 });
+
+Future<void> updateParentInAppNotificationProvider (bool value, WidgetRef ref) async {
+  final parentDoc = ref.watch(parentDocProvider);
+  if (parentDoc.value != null) {
+    await parentDoc.value!.update({
+      'inAppNotification': value,    });
+    ScaffoldMessenger.of(ref.read(navigatorKeyProvider).currentContext!)
+        .showSnackBar(
+      const SnackBar(
+        content: Text("Notification status updated successfully"),
+      ),
+    );
+  }
+}
+
+
+
+Future<void> updateParentAppUpdateNotification(bool value, WidgetRef ref)async{
+   final parentDoc = ref.watch(parentDocProvider);
+ await parentDoc.value!.set({
+      'appUpdateNotification': value,    },SetOptions(merge: true));
+      ref.watch(parentProfileProvider);
+    ScaffoldMessenger.of(ref.read(navigatorKeyProvider).currentContext!)
+        .showSnackBar(
+      const SnackBar(
+        content: Text("Notification status updated successfully"),
+      ),
+    );
+}
 
 Future<String?> uploadProfileToFirebase(XFile? postImage) async {
   if (postImage != null) {
@@ -225,8 +272,44 @@ final childSubjectListProvider = FutureProvider((ref) async {
       );
 });
 
+final studentTopicFeedbackProvider =  StreamProvider<List<Map>>((ref) {
+  
+  final baseDoc = ref.read(schoolDocProvider);
+  print("+++STUDENT ID ${ref.read(myCurrentChild.notifier).state?.currentClassId}");
+   return  baseDoc
+      .collection("students")
+      .doc(ref.read(myCurrentChild.notifier).state?.id).collection('topic_feedbacks').snapshots().map(
+            (v) {
+              print(v.docs);
+              return v.docs
+                .map((doc) => {...doc.data(),'id':doc.id})
+                .toList();
+            },
+          ) ?? const Stream.empty();
+});
+
+final updatedFavoriteActivityProvider =
+    FutureProvider((ref) async {
+  final parentDoc = ref.watch(parentDocProvider);
+  var a =ref.read(favoriteActivityState.notifier).state.length;
+  print("++++++LENGTH ${a}");
+  if (parentDoc.value != null) {
+    await parentDoc.value!.set({
+      'favoriteActivities':  ref.read(favoriteActivityState.notifier).state,    },SetOptions(merge: true));
+    ScaffoldMessenger.of(ref.read(navigatorKeyProvider).currentContext!)
+        .showSnackBar(
+      const SnackBar(
+        content: Text("Done."),
+      ),
+    );
+  }
+});
 
 
 final myCurrentReportType = StateProvider<MenuType?>((ref) => null);
 final myChildClassroom = StateProvider<Classroom>((_) => Classroom.empty());
 final myCurrentChild = StateProvider<u.UserInfo?>((_) => null);
+final selectedLanguageProvider = StateProvider<String>((_) => "English");
+final previousIndexNavbarProvider = StateProvider<String>((_)=>'parent-home');
+    final selectedCategoryProvider = StateProvider((String) => 'All');
+  final filterProvider = StateProvider((_) => {});

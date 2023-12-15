@@ -22,6 +22,7 @@ class DashboardReport {
     String? url;
     List<Tip>? tips;
     String? desc;
+    String? imageUrl;
 
     DashboardReport({
         this.activities,
@@ -32,6 +33,7 @@ class DashboardReport {
         this.url,
         this.tips,
         this.desc,
+        this.imageUrl
     });
 
     factory DashboardReport.fromJson(Map<String, dynamic> json) => DashboardReport(
@@ -43,6 +45,7 @@ class DashboardReport {
         url: json["url"],
         tips: json["tips"] == null ? [] : List<Tip>.from(json["tips"]!.map((x) => Tip.fromJson(x))),
         desc: json["desc"],
+        imageUrl: json['imageUrl']??""
     );
 
     Map<String, dynamic> toJson() => {
@@ -54,6 +57,7 @@ class DashboardReport {
         "url": url,
         "tips": tips == null ? [] : List<dynamic>.from(tips!.map((x) => x.toJson())),
         "desc": desc,
+        "imageUrl":imageUrl
     };
 }
 
@@ -92,9 +96,18 @@ Future<List<MenuType>> getReportMenuType(WidgetRef ref)async{
       print("++++++++++++++>>>${doc.data()}");
     List list = doc.get('types')??[];
     List<MenuType> menu = [];
+    List<String> value = [];
     list.forEach((element) {
-      menu.add(MenuType.fromJson(element));
+     
     });
+    for(var i in list){
+      print("+++${i['label']}");
+       if(!value.contains(i['label'])){
+      menu.add(MenuType.fromJson(i));
+      value.add(i['label']);
+      }
+    }
+
     
   return menu.toSet().toList();
 }

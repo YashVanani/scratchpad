@@ -1,3 +1,4 @@
+import 'package:clarified_mobile/consts/colors.dart';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,17 +19,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final loginFormKey = GlobalKey<FormState>();
   bool showPassword = false;
   bool isBusy = false;
-
+  bool isLoading = false;
   void attemptLogin() async {
     final schoolId = ref.read(schoolIdProvider);
     print("attempting school $schoolId");
-
+    
+    setState(() {
+      isLoading = true;
+    });
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email:
             "${loginIdController.text}@$schoolId.clarified-school.scratchpad.com",
         password: passwordController.text,
       );
+      setState(() {
+      isLoading = false;
+    });
       if (loginIdController.text.split('')[0].toUpperCase() == 'P') {
         GoRouter.of(context).goNamed("parents-home");
       }
@@ -37,6 +44,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       }
     } catch (e) {
       print(e);
+      var snackBar = SnackBar(content: Text(e.toString()));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      setState(() {
+      isLoading = false;
+    });
     }
   }
 
@@ -198,7 +210,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   child: Center(
                                     child: Padding(
                                       padding: EdgeInsets.all(8.0),
-                                      child: Text(
+                                      child: 
+                                      isLoading?SizedBox(width: 10,height: 10,child: CircularProgressIndicator(color: whiteColor,)):
+                                      Text(
                                         // 'LOGIN',
                                         AppLocalizations.of(context)!.login,
                                         style: TextStyle(

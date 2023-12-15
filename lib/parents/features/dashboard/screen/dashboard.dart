@@ -4,7 +4,7 @@ import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DashboardScreen extends ConsumerWidget{
   const DashboardScreen({Key? key, required this.dashboardReport}) : super(key: key);
@@ -16,7 +16,7 @@ class DashboardScreen extends ConsumerWidget{
     ref.refresh(dashboardPlaybookListProvider);
      return Scaffold(
         appBar: AppBar(
-          title: const Text('Dashboard'),
+          title: Text(AppLocalizations.of(context)!.dashboard),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -54,7 +54,7 @@ class DashboardScreen extends ConsumerWidget{
             DefaultTabController(
                 length: 2,
                 child: Column(children: [
-                  const TabBar(
+                   TabBar(
                     labelColor: Colors.black,
                     unselectedLabelColor: Colors.grey,
                     indicatorColor: Colors.black,
@@ -67,7 +67,7 @@ class DashboardScreen extends ConsumerWidget{
                               SizedBox(
                                 width: 5,
                               ),
-                              Text("Dashboard")
+                              Text(AppLocalizations.of(context)!.dashboard)
                             ]),
                       ),
                       Tab(
@@ -78,7 +78,7 @@ class DashboardScreen extends ConsumerWidget{
                               SizedBox(
                                 width: 5,
                               ),
-                              Text("Activities")
+                              Text(AppLocalizations.of(context)!.activities)
                             ]),
                       ),
                     ],
@@ -94,12 +94,12 @@ class DashboardScreen extends ConsumerWidget{
                               const SizedBox(
                                 height: 20,
                               ),
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 16.0, vertical: 0),
                                 child: Text(
-                                  "Recommendations",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                  AppLocalizations.of(context)!.recommendations,
+                                  style: TextStyle(fontWeight: FontWeight.w500,fontSize: 17),
                                 ),
                               ),
                               const SizedBox(
@@ -148,12 +148,12 @@ class DashboardScreen extends ConsumerWidget{
                                   },
                                 ),
                               ),
-                           const Padding(
+                           Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 16.0, vertical: 10),
                                 child: Text(
-                                  "Activities",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                  AppLocalizations.of(context)!.activities,
+                                  style: TextStyle(fontWeight: FontWeight.w500,fontSize: 17),
                                 ),
                               ),
                               playbook.when(data: (d)=>ListView(
