@@ -113,5 +113,20 @@
   "cancel": "Cancel",
   "open": "OPEN"
 
+ "student_id": "Student ID",
+  "please_provide_id": "Please provide ID",
+  "password": "Password",
+  "please_password": "Please Password",
+  "class_survey": "Class Survey",
+  "unknown_subject": "Unknown Subject",
+  "your_thoughts": "Your thoughts and feedback are super valuable",
+  "survey_purpose": "Survey Purpose: ",
+  "take_a_moment": "Take a moment to think about the lesson before responding.",
+  "answer_truthfully": "Answer truthfully based on your understanding of the lesson.",
+  "if_there_something": "If there's something you didn't understand, don't hesitate to mention it. ",
+  "failed_to_previous": "Failed to Previous Answers",
+  "good_job": "GOOD JOB!",
+  "happy_learning" : "Happy Learning",
+  "resources_for_this": "Resources for this lesson has unlocked."
 
 }
