@@ -113,4 +113,20 @@
   "cancel": "रद्द करा",
   "open": "उघडा",
   "post_lesson_doubt": "धडा नंतर शंका"
+
+  "student_id": "विद्यार्थी ओळखपत्र",
+  "please_provide_id": "कृपया आयडी द्या",
+  "password": "पासवर्ड",
+  "please_password": "कृपया पासवर्ड द्या",
+  "class_survey": "वर्ग सर्वेक्षण",
+  "unknown_subject": "अज्ञात विषय",
+  "your_thoughts": "तुमचे विचार आणि प्रतिक्रिया खूप मोलाच्या आहेत",
+  "survey_purpose": "सर्वेक्षण उद्देश: ",
+  "take_a_moment": "प्रतिसाद देण्यापूर्वी धड्याचा विचार करण्यासाठी थोडा वेळ द्या.",
+  "answer_truthfully": "तुमच्या धड्याच्या समजुतीच्या आधारे सत्यतेने उत्तर द्या.",
+  "if_there_something": "जर तुम्हाला काही समजले नसेल तर ते नमूद करण्यास अजिबात संकोच करू नका.",
+  "failed_to_previous": "मागील उत्तरांमध्ये अयशस्वी",
+  "good_job": "चांगली नोकरी!",
+  "happy_learning" : "आनंदी शिक्षण",
+  "resources_for_this": "Resources for this lesson has unlocked."
 }
