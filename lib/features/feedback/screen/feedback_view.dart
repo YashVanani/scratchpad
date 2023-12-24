@@ -1,3 +1,4 @@
+import 'package:clarified_mobile/consts/colors.dart';
 import 'package:clarified_mobile/features/feedback/model/feedback.dart';
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
@@ -78,7 +79,7 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                         Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
-                            vertical: 16,
+                            vertical: 8,
                           ),
                           child: Text(
                             (widget.data?["subjectName"]?.toUpperCase() ??
@@ -91,30 +92,117 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                             ),
                           ),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                          ),
+                          child: Text(
+                            'Your thoughts and feedback are super valuable',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontFamily: 'Lexend',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
+                   SizedBox(height: 12,),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text("Survey Purpose: "),
                   ),
-                  Expanded(
-                    child: feedbackQuestions.when(
-                      data: (data) {
-                        return Markdown(
-                          data: data.content,
-                          shrinkWrap: true,
-                        );
-                      },
-                      error: (er, st) {
-                        print([er, st]);
-                        return const Center(
-                          child: Text("Error: Fetching Feedback Questions"),
-                        );
-                      },
-                      loading: () => const SizedBox(),
+                  // Expanded(
+                  //   child: feedbackQuestions.when(
+                  //     data: (data) {
+                  //       return Markdown(
+                  //         data: data.content,
+                  //         shrinkWrap: true,
+                  //       );
+                  //     },
+                  //     error: (er, st) {
+                  //       print([er, st]);
+                  //       return const Center(
+                  //         child: Text("Error: Fetching Feedback Questions"),
+                  //       );
+                  //     },
+                  //     loading: () => const SizedBox(),
+                  //   ),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width - 40,
+                          child: Row(children: [
+                            Image.asset('assets/bullet.png'),
+                            Container(
+                              padding: EdgeInsets.only(left: 10),
+                              width: MediaQuery.of(context).size.width - 60,
+                              child: Text(
+                                "Take a moment to think about the lesson before responding.",
+                                maxLines: 5,
+                                style: const TextStyle(
+                                  color: greyTextColor,
+                                  fontSize: 14,
+                                  fontFamily: 'Lexend',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            )
+                          ]),
+                        ),
+                        SizedBox(height: 12,),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width - 40,
+                          child: Row(children: [
+                            Image.asset('assets/bullet.png'),
+                            Container(
+                              padding: EdgeInsets.only(left: 10),
+                              width: MediaQuery.of(context).size.width - 60,
+                              child: Text(
+                                "Answer truthfully based on your understanding of the lesson.",
+                                maxLines: 5,
+                                style: const TextStyle(
+                                  color: greyTextColor,
+                                  fontSize: 14,
+                                  fontFamily: 'Lexend',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            )
+                          ]),
+                        ),
+                         SizedBox(height: 12,),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width - 40,
+                          child: Row(children: [
+                            Image.asset('assets/bullet.png'),
+                            Container(
+                              padding: EdgeInsets.only(left: 10),
+                              width: MediaQuery.of(context).size.width - 60,
+                              child: Text(
+                                "If there's something you didn't understand, don't hesitate to mention it. ",
+                                maxLines: 5,
+                                style: const TextStyle(
+                                  color: greyTextColor,
+                                  fontSize: 14,
+                                  fontFamily: 'Lexend',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            )
+                          ]),
+                        ),
+                      ],
                     ),
                   ),
+                  Spacer(),
                   Padding(
                     padding: const EdgeInsets.all(32.0),
                     child: userAlreadyAnswered.when(

@@ -54,7 +54,7 @@ class Topic {
       cost: (
         quiz: data["cost"]["quiz"],
         caseStudy: data["cost"]["case_study"],
-        materials: data["cost"]["materials"]
+        materials: data["cost"]["materials"]??0
       ),
     );
   }

@@ -14,70 +14,71 @@ Post postFromJson(String str) => Post.fromJson(json.decode(str));
 String postToJson(Post data) => json.encode(data.toJson());
 
 class Post {
-  PostBy? postBy;
-  Timestamp? postAt;
-  String? content;
-  String? postImage;
-  int? likes;
-  List<String>? likedBy;
-  String id;
+    String? id;
+    String? content;
+    int? likeCount;
+    List? likedBy;
+    String? mediaUrl;
+    Timestamp? postedAt;
+    User? user;
 
-  Post({
-    this.postBy,
-    this.postAt,
-    this.content,
-    this.postImage,
-    this.likes,
-    this.likedBy,
-    this.id = '',
-  });
+    Post({
+      this.id,
+        this.content,
+        this.likeCount,
+        this.likedBy,
+        this.mediaUrl,
+        this.postedAt,
+        this.user,
+    });
 
-  factory Post.fromJson(Map<String, dynamic> json) => Post(
-        postBy: json["postBy"] == null ? null : PostBy.fromJson(json["postBy"]),
-        postAt: json["postAt"] ?? Timestamp.now(),
-        content: json["content"] ?? "",
-        postImage: json["postImage"] ?? "",
-        likes: json["likes"] ?? 88,
-        likedBy: json["likedBy"] == null
-            ? null
-            : List<String>.from(json["likedBy"].map((x) => x)),
-      );
+    factory Post.fromJson(Map<String, dynamic> json) => Post(
+        id:json['id']??"",
+        content: json["content"]??"",
+        likeCount: json["likeCount"]??0,
+        likedBy: json["likedBy"] == null ? [] : List.from(json["likedBy"]!.map((x) => x)),
+        mediaUrl: json["mediaUrl"]??"",
+        postedAt: json["postedAt"]??Timestamp.now(),
+        user: json["user"] == null ? null : User.fromJson(json["user"]),
+    );
 
-  Map<String, dynamic> toJson() => {
-        "postBy": postBy?.toJson(),
-        "postAt": postAt,
+    Map<String, dynamic> toJson() => {
         "content": content,
-        "postImage": postImage,
-        "likes": likes,
-        "likedBy":
-            likedBy == null ? null : List<dynamic>.from(likedBy!.map((x) => x)),
-      };
+        "likeCount": likeCount,
+        "likedBy": likedBy == null ? [] : List.from(likedBy!.map((x) => x)),
+        "mediaUrl": mediaUrl,
+        "postedAt": postedAt,
+        "user": user?.toJson(),
+    };
 }
 
-class PostBy {
-  String? username;
-  String? userType;
-  String? userId;
+class User {
+    String? name;
+    String? profileUrl;
+    String? userId;
+    String? userType;
 
-  PostBy({
-    this.username,
-    this.userType,
-    this.userId,
-  });
+    User({
+        this.name,
+        this.profileUrl,
+        this.userId,
+        this.userType,
+    });
 
-  factory PostBy.fromJson(Map<String, dynamic> json) => PostBy(
-        username: json["username"] ?? "",
-        userType: json["userType"] ?? "",
-        userId: json["userId"] ?? "",
-      );
+    factory User.fromJson(Map<String, dynamic> json) => User(
+        name: json["name"]??'',
+        profileUrl: json["profileUrl"]??'',
+        userId: json["userId"]??"",
+        userType: json["userType"]??"",
+    );
 
-  Map<String, dynamic> toJson() => {
-        "username": username,
-        "userType": userType,
+    Map<String, dynamic> toJson() => {
+        "name": name,
+        "profileUrl": profileUrl,
         "userId": userId,
-      };
+        "userType": userType,
+    };
 }
-
 final userProvider = StreamProvider(
   (ref) => FirebaseAuth.instance.authStateChanges(),
 );
@@ -89,7 +90,7 @@ final communityProvider = FutureProvider((ref) {
   print(userStream.value?.uid);
   print("HERE");
 
-  return baseDoc.collection("community");
+  return baseDoc.collection("community_posts");
 });
 
 final postProvider = StreamProvider<List<Post>>((ref) {
@@ -99,13 +100,13 @@ final postProvider = StreamProvider<List<Post>>((ref) {
             (v) => v.docs
                 .map((doc) => Post(
                     id: doc.id,
-                    postAt: doc.data()['postAt'],
+                    postedAt: doc.data()['postedAt'],
                     content: doc.data()['content'],
-                    postImage: doc.data()['postImage'],
-                    likes: doc.data()['likes'],
-                    likedBy: List<String>.from(doc.data()['likedBy']),
-                    postBy: PostBy.fromJson(
-                      doc.data()['postBy'],
+                    mediaUrl: doc.data()['mediaUrl'],
+                    likeCount: doc.data()['likeCount'],
+                    likedBy:doc.data()['likedBy'],
+                    user: User.fromJson(
+                      doc.data()['user'],
                     )))
                 .toList(),
           ) ??
@@ -116,7 +117,7 @@ Future<bool> addPost(Post post, ref) async {
   try {
     final addPostProvider = FutureProvider.autoDispose<void>((ref) async {
       final baseDoc = ref.read(schoolDocProvider);
-      await baseDoc.collection("community").add(post.toJson());
+      await baseDoc.collection("community_posts").add(post.toJson());
     });
     await ref.watch(addPostProvider);
 
@@ -132,10 +133,11 @@ Future<bool> likePost(Post post, ref) async {
     print("++++${post.id}");
     final addPostProvider = FutureProvider.autoDispose<void>((ref) async {
       final baseDoc = ref.read(schoolDocProvider);
-      await baseDoc.collection("community").doc(post.id).update({
-        "likes": (post.likes ?? 0) + 1,
+      final parentInfo = ref.read(parentProfileProvider);
+      await baseDoc.collection("community_posts").doc(post.id).update({
+        "likeCount": (post.likedBy?.contains(parentInfo.asData?.value.id??"")??false)?post.likeCount:(post.likeCount ?? 0) + 1,
         "likedBy": FieldValue.arrayUnion(
-            [ref.read(userProvider).asData?.value?.uid.split(':').first])
+            [parentInfo.asData?.value.id??""])
       });
     });
     await ref.watch(addPostProvider);
@@ -152,10 +154,12 @@ Future<bool> unLikePost(Post post, ref) async {
     print("++++${post.id}");
     final addPostProvider = FutureProvider.autoDispose<void>((ref) async {
       final baseDoc = ref.read(schoolDocProvider);
-      await baseDoc.collection("community").doc(post.id).update({
-        "likes": (post.likes ?? 0) != 0 ? ((post.likes ?? 0) - 1) : 0,
+      
+      final parentInfo = ref.read(parentProfileProvider);
+      await baseDoc.collection("community_posts").doc(post.id).update({
+        "likeCount":  (post.likedBy?.contains(parentInfo.asData?.value.id??"")??false)?(post.likeCount ?? 0) != 0 ? ((post.likeCount ?? 0) - 1) : 0:post.likeCount,
         "likedBy": FieldValue.arrayRemove(
-            [ref.read(userProvider).asData?.value?.uid.split(':').first])
+            [parentInfo.asData?.value.id??""])
       });
     });
     await ref.watch(addPostProvider);
@@ -172,7 +176,7 @@ Future<bool> deletePost(Post post, ref) async {
     print("++++${post.id}");
     final addPostProvider = FutureProvider.autoDispose<void>((ref) async {
       final baseDoc = ref.read(schoolDocProvider);
-      await baseDoc.collection("community").doc(post.id).delete();
+      await baseDoc.collection("community_posts").doc(post.id).delete();
     });
     await ref.watch(addPostProvider);
 
@@ -188,7 +192,7 @@ Future<Post?> getPostById(String id, WidgetRef ref) async {
     print("++++ID ${id}");
     final baseDoc = ref.read(schoolDocProvider);
     return await baseDoc
-        .collection("community")
+        .collection("community_posts")
         .doc(id)
         .get()
         .then((value) => Post.fromJson(value.data()!));
@@ -197,6 +201,17 @@ Future<Post?> getPostById(String id, WidgetRef ref) async {
     return null;
   }
 }
+final selectPostProvider =StreamProvider<Post>((ref) {
+
+final baseDoc = ref.read(schoolDocProvider);
+print("+++++${ref.read(selectedPostId.notifier).state}");
+  return baseDoc
+        .collection("community_posts")
+        .doc(ref.read(selectedPostId.notifier).state)
+        .get()
+        .then((value) => Post.fromJson(value.data()!)).asStream()??
+      const Stream.empty();
+});
 
 Future<ParentInfo?> getPostParent(
     String userId, String userType, WidgetRef ref) async {
@@ -205,6 +220,20 @@ Future<ParentInfo?> getPostParent(
     final baseDoc = ref.read(schoolDocProvider);
     return await baseDoc
         .collection("parents")
+        .doc(userId)
+        .get()
+        .then((value) => ParentInfo.fromMap(value.data()!));
+  } catch (e) {
+    null;
+  }
+}
+Future<ParentInfo?> getPostTeacher(
+    String userId, String userType, WidgetRef ref) async {
+  try {
+    print("++++++++++GET PARENT ${userId}");
+    final baseDoc = ref.read(schoolDocProvider);
+    return await baseDoc
+        .collection("staffs")
         .doc(userId)
         .get()
         .then((value) => ParentInfo.fromMap(value.data()!));
@@ -261,3 +290,5 @@ Future<String> generateCurrentPageLink(
     return '';
   }
 }
+
+final selectedPostId = StateProvider<String>((ref) => '');

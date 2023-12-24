@@ -28,10 +28,10 @@ class MyPostScreen extends ConsumerWidget {
         bottomNavigationBar: const CommunityNavBar(selected: 'parents-my-post'),
         body: post.when(
             data: (u) {
-              u.sort((a,b)=>(b.postAt??Timestamp.now()).compareTo(a.postAt??Timestamp.now()));
+              u.sort((a,b)=>(b.postedAt??Timestamp.now()).compareTo(a.postedAt??Timestamp.now()));
               return ListView.builder(
                   itemBuilder: (context, index) {
-                    if (u[index].postBy?.userId == user.asData?.value.id) {
+                    if (u[index].user?.userId == user.asData?.value.id) {
                       return PostCard(
                         post: u[index],
                         userId: user.asData?.value.id ?? '',

@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostCard extends ConsumerWidget {
+  
   PostCard({
     super.key,
     required this.post,
@@ -19,12 +20,15 @@ class PostCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print("++POST ID++${post.id}");
+   
+    final selectedPost = ref.watch(selectPostProvider);
     return InkWell(
       onTap: () {
         // if(GoRouter.of(context).)
 
         if (GoRouterState.of(context).uri.toString() != '/post-detail') {
+          ref.read(selectedPostId.notifier).state=post.id??'';
+          ref.refresh(selectPostProvider);
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -40,10 +44,10 @@ class PostCard extends ConsumerWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                post.postBy?.userType == 'student'
+                post.user?.userType == 'student'
                     ? FutureBuilder(
                         future: getPostStudent(
-                            post.postBy?.userId ?? "", 'student', ref),
+                            post.user?.userId ?? "", 'student', ref),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return CircleAvatar(
@@ -53,9 +57,20 @@ class PostCard extends ConsumerWidget {
                           }
                           return SizedBox();
                         })
-                    : post.postBy?.userType == 'parent'?FutureBuilder(
+                    : post.user?.userType == 'parent'?FutureBuilder(
                         future: getPostParent(
-                            post.postBy?.userId ?? "", 'parent', ref),
+                            post.user?.userId ?? "", 'parent', ref),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                    (snapshot.data?.profileUrl) ?? ''));
+                          }
+                          return SizedBox();
+                        }):post.user?.userType == 'teacher'?FutureBuilder(
+                        future: getPostTeacher(
+                            post.user?.userId ?? "", 'parent', ref),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return CircleAvatar(
@@ -78,11 +93,12 @@ class PostCard extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             
-                            post.postBy?.userType == 'student'
+                            post.user?.userType == 'student'
                     ? FutureBuilder(
                         future: getPostStudent(
-                            post.postBy?.userId ?? "", 'student', ref),
+                            post.user?.userId ?? "", 'student', ref),
                         builder: (context, snapshot) {
+
                           if (snapshot.hasData) {
                             return CircleAvatar(
                                 radius: 20,
@@ -91,9 +107,21 @@ class PostCard extends ConsumerWidget {
                           }
                           return SizedBox();
                         })
-                    : post.postBy?.userType == 'parent'?FutureBuilder(
+                    : post.user?.userType == 'parent'?FutureBuilder(
                         future: getPostParent(
-                            post.postBy?.userId ?? "", 'parent', ref),
+                            post.user?.userId ?? "", 'parent', ref),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              (snapshot.data?.name) ?? '',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            );
+                          }
+                          return SizedBox();
+                        }):post.user?.userType == 'teacher'?FutureBuilder(
+                        future: getPostTeacher(
+                            post.user?.userId ?? "", 'parent', ref),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Text(
@@ -106,7 +134,7 @@ class PostCard extends ConsumerWidget {
                         }):SizedBox(),
                            
                             Text(
-                              post.postAt
+                              post.postedAt
                                       ?.toDate()
                                       .toString()
                                       .substring(0, 10) ??
@@ -125,7 +153,7 @@ class PostCard extends ConsumerWidget {
                           height: 10,
                         ),
                         Visibility(
-                          visible: post.postImage?.isNotEmpty ?? false,
+                          visible: post.mediaUrl?.isNotEmpty ?? false,
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Container(
@@ -133,7 +161,7 @@ class PostCard extends ConsumerWidget {
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   image: DecorationImage(
-                                      image: NetworkImage(post.postImage ?? ''),
+                                      image: NetworkImage(post.mediaUrl ?? ''),
                                       fit: BoxFit.cover)),
                             ),
                           ),
@@ -190,7 +218,7 @@ class PostCard extends ConsumerWidget {
                               ),
                             ),
                             Visibility(
-                              visible: post.postBy?.userId == userId,
+                              visible: post.user?.userId == userId,
                               child: InkWell(
                                 onTap: () {
                                   showDialog(

@@ -1,8 +1,11 @@
+import 'package:clarified_mobile/features/notification/screen/notification_setting.dart';
 import 'package:clarified_mobile/model/school.dart';
+import 'package:clarified_mobile/parents/features/profile/screen/p_profile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:clarified_mobile/parents/models/notification.dart' as n;
 @immutable
 class UserInfo {
   final String id;
@@ -17,6 +20,9 @@ class UserInfo {
   final String? avatar;
   final List<String> unlockedAvatars;
   final List<String> surveyInbox;
+  
+  final bool inAppNotification;
+  final bool appUpdateNotification;
   final ({int current, int spent, int total}) balance;
 
   const UserInfo({
@@ -33,6 +39,8 @@ class UserInfo {
     required this.unlockedAvatars,
     required this.balance,
     required this.surveyInbox,
+    required this.appUpdateNotification,
+    required this.inAppNotification
   });
 
   get name {
@@ -62,6 +70,8 @@ class UserInfo {
         total: data['balance']['total'],
         spent: data['balance']['spent']
       ),
+      appUpdateNotification: data['appUpdateNotification'],
+      inAppNotification: data['inAppNotification']
     );
   }
 }
@@ -90,3 +100,50 @@ final profileProvider = StreamProvider<UserInfo>((ref) {
           ) ??
       const Stream.empty();
 });
+
+
+final studentNotificationProvider =  StreamProvider<List<n.Notification>>((ref) {
+  
+  final baseDoc = ref.read(schoolDocProvider);
+  final parentStream = ref.watch(profileProvider);
+
+   return  baseDoc
+      .collection("students")
+      .doc(parentStream.asData?.value.id.split(":").first).collection('notifications').snapshots().map(
+            (v) {
+              print(v.docs);
+              return v.docs
+                .map((doc) => n.Notification.fromJson(doc.data()))
+                .toList();
+            },
+          ) ?? const Stream.empty();
+});
+
+Future<void> updateStudentInAppNotificationProvider (bool value, WidgetRef ref) async {
+  final parentDoc = ref.watch(userDocProvider);
+  if (parentDoc.value != null) {
+    await parentDoc.value!.update({
+      'inAppNotification': value,    });
+    ScaffoldMessenger.of(ref.read(studentKeyProvider).currentContext!)
+        .showSnackBar(
+      const SnackBar(
+        content: Text("Notification status updated successfully"),
+      ),
+    );
+  }
+}
+
+
+
+Future<void> updateStudentAppUpdateNotification(bool value, WidgetRef ref)async{
+    final parentDoc = ref.watch(userDocProvider);
+ await parentDoc.value!.set({
+      'appUpdateNotification': value,    },SetOptions(merge: true,),);
+      ref.watch(profileProvider);
+    ScaffoldMessenger.of(ref.read(studentKeyProvider).currentContext!)
+        .showSnackBar(
+      const SnackBar(
+        content: Text("Notification status updated successfully"),
+      ),
+    );
+}

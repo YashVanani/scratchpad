@@ -55,8 +55,8 @@ class CommunityScreen extends ConsumerStatefulWidget{
             const CommunityNavBar(selected: 'parents-community'),
         body: post.when(
             data: (u) {
-              u.sort((a, b) => (b.postAt ?? Timestamp.now())
-                  .compareTo(a.postAt ?? Timestamp.now()));
+              u.sort((a, b) => (b.postedAt ?? Timestamp.now())
+                  .compareTo(a.postedAt ?? Timestamp.now()));
               return ListView.builder(
                 itemBuilder: (context, index) {
                   return PostCard(

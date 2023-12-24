@@ -1,6 +1,7 @@
 import 'package:clarified_mobile/features/subjects/model/quiz_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class StudyMaterial extends ConsumerWidget {
@@ -32,22 +33,27 @@ class StudyMaterial extends ConsumerWidget {
             items: [
               (
                 label: "Videos",
-                onClicked: () => launchWithType(
-                      context,
-                      materials.value?["entries"] ?? [],
-                      "video",
-                    ),
+                onClicked: () => launchWithType(context,
+                    materials.value?["entries"] ?? [], "video", "Videos"),
               ),
               (
                 label: "NCERT Solutions",
                 onClicked: () => launchWithType(
-                      context,
-                      materials.value?["entries"] ?? [],
-                      "ncert",
-                    )
+                    context,
+                    materials.value?["entries"] ?? [],
+                    "ncert",
+                    "NCERT Solutions")
               ),
-              (label: "Revision", onClicked: () => print("Revision")),
-              (label: "Templates", onClicked: () => print("Templates")),
+              (
+                label: "Revision",
+                onClicked: () => launchWithType(context,
+                    materials.value?["entries"] ?? [], "revision", "Revision")
+              ),
+              (
+                label: "Templates",
+                onClicked: () => launchWithType(context,
+                    materials.value?["entries"] ?? [], "templates", "Templates")
+              ),
             ],
           ),
         ),
@@ -55,11 +61,12 @@ class StudyMaterial extends ConsumerWidget {
     );
   }
 
-  Future launchWithType(BuildContext ctx, List<dynamic> entries, String type) {
+  Future launchWithType(
+      BuildContext ctx, List<dynamic> entries, String type, String label) {
     return Navigator.of(ctx).push(
       MaterialPageRoute(
         builder: (ctx) => ListMaterials(
-          title: "Videos",
+          title: label,
           items: List<Map<String, dynamic>>.from(
             entries?.where((d) => d["type"] == type).toList() ?? [],
           ),
@@ -167,21 +174,88 @@ class ListMaterials extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: ListView.separated(
-        itemCount: items.length,
-        separatorBuilder: (BuildContext context, int index) {
-          return const Divider(color: Colors.grey);
-        },
-        itemBuilder: (BuildContext context, int index) {
-          final item = items[index];
+      body: items.length >= 1
+          ? ListView.separated(
+              itemCount: items.length,
+              separatorBuilder: (BuildContext context, int index) {
+                return const Divider(color: Colors.grey);
+              },
+              itemBuilder: (BuildContext context, int index) {
+                final item = items[index];
 
-          return item["type"] == "video"
-              ? generateVideoTile(item)
-              : item["type"] == "ncert"
-                  ? generateNCERTTile(item)
-                  : const SizedBox();
-        },
-      ),
+                return item["type"] == "video"
+                    ? generateVideoTile(item)
+                    : item["type"] == "ncert"
+                        ? generateNCERTTile(item)
+                        : const SizedBox();
+              },
+            )
+          : Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/no_content_bg.png'),
+                      fit: BoxFit.cover)),
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Spacer(),
+                  SvgPicture.asset('assets/svg/no_content.svg'),
+                  Spacer(),
+                  Container(
+                    height: 150,
+                    child: Column(
+                      children: [
+                        Text(
+                          "More content coming soon",
+                          style: TextStyle(color: Color(0xffF2F4F7)),
+                        ),
+                        SizedBox(height: 30,),
+                        InkWell(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            width: 250,
+                            height: 56,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 88, vertical: 16),
+                            decoration: ShapeDecoration(
+                              color: Color(0xFF045E63),
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    width: 1, color: Color(0xFF035358)),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'GO BACK',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: 'Lexend',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0.09,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
     );
   }
 

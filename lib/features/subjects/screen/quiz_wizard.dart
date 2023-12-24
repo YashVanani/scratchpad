@@ -7,6 +7,7 @@ import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/subjects/model/quiz_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 
 class QuizWizardPage extends ConsumerStatefulWidget {
   final String subjectId;
@@ -30,9 +31,11 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
   int next = 0;
   String selectedLevel = "easy";
   bool startQuiz = false;
-
+  
+    
   @override
   Widget build(BuildContext context) {
+    final quizAttempted = ref.watch(quizAttemptProvider);
     final quiz = ref.watch(
       quizProvider(
         (
@@ -47,6 +50,8 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
         ? QuizView(
             quiz: quiz.value!,
             level: selectedLevel,
+            subjectId: widget.subjectId,
+            topicId: widget.topicId,
           )
         : Scaffold(
             appBar: AppBar(
@@ -82,23 +87,45 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                           ),
                         ),
                       ),
+                      Text((quizAttempted.asData?.value??[]).first.toString()),
                       Expanded(
                         child: SPChecker(
                           items: [
-                            (
+                            (quizAttempted.asData?.value??[]).any((element) =>
+      element['id'] == widget.topicId && element['level'].contains('easy'))?(
                               label: "Easy",
                               onClicked: () =>
-                                  setState(() => selectedLevel = "easy")
+                                  setState(() => selectedLevel = "easy"),
+                                  isCompleted: true
+                            ):(
+                              label: "Easy",
+                              onClicked: () =>
+                                  setState(() => selectedLevel = "easy"),
+                                  isCompleted: false
                             ),
-                            (
+                             (quizAttempted.asData?.value??[]).any((element) =>
+      element['id'] == widget.topicId && element['level'].contains('medium'))?(
                               label: "Medium ",
                               onClicked: () =>
-                                  setState(() => selectedLevel = "medium")
+                                  setState(() => selectedLevel = "medium"),
+                                   isCompleted: true
+                            ):(
+                              label: "Medium ",
+                              onClicked: () =>
+                                  setState(() => selectedLevel = "medium"),
+                                   isCompleted: false
                             ),
-                            (
+                            (quizAttempted.asData?.value??[]).any((element) =>
+      element['id'] == widget.topicId && element['level'].contains('hard'))? (
                               label: "Hard",
                               onClicked: () =>
-                                  setState(() => selectedLevel = "hard")
+                                  setState(() => selectedLevel = "hard"),
+                                     isCompleted: true
+                            ):(
+                              label: "Hard",
+                              onClicked: () =>
+                                  setState(() => selectedLevel = "hard"),
+                                     isCompleted: false
                             ),
                           ],
                         ),
@@ -302,7 +329,7 @@ class QuizWelcomeScreen extends StatelessWidget {
 }
 
 class SPChecker extends StatefulWidget {
-  final List<({String label, Function onClicked})> items;
+  final List<({String label, Function onClicked, bool isCompleted})> items;
 
   const SPChecker({
     super.key,
@@ -328,10 +355,15 @@ class _SPCheckerState extends State<SPChecker> {
         final item = widget.items[index];
         return InkWell(
           onTap: () {
+            if(!item.isCompleted){
             setState(() {
               selected = index;
             });
             item.onClicked();
+            }else{
+              var snackBar = SnackBar(content: Text("Already Submitted"));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
           },
           child: Container(
             padding: const EdgeInsets.only(
@@ -341,7 +373,7 @@ class _SPCheckerState extends State<SPChecker> {
               bottom: 16,
             ),
             decoration: ShapeDecoration(
-              color: const Color(0xFFFCFCFD),
+              color: item.isCompleted?Colors.green.shade300: Color(0xFFFCFCFD),
               shape: RoundedRectangleBorder(
                 side: const BorderSide(
                   width: 1,
@@ -393,11 +425,14 @@ class _SPCheckerState extends State<SPChecker> {
 class QuizView extends ConsumerStatefulWidget {
   final String level;
   final Quiz quiz;
-
+  final String subjectId;
+  final String topicId;
   const QuizView({
     super.key,
     required this.level,
     required this.quiz,
+    required this.subjectId,
+    required this.topicId
   });
 
   @override
@@ -414,7 +449,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
   final startAt = DateTime.now();
 
   bool pauseTimer = false;
-  // late QuizManager questionSaver;
+  late QuizManager questionSaver;
 
   @override
   void initState() {
@@ -422,138 +457,146 @@ class _QuizViewState extends ConsumerState<QuizView> {
 
     activeQuestions =
         widget.quiz.questions.where((q) => q.level == widget.level).toList();
-    // questionSaver = ref.read(QuizManagerProvider(
-    //     (subjectId: widget.subjectId, topicId: widget.topicId)).notifier);
+    questionSaver = ref.read(QuizManagerProvider(
+        (subjectId: widget.subjectId, topicId: widget.topicId)).notifier);
   }
 
   void saveCurrentAnswers(bool lastQuestion) async {
-    // final f = questionSaver.saveAnswer(
-    //   answers: answers,
-    //   completed: lastQuestion,
-    // );
+    print("+++>HERE+++>>>${emitter.count}");
+    for(var i in answers.entries){
+      print(i.toString());
+    }
+    final f = questionSaver.saveAnswer(
+      quiz: widget.quiz,
+      difficultyLevel: widget.level,
+      answers: answers,
+      completed: lastQuestion,
+      startAt:startAt,
+      ref:ref,
+      level: widget.level
+    );
+    if (!lastQuestion) return;
+    
+    await showModalBottomSheet(
+      context: context,
+      builder: (ctx) {
+        return FutureBuilder(
+          future: f,
+          builder: (ctxx, snap) {
+            if (snap.connectionState == ConnectionState.done) {
+              return Container(
+                padding: const EdgeInsets.only(
+                  top: 48,
+                  left: 24,
+                  right: 24,
+                  bottom: 24,
+                ),
+                clipBehavior: Clip.antiAlias,
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(
+                      width: 112,
+                      height: 48,
+                      child: SvgPicture.asset("assets/svg/celebrate.svg"),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'GOOD JOB!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFF2970FE),
+                        fontSize: 24,
+                        fontFamily: 'Lexend',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const SizedBox(
+                      height: 52,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Happy Learning',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFF344054),
+                              fontSize: 16,
+                              fontFamily: 'Lexend',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SizedBox(
+                            child: Text(
+                              'Resources for this lesson has unlocked.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFF667085),
+                                fontSize: 14,
+                                fontFamily: 'Lexend',
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        splashFactory: NoSplash.splashFactory,
+                        backgroundColor: const Color(0xFF04686E),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(ctxx).maybePop("finished");
+                      },
+                      child: const Text(
+                        "OK",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontFamily: 'Lexend',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
 
-    // if (!lastQuestion) return;
-
-    // await showModalBottomSheet(
-    //   context: context,
-    //   builder: (ctx) {
-    //     return FutureBuilder(
-    //       future: f,
-    //       builder: (ctxx, snap) {
-    //         if (snap.connectionState == ConnectionState.done) {
-    //           return Container(
-    //             padding: const EdgeInsets.only(
-    //               top: 48,
-    //               left: 24,
-    //               right: 24,
-    //               bottom: 24,
-    //             ),
-    //             clipBehavior: Clip.antiAlias,
-    //             decoration: ShapeDecoration(
-    //               color: Colors.white,
-    //               shape: RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.circular(16),
-    //               ),
-    //             ),
-    //             child: Column(
-    //               mainAxisSize: MainAxisSize.min,
-    //               mainAxisAlignment: MainAxisAlignment.start,
-    //               crossAxisAlignment: CrossAxisAlignment.stretch,
-    //               children: [
-    //                 SizedBox(
-    //                   width: 112,
-    //                   height: 48,
-    //                   child: SvgPicture.asset("assets/svg/celebrate.svg"),
-    //                 ),
-    //                 const SizedBox(height: 16),
-    //                 const Text(
-    //                   'GOOD JOB!',
-    //                   textAlign: TextAlign.center,
-    //                   style: TextStyle(
-    //                     color: Color(0xFF2970FE),
-    //                     fontSize: 24,
-    //                     fontFamily: 'Lexend',
-    //                     fontWeight: FontWeight.w600,
-    //                   ),
-    //                 ),
-    //                 const SizedBox(height: 16),
-    //                 const SizedBox(
-    //                   height: 52,
-    //                   child: Column(
-    //                     mainAxisSize: MainAxisSize.min,
-    //                     mainAxisAlignment: MainAxisAlignment.start,
-    //                     crossAxisAlignment: CrossAxisAlignment.center,
-    //                     children: [
-    //                       Text(
-    //                         'Happy Learning',
-    //                         textAlign: TextAlign.center,
-    //                         style: TextStyle(
-    //                           color: Color(0xFF344054),
-    //                           fontSize: 16,
-    //                           fontFamily: 'Lexend',
-    //                           fontWeight: FontWeight.w400,
-    //                         ),
-    //                       ),
-    //                       SizedBox(height: 8),
-    //                       SizedBox(
-    //                         child: Text(
-    //                           'Resources for this lesson has unlocked.',
-    //                           textAlign: TextAlign.center,
-    //                           style: TextStyle(
-    //                             color: Color(0xFF667085),
-    //                             fontSize: 14,
-    //                             fontFamily: 'Lexend',
-    //                             fontWeight: FontWeight.w400,
-    //                           ),
-    //                         ),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                 ),
-    //                 const SizedBox(height: 16),
-    //                 TextButton(
-    //                   style: TextButton.styleFrom(
-    //                     splashFactory: NoSplash.splashFactory,
-    //                     backgroundColor: const Color(0xFF04686E),
-    //                     shape: RoundedRectangleBorder(
-    //                       borderRadius: BorderRadius.circular(8),
-    //                     ),
-    //                   ),
-    //                   onPressed: () {
-    //                     Navigator.of(ctxx).maybePop("finished");
-    //                   },
-    //                   child: const Text(
-    //                     "OK",
-    //                     style: TextStyle(
-    //                       color: Colors.white,
-    //                       fontSize: 14,
-    //                       fontFamily: 'Lexend',
-    //                       fontWeight: FontWeight.w400,
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ],
-    //             ),
-    //           );
-    //         }
-
-    //         return const Dialog(
-    //           child: Center(
-    //             child: Column(
-    //               mainAxisSize: MainAxisSize.min,
-    //               children: [
-    //                 CircularProgressIndicator(),
-    //                 Text("Submitting Answers"),
-    //               ],
-    //             ),
-    //           ),
-    //         );
-    //       },
-    //     );
-    //   },
-    // ).then((value) {
-    //   if (value == "finished") Navigator.of(context).maybePop();
-    // });
+            return const Dialog(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    Text("Submitting Answers"),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    ).then((value) {
+      if (value == "finished") Navigator.of(context).maybePop();
+    });
   }
 
   @override
@@ -561,7 +604,9 @@ class _QuizViewState extends ConsumerState<QuizView> {
     final ques = activeQuestions[currentQuestion];
     final tanswers = ques.answers.map((e) => (id: e, label: e)).toList();
     final isLastQuestion = ques.id == activeQuestions.last.id;
-
+    print("is last questiion ${isLastQuestion}");
+    print("is last questiion ${ ques.id}");
+    print("is last questiion ${activeQuestions.last.id}");
     return Scaffold(
       backgroundColor: const Color(0xFFF2F4F7),
       body: SafeArea(
@@ -635,7 +680,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                       children: [
                         TextSpan(
                           text:
-                              "${(answers.keys.length - 1).clamp(0, answers.keys.length)}",
+                              "${(answers.keys.length ).clamp(0, answers.keys.length)}",
                           style: const TextStyle(
                             color: Color(0xFF087343),
                             fontSize: 12,
@@ -652,7 +697,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                       children: [
                         TextSpan(
                           text:
-                              "${(activeQuestions.length - answers.keys.length - 1).clamp(0, activeQuestions.length)}",
+                              "${(activeQuestions.length - answers.keys.length ).clamp(0, activeQuestions.length)}",
                           style: const TextStyle(
                             color: Color(0xFFCA8403),
                             fontSize: 12,
@@ -720,7 +765,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                   onAnswerSelected: (submittedAnswer) => setState(() {
                     answers[ques.id] = (
                       answer: submittedAnswer,
-                      extra: "",
+                      extra: submittedAnswer,
                       isCorrect: submittedAnswer == ques.answer
                     );
                   }),
@@ -757,7 +802,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                     emitter.emit("stop:timer");
                     setState(() => pauseTimer = true);
                   }
-                  ;
+                  
                   await (() async {
                     await showModalBottomSheet(
                         context: context,
@@ -767,20 +812,18 @@ class _QuizViewState extends ConsumerState<QuizView> {
                           side: BorderSide.none,
                         ),
                         builder: (ctx) {
-                          if (isLastQuestion) {
-                            final correctCount = answers.values
+                           final correctCount = answers.values
                                     .where((e) => e.isCorrect)
                                     .length /
                                 activeQuestions.length;
-                            return CompletePopUp(
-                              successPercent: "${(correctCount * 100).ceil()}",
-                              elaspsedTime: '',
-                              pointsGained: "${widget.quiz.points}",
-                            );
-                          }
+                        
                           return SubmittedAnswer(
                             question: ques,
                             answer: answers[ques.id]!.answer,
+                            isLastQuestion:isLastQuestion,
+                            correctCount:correctCount,
+                            pointGained:"${widget.quiz.points}",
+                            startTime: startAt,
                           );
                         });
                   })();
@@ -927,11 +970,18 @@ class _TimerProgressBarState extends State<TimerProgressBar> {
 class SubmittedAnswer extends StatefulWidget {
   final QuizQuestion question;
   final String answer;
-
+  final bool isLastQuestion;  
+  final double correctCount;
+  final String pointGained; 
+  final DateTime startTime;
   const SubmittedAnswer({
     super.key,
     required this.question,
     required this.answer,
+    required this.correctCount,
+    required this.isLastQuestion,
+    required this.pointGained,
+    required this.startTime
   });
 
   @override
@@ -1078,6 +1128,24 @@ class _SubmittedAnswerState extends State<SubmittedAnswer> {
                   setState(() {
                     allowClose = true;
                   });
+                  if(widget.isLastQuestion){
+                     await showModalBottomSheet(
+                        context: context,
+                        enableDrag: false,
+                        isDismissible: false,
+                        shape: const ContinuousRectangleBorder(
+                          side: BorderSide.none,
+                        ),
+                        builder: (ctx) {
+                         
+                            return CompletePopUp(
+                              successPercent: "${(widget.correctCount * 100).ceil()}",
+                              elaspsedTime: '${DateTime.now().difference(widget.startTime).inMinutes}:${DateTime.now().difference(widget.startTime).inSeconds}',
+                              pointsGained: widget.pointGained,
+                            );
+                        });
+                         Navigator.of(context).maybePop();
+                  }
                   Navigator.of(context).maybePop();
                 },
                 child: const Text(
@@ -1431,7 +1499,9 @@ class CompletePopUp extends StatelessWidget {
                 ),
                 elevation: 3,
               ),
-              onPressed: () async {},
+              onPressed: () async {
+                Navigator.pop(context);
+              },
               child: const Text(
                 "CONTINUE",
                 style: TextStyle(

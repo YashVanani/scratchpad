@@ -1,3 +1,4 @@
+import 'package:clarified_mobile/features/notification/screen/notification.dart';
 import 'package:clarified_mobile/features/profiles/screens/profile_password.dart';
 import 'package:clarified_mobile/features/subjects/screen/case_study_view.dart';
 import 'package:clarified_mobile/features/subjects/screen/quiz_wizard.dart';
@@ -129,6 +130,7 @@ GoRouter initRouter() {
         builder: (context, state) => TopicFeedbackView(
           subjectId: state.pathParameters["subjectId"]!,
           topicId: state.pathParameters["topicId"]!,
+          
           data: state.uri.queryParameters,
         ),
       ),
@@ -192,6 +194,16 @@ GoRouter initRouter() {
         path: '/profile-notification',
         name: 'profile-notification',
         builder: (context, state) => const NotificationsPage(),
+      ),
+        GoRoute(
+        path: '/student-notification',
+        name: 'student-notification',
+        builder: (context, state) => const StudentNotificationScreen(),
+      ),
+       GoRoute(
+        path: '/student-notification-settings',
+        name: 'student-notification-settings',
+        builder: (context, state) => const StudentNotificationScreen(),
       ),
       GoRoute(
         path: '/survey/:surveyId',

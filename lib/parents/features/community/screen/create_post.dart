@@ -127,13 +127,13 @@ class CreatePostScreen extends ConsumerWidget {
                                 bool res = await addPost(
                                     Post(
                                         content: captionController.text,
-                                        postImage: img,
+                                        mediaUrl: img,
                                         likedBy: [],
-                                        likes: 0,
-                                        postAt: Timestamp.now(),
-                                        postBy: PostBy(
+                                        likeCount: 0,
+                                        postedAt: Timestamp.now(),
+                                        user: User(
                                           userId: user.asData?.value.id,
-                                          username: user.asData?.value.name,
+                                          name: user.asData?.value.name,
                                           userType: 'parent'
                                         )),
                                     ref);

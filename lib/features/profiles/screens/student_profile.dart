@@ -1,3 +1,5 @@
+import 'package:clarified_mobile/consts/colors.dart';
+import 'package:clarified_mobile/features/subjects/model/quiz_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +15,7 @@ class StudentProfile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
-
+    final quizAttempted = ref.watch(quizAttemptProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
@@ -36,10 +38,20 @@ class StudentProfile extends ConsumerWidget {
                     child: SizedBox(
                       width: 90,
                       height: 90,
-                      child: ProfilePhotoWidget(
-                        photoUrl: data.profileUrl,
-                        gender: data.gender,
-                      ),
+                      child: Stack(
+                        children: [
+                         
+                          SizedBox(
+                            width: 90,
+                      height: 90,
+                            child: ProfilePhotoWidget(
+                                                    photoUrl: data.profileUrl,
+                                                    gender: data.gender,
+                                                  ),
+                          ),
+                           Positioned(top:0,right: 0,child: Icon(Icons.edit,color: greenTextColor,size: 28,)),
+                        ],
+                      )
                     ),
                   ),
                   const SizedBox(
@@ -179,7 +191,7 @@ class StudentProfile extends ConsumerWidget {
                             height: 15,
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: quizAttempted.asData?.value.length==0?MainAxisAlignment.center: MainAxisAlignment.spaceAround,
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -265,7 +277,9 @@ class StudentProfile extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-                              Container(
+                               quizAttempted.when(data: (d){
+                                      if(d!=0){
+                                        return    Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8,
                                   vertical: 16,
@@ -311,6 +325,7 @@ class StudentProfile extends ConsumerWidget {
                                       ),
                                     ),
                                     const SizedBox(height: 12),
+                                    
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       mainAxisAlignment:
@@ -333,8 +348,8 @@ class StudentProfile extends ConsumerWidget {
                                           ),
                                         ),
                                         const SizedBox(width: 8),
-                                        const Text(
-                                          '15',
+                                         Text(
+                                          d.length.toString(),
                                           textAlign: TextAlign.right,
                                           style: TextStyle(
                                             color: Color(0xFF09914F),
@@ -348,68 +363,73 @@ class StudentProfile extends ConsumerWidget {
                                     ),
                                   ],
                                 ),
-                              )
+                              );
+                           
+                                      }
+                                      return SizedBox();
+                                    }, error: (e,j)=>SizedBox(), loading: ()=>SizedBox())
+                                  
                             ],
                           ),
                           const SizedBox(
                             height: 15,
                           ),
                           const Expanded(child: SizedBox()),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: InkWell(
-                              onTap: () => print("Setting"),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 14,
-                                ),
-                                decoration: ShapeDecoration(
-                                  color: const Color(0xFFFCFCFD),
-                                  shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                      width: 1,
-                                      color: Color(0xFFEAECF0),
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  shadows: const [
-                                    BoxShadow(
-                                      color: Color(0xFFEAECF0),
-                                      blurRadius: 0,
-                                      offset: Offset(0, 3),
-                                      spreadRadius: 0,
-                                    )
-                                  ],
-                                ),
-                                child: const SizedBox(
-                                  height: 20,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Profile Setting',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Color(0xFF344054),
-                                          fontSize: 14,
-                                          fontFamily: 'Lexend',
-                                          fontWeight: FontWeight.w400,
-                                          height: 0.10,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.all(8.0),
+                          //   child: InkWell(
+                          //     onTap: () => print("Setting"),
+                          //     child: Container(
+                          //       padding: const EdgeInsets.symmetric(
+                          //         horizontal: 16,
+                          //         vertical: 14,
+                          //       ),
+                          //       decoration: ShapeDecoration(
+                          //         color: const Color(0xFFFCFCFD),
+                          //         shape: RoundedRectangleBorder(
+                          //           side: const BorderSide(
+                          //             width: 1,
+                          //             color: Color(0xFFEAECF0),
+                          //           ),
+                          //           borderRadius: BorderRadius.circular(16),
+                          //         ),
+                          //         shadows: const [
+                          //           BoxShadow(
+                          //             color: Color(0xFFEAECF0),
+                          //             blurRadius: 0,
+                          //             offset: Offset(0, 3),
+                          //             spreadRadius: 0,
+                          //           )
+                          //         ],
+                          //       ),
+                          //       child: const SizedBox(
+                          //         height: 20,
+                          //         child: Row(
+                          //           mainAxisSize: MainAxisSize.min,
+                          //           mainAxisAlignment: MainAxisAlignment.start,
+                          //           crossAxisAlignment:
+                          //               CrossAxisAlignment.center,
+                          //           children: [
+                          //             Text(
+                          //               'Profile Setting',
+                          //               textAlign: TextAlign.center,
+                          //               style: TextStyle(
+                          //                 color: Color(0xFF344054),
+                          //                 fontSize: 14,
+                          //                 fontFamily: 'Lexend',
+                          //                 fontWeight: FontWeight.w400,
+                          //                 height: 0.10,
+                          //               ),
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                          // const SizedBox(
+                          //   height: 10,
+                          // ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(

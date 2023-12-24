@@ -105,7 +105,7 @@ class SubjectDetail extends ConsumerWidget {
 
                   final lockRecord =
                       idx > -1 ? unlockdedItems.value![idx] : null;
-
+                  print(idx > -1 ? unlockdedItems.value![idx] : null);
                   return _LessonPlan(
                     index: index + 1,
                     topic: rez.topics[index],
@@ -178,6 +178,7 @@ class SubjectDetail extends ConsumerWidget {
                               topic: topic,
                               subjectId: subjectId,
                               artifact: artifact,
+                              context: context
                             );
                           },
                         ),

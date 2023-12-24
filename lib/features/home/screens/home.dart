@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clarified_mobile/features/home/widgets/student_faq.dart';
 import 'package:clarified_mobile/parents/features/home/widgets/survey_card_parents.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,7 +23,31 @@ class HomePage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: const Icon(Icons.account_circle_outlined),
+        leading: profile.when(
+                data: (u) => CircleAvatar(
+      radius: 12,
+      backgroundColor: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.only(left:8.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(45),
+          child: CachedNetworkImage(
+              imageUrl: u.avatar ?? "",
+              errorWidget: (url, err, st) {
+                return Image.asset(
+                  u.gender == 'male'
+                      ? "assets/defalut_profile_male.png"
+                      : "assets/default_profile_female.png",
+                );
+              }),
+        ),
+      ),
+    ),
+                error: (e, st) {
+                  return const Icon(Icons.account_circle_outlined);
+                },
+                loading: () => const Icon(Icons.account_circle_outlined),
+              ),
         titleSpacing: 0,
         leadingWidth: 42.0,
         toolbarHeight: 70,
@@ -37,31 +63,42 @@ class HomePage extends ConsumerWidget {
             ),
           ),
           IconButton(
-            onPressed: () => print('outline'),
+            onPressed: () {
+              showDialog(
+                              context: context,
+                              builder: (context) {
+                                return StudentFAQPopUp(
+                                  widgetRef: ref,
+                                );
+                              });
+            },
             icon: const Icon(
               Icons.help_outline_outlined,
             ),
           ),
           IconButton(
             onPressed: () =>
-                GoRouter.of(context).pushNamed("profile-notification"),
+                GoRouter.of(context).pushNamed("student-notification"),
             icon: const Icon(
               Icons.notifications_outlined,
             ),
           )
         ],
-        title: Text.rich(
-          TextSpan(
-            children: [
-              const TextSpan(text: "Hello\n", style: TextStyle(fontSize: 12)),
-              profile.when(
-                data: (u) => TextSpan(text: u.name),
-                error: (e, st) {
-                  return const TextSpan(text: "Error Loading User");
-                },
-                loading: () => const TextSpan(text: "---"),
-              ),
-            ],
+        title: Padding(
+          padding: const EdgeInsets.only(left:8.0),
+          child: Text.rich(
+            TextSpan(
+              children: [
+                const TextSpan(text: "Hello\n", style: TextStyle(fontSize: 12)),
+                profile.when(
+                  data: (u) => TextSpan(text: u.name),
+                  error: (e, st) {
+                    return const TextSpan(text: "Error Loading User");
+                  },
+                  loading: () => const TextSpan(text: "---"),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -116,7 +153,7 @@ class HomePage extends ConsumerWidget {
                         ),
                       ),
                       label: profile.when(
-                        data: (u) => Text("${u.xpBalance}"),
+                        data: (u) => Text("${u.balance.current}"),
                         error: (e, st) {
                           return const Text("0");
                         },

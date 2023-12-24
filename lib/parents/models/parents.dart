@@ -213,7 +213,11 @@ final userListProvider = FutureProvider((ref) async {
         avatar: '',
         unlockedAvatars: [],
         balance: (current: 0, spent: 0, total: 0),
-        surveyInbox: []));
+        surveyInbox: [],
+        inAppNotification: false,
+        appUpdateNotification: false,
+
+        ));
   }
   if(ref.read(myCurrentChild.notifier).state==null){
     ref.read(myCurrentChild.notifier).state = (user[0] as u.UserInfo);

@@ -92,6 +92,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
       return Scaffold(
         appBar: AppBar(
           title: Text(survey!.name),
+          centerTitle: true,
         ),
         backgroundColor: Colors.grey.shade100,
         body: SafeArea(
@@ -310,6 +311,11 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                           ),
                         ),
                       ),
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: Image.network(ques.ninja??""),
+                      ),
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           backgroundColor: const Color(0xFF04686E),
@@ -419,7 +425,7 @@ class SurveyCompletedPage extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: '${survey!.reward} XP',
+                    text: '${survey?.startAt.add(Duration(days: 1)).isAfter(DateTime.now())??false?survey?.reward:((survey?.reward??0)*0.5).toInt()} XP',
                     style: const TextStyle(
                       color: Color(0xFFFEC84B),
                       fontSize: 18,
@@ -487,15 +493,12 @@ class SurveyIntro extends StatelessWidget {
               Expanded(
                 flex: 6,
                 child: Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
+                  decoration:  BoxDecoration(
+                    image: (survey?.thumbnail?.isEmpty)??true? DecorationImage(
                       image: AssetImage("assets/survey_bg.png"),
                       fit: BoxFit.cover,
-                    ),
-                  ),
-                  foregroundDecoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/survey_fg.png"),
+                    ):DecorationImage(
+                      image: NetworkImage(survey?.thumbnail??''),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -583,7 +586,7 @@ class SurveyIntro extends StatelessWidget {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: '+${survey?.reward ?? 0}XP',
+                                    text: '+${survey?.startAt.add(Duration(days: 1)).isAfter(DateTime.now())??false?survey?.reward:((survey?.reward??0)*0.5).toInt()} XP',
                                     style: const TextStyle(
                                       color: Color(0xFFEAA907),
                                       fontSize: 16,

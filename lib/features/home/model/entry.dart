@@ -25,9 +25,9 @@ class SurveyAnswer {
 
   factory SurveyAnswer.fromMap(Map<String, dynamic> data) {
     return SurveyAnswer(
-      id: data["id"],
-      value: data["value"],
-      label: data["label"],
+      id: data["id"]??'',
+      value: data["value"]??"",
+      label: data["label"]??'',
     );
   }
 }
@@ -39,6 +39,7 @@ class SurveyQuestion {
   final String description;
   final QuestionType type;
   final List<SurveyAnswer> answers;
+  final String? ninja;
 
   const SurveyQuestion({
     required this.id,
@@ -46,13 +47,15 @@ class SurveyQuestion {
     required this.type,
     required this.description,
     required this.answers,
+    required this.ninja
   });
 
   factory SurveyQuestion.fromMap(Map<String, dynamic> data) {
     return SurveyQuestion(
-      id: data["id"]??"",
+      id: (data["id"]??"").toString(),
       questionText: data["questionText"],
       description: data["description"] ?? "",
+      ninja: data['ninja']??'',
       type: QuestionType.values.firstWhere(
         (qt) => qt.name == data["type"],
         orElse: () => QuestionType.boolean,
@@ -73,6 +76,7 @@ class Survey {
   final DateTime startAt;
   final DateTime endAt;
   final List<SurveyQuestion> questions;
+  final String? thumbnail;
 
   const Survey({
     required this.id,
@@ -82,6 +86,7 @@ class Survey {
     required this.startAt,
     required this.endAt,
     required this.questions,
+    required this.thumbnail
   });
 
   factory Survey.fromMap(Map<String, dynamic> data) {
@@ -95,6 +100,7 @@ class Survey {
       questions: data["questions"]
           .map<SurveyQuestion>((q) => SurveyQuestion.fromMap(q))
           .toList(),
+      thumbnail: data['thumbnail']??""
     );
   }
 }
@@ -182,6 +188,19 @@ class SurveyAnswerSaver extends AutoDisposeAsyncNotifier<void> {
     }
 
     return FirebaseFirestore.instance.runTransaction((trx) async {
+      bool is24HourWent = survey.startAt.add(Duration(days: 1)).isAfter(DateTime.now());
+      int reward = 0;
+      try{  if(!is24HourWent){
+        print("+++HALF REWARDS");
+        reward = (survey.reward*0.5).toInt();
+      }else{
+          print("+++Full REWARDS");
+        reward = survey.reward;
+      }
+      print("+++FINAL ${survey.reward}++ ${reward}");}
+      catch(e){
+        print("++++${e}}");
+      }
       trx
           .set(
         answerDoc,
@@ -192,11 +211,11 @@ class SurveyAnswerSaver extends AutoDisposeAsyncNotifier<void> {
         // remove this survey from their inbox, so they don't have to answer again
         "surveyInbox": FieldValue.arrayRemove([survey.id]),
         // give them some rewards
-        "balance.total": FieldValue.increment(survey.reward),
-        "balance.current": FieldValue.increment(survey.reward),
+        "balance.total": FieldValue.increment(reward),
+        "balance.current": FieldValue.increment(reward),
       }).set(userDoc.value!.collection("balance").doc(), {
         "type": "credit",
-        "amount": survey.reward,
+        "amount": reward,
         "module": "survey",
         "surveyId": survey.id
       });

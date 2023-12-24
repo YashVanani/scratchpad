@@ -27,7 +27,7 @@ void main() async {
 class ClarifiedApp extends StatefulWidget {
   final GoRouter router;
 
-  const ClarifiedApp({super.key, required this.router});
+  const ClarifiedApp({super.key, required this.router});  
 
   @override
   State<ClarifiedApp> createState() => _ClarifiedAppState();
