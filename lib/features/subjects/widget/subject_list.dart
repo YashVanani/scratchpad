@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:clarified_mobile/features/subjects/widget/subect_item.dart';
 import 'package:clarified_mobile/model/clazz.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SubjectListView extends ConsumerWidget {
   final int limit;
@@ -20,8 +21,8 @@ class SubjectListView extends ConsumerWidget {
       child: subjectList.when(
         data: (subjects) {
           if (subjects.isEmpty) {
-            return const Center(
-              child: Text("No Available Subjects"),
+            return Center(
+              child: Text(AppLocalizations.of(context)!.no_available_subjects),
             );
           }
           return GridView.builder(
@@ -46,7 +47,7 @@ class SubjectListView extends ConsumerWidget {
         },
         error: (e, st) {
           print([e, st]);
-          return const Text("Error: loading");
+          return Text(AppLocalizations.of(context)!.error_loading);
         },
         loading: () => const CircularProgressIndicator(),
       ),

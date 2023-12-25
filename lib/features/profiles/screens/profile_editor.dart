@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:clarified_mobile/features/shared/widgets/profile_photo_widget.dart';
 import 'package:clarified_mobile/model/user.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileEditorPage extends ConsumerStatefulWidget {
   const ProfileEditorPage({super.key});
@@ -20,7 +21,7 @@ class _ProfileEditorPageState extends ConsumerState<ProfileEditorPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Profile"),
+        title: Text(AppLocalizations.of(context)!.edit_profile),
       ),
       backgroundColor: Colors.grey.shade100,
       body: SingleChildScrollView(
@@ -45,7 +46,7 @@ class _ProfileEditorPageState extends ConsumerState<ProfileEditorPage> {
                     ElevatedButton(
                       onPressed: () =>
                           GoRouter.of(context).pushNamed("profile-avatar"),
-                      child: const Text("CHANGE AVATAR"),
+                      child: Text(AppLocalizations.of(context)!.change_avatar),
                     )
                   ],
                 ),
@@ -62,8 +63,8 @@ class _ProfileEditorPageState extends ConsumerState<ProfileEditorPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'First Name',
+                      Text(
+                        AppLocalizations.of(context)!.first_name,
                         style: TextStyle(
                           color: Color(0xFF344054),
                           fontSize: 14,
@@ -134,8 +135,8 @@ class _ProfileEditorPageState extends ConsumerState<ProfileEditorPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Last Name',
+                      Text(
+                        AppLocalizations.of(context)!.last_name,
                         style: TextStyle(
                           color: Color(0xFF344054),
                           fontSize: 14,
@@ -206,8 +207,8 @@ class _ProfileEditorPageState extends ConsumerState<ProfileEditorPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Gender',
+                      Text(
+                        AppLocalizations.of(context)!.gender,
                         style: TextStyle(
                           color: Color(0xFF344054),
                           fontSize: 14,
@@ -248,14 +249,14 @@ class _ProfileEditorPageState extends ConsumerState<ProfileEditorPage> {
                               border: InputBorder.none,
                             ),
                             value: profileInfo.gender,
-                            items: const [
+                            items: [
                               DropdownMenuItem(
                                 value: "male",
-                                child: Text("Male"),
+                                child: Text(AppLocalizations.of(context)!.male),
                               ),
                               DropdownMenuItem(
                                 value: "female",
-                                child: Text("Female"),
+                                child: Text(AppLocalizations.of(context)!.female),
                               ),
                             ],
                             onChanged: (String? value) {
@@ -275,7 +276,7 @@ class _ProfileEditorPageState extends ConsumerState<ProfileEditorPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Text("Email"),
+                          Text(AppLocalizations.of(context)!.email),
                           TextFormField(),
                         ],
                       )

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clarified_mobile/model/clazz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TeacherBug extends ConsumerWidget {
   final String teacherId;
@@ -47,7 +48,7 @@ class TeacherBug extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  teacher?.name ?? 'Unknown Teacher',
+                  teacher?.name ?? AppLocalizations.of(context)!.unknown_teacher,
                   style: const TextStyle(
                     color: Color(0xFF1D2939),
                     fontSize: 12,

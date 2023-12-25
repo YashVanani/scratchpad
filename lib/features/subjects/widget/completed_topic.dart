@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:clarified_mobile/features/subjects/model/recent_topics.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CompletedTopicCard extends ConsumerWidget {
   const CompletedTopicCard({super.key});
@@ -24,8 +25,8 @@ class CompletedTopicCard extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Recently Completed Topics',
+              Text(
+                AppLocalizations.of(context)!.recently_completed_topics,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -38,7 +39,7 @@ class CompletedTopicCard extends ConsumerWidget {
                   return TextButton(
                     onPressed: () =>
                         GoRouter.of(context).pushNamed("recent-topics"),
-                    child: const Text("View all"),
+                    child: Text(AppLocalizations.of(context)!.view_all),
                   );
                 },
                 orElse: () => const SizedBox(),
@@ -67,8 +68,8 @@ class CompletedTopicCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SvgPicture.asset("assets/svg/no_topics.svg"),
-                        const Text(
-                          "There are no new topics available",
+                        Text(
+                          AppLocalizations.of(context)!.there_are_no_new_topics_available,
                         ),
                       ],
                     ),
@@ -165,8 +166,8 @@ class CompletedTopicCard extends ConsumerWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  const Text(
-                                    '+50 XP',
+                                  Text(
+                                    '+50 ${AppLocalizations.of(context)!.xp}',
                                     style: TextStyle(
                                       color: Color(0xFFEAA907),
                                       fontSize: 12,
@@ -197,8 +198,8 @@ class CompletedTopicCard extends ConsumerWidget {
                                       "subjectName": topic.subjectName,
                                       "topicName": topic.topicName,
                                     }),
-                                child: const Text(
-                                  'Quick Feedback',
+                                child: Text(
+                                  AppLocalizations.of(context)!.quick_feedback,
                                   style: TextStyle(
                                     color: Color(0xFFFCFCFD),
                                     fontSize: 12,
@@ -216,7 +217,7 @@ class CompletedTopicCard extends ConsumerWidget {
                 );
               },
               error: (er, st) =>
-                  const SizedBox(child: Text('There was an error')),
+                  SizedBox(child: Text(AppLocalizations.of(context)!.there_was_an_error)),
               loading: () => const CircularProgressIndicator(),
             ),
           ),

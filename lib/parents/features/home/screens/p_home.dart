@@ -669,7 +669,7 @@ class ParentsHome extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: EdgeInsets.only(left: 15),
+                          padding: const EdgeInsets.only(left: 15),
                           child: Text.rich(
                             TextSpan(
                               children: [

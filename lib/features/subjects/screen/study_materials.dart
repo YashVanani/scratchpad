@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class StudyMaterial extends ConsumerWidget {
   final String subjectId;
@@ -24,7 +25,7 @@ class StudyMaterial extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Study Material"),
+        title: Text(AppLocalizations.of(context)!.study_material),
       ),
       body: SizedBox.expand(
         child: Padding(
@@ -32,12 +33,12 @@ class StudyMaterial extends ConsumerWidget {
           child: SPPicker(
             items: [
               (
-                label: "Videos",
+                label: AppLocalizations.of(context)!.videos,
                 onClicked: () => launchWithType(context,
                     materials.value?["entries"] ?? [], "video", "Videos"),
               ),
               (
-                label: "NCERT Solutions",
+                label: AppLocalizations.of(context)!.ncert_solutions,
                 onClicked: () => launchWithType(
                     context,
                     materials.value?["entries"] ?? [],
@@ -45,12 +46,12 @@ class StudyMaterial extends ConsumerWidget {
                     "NCERT Solutions")
               ),
               (
-                label: "Revision",
+                label: AppLocalizations.of(context)!.revision,
                 onClicked: () => launchWithType(context,
                     materials.value?["entries"] ?? [], "revision", "Revision")
               ),
               (
-                label: "Templates",
+                label: AppLocalizations.of(context)!.templates,
                 onClicked: () => launchWithType(context,
                     materials.value?["entries"] ?? [], "templates", "Templates")
               ),
@@ -210,7 +211,7 @@ class ListMaterials extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          "More content coming soon",
+                          AppLocalizations.of(context)!.more_content_coming_soon,
                           style: TextStyle(color: Color(0xffF2F4F7)),
                         ),
                         SizedBox(height: 30,),
@@ -237,7 +238,7 @@ class ListMaterials extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  'GO BACK',
+                                  AppLocalizations.of(context)!.go_back,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,

@@ -6,6 +6,7 @@ import 'package:clarified_mobile/features/shared/widgets/app_buttombar.dart';
 import 'package:clarified_mobile/model/user.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LeaderboardPage extends ConsumerStatefulWidget {
   const LeaderboardPage({super.key});
@@ -43,15 +44,15 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
         title: Text.rich(
           TextSpan(
             children: [
-              const TextSpan(
-                text: "Hello",
+              TextSpan(
+                text: AppLocalizations.of(context)!.hello,
                 style: TextStyle(fontSize: 12),
               ),
               const TextSpan(text: "\n"),
               profile.when(
                 data: (u) => TextSpan(text: u.name),
                 error: (e, st) {
-                  return const TextSpan(text: "Error Loading User");
+                  return TextSpan(text: AppLocalizations.of(context)!.error_loading_user);
                 },
                 loading: () => const TextSpan(text: "---"),
               ),
@@ -66,9 +67,9 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _sectionTab(
-              menu: const [
-                (label: "Your Section", tag: "section"),
-                (label: "All Section", tag: "section-all"),
+              menu: [
+                (label: AppLocalizations.of(context)!.your_section, tag: AppLocalizations.of(context)!.section),
+                (label: AppLocalizations.of(context)!.all_section, tag: AppLocalizations.of(context)!.section_all),
               ],
               callback: (tag) => setState(() {
                 leaderGraph = tag == 'section';
@@ -81,9 +82,9 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
               data: (data) {
                 if (data?.isNotEmpty != true) {
                   // we should probably never get here
-                  return const Expanded(
+                  return Expanded(
                     child: Center(
-                      child: Text("No Students Found"),
+                      child: Text(AppLocalizations.of(context)!.no_students_found),
                     ),
                   );
                 }
@@ -111,8 +112,8 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
                             size: 16,
                             color: Color(0xFFF79009),
                           ),
-                          label: const Text(
-                            "These scores are not academic rankings",
+                          label: Text(
+                            AppLocalizations.of(context)!.these_scores_are_not_academic_rankings,
                             style: TextStyle(
                               color: Color(0xFFF79009),
                               fontSize: 12,
@@ -178,7 +179,7 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
                                           TextSpan(text: rec.name),
                                           TextSpan(
                                             text:
-                                                "\n${rec?.score?.overall ?? 0} points",
+                                                "\n${rec?.score?.overall ?? 0} ${AppLocalizations.of(context)!.points}",
                                           ),
                                         ],
                                       ),
@@ -228,8 +229,8 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
                                               BorderRadius.circular(166),
                                         ),
                                       ),
-                                      child: const Text(
-                                        'YOU',
+                                      child: Text(
+                                        AppLocalizations.of(context)!.you_capital,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Color(0xFF045E63),
@@ -257,7 +258,7 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
               error: (err, st) {
                 print(err);
                 print(st);
-                return const Text("Error loading leader board");
+                return Text(AppLocalizations.of(context)!.error_loading_leader_board);
               },
               loading: () => const Center(child: CircularProgressIndicator()),
             )
@@ -294,7 +295,7 @@ class _LeaderPodium extends StatelessWidget {
                 gender: "female",
               ),
               Text(
-                items[1]?.name ?? "Name",
+                items[1]?.name ?? AppLocalizations.of(context)!.name,
                 textAlign: TextAlign.center,
               ),
               Container(
@@ -398,7 +399,7 @@ class _LeaderPodium extends StatelessWidget {
                 gender: "female",
               ),
               Text(
-                items[0]?.name ?? "Name",
+                items[0]?.name ?? AppLocalizations.of(context)!.name,
                 textAlign: TextAlign.center,
               ),
               Container(
@@ -501,7 +502,7 @@ class _LeaderPodium extends StatelessWidget {
                 gender: "female",
               ),
               Text(
-                items[2]?.name ?? "Name",
+                items[2]?.name ?? AppLocalizations.of(context)!.name,
                 textAlign: TextAlign.center,
               ),
               Container(

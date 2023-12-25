@@ -2,6 +2,7 @@ import 'package:clarified_mobile/model/clazz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final Map<String, ({Color bg, Color shadow, Color border})> subjectThemeList = {
   "bluedark": (

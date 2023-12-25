@@ -1,16 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clarified_mobile/features/home/widgets/student_faq.dart';
 import 'package:clarified_mobile/features/peers/screens/peer_intro.dart';
+import 'package:clarified_mobile/model/user.dart';
 import 'package:clarified_mobile/parents/features/home/widgets/survey_card_parents.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:clarified_mobile/features/home/widgets/survey_card.dart';
-import 'package:clarified_mobile/features/shared/widgets/app_buttombar.dart';
-import 'package:clarified_mobile/features/subjects/widget/completed_topic.dart';
-import 'package:clarified_mobile/features/subjects/widget/subject_list.dart';
-import 'package:clarified_mobile/model/user.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../shared/widgets/app_buttombar.dart';
+import '../../subjects/widget/completed_topic.dart';
+import '../../subjects/widget/subject_list.dart';
+import '../widgets/survey_card.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({
@@ -48,7 +50,7 @@ class HomePage extends ConsumerWidget {
                   return const Icon(Icons.account_circle_outlined);
                 },
                 loading: () => const Icon(Icons.account_circle_outlined),
-              ),
+        ),
         titleSpacing: 0,
         leadingWidth: 42.0,
         toolbarHeight: 70,
@@ -66,20 +68,19 @@ class HomePage extends ConsumerWidget {
           IconButton(
             onPressed: () {
               showDialog(
-                              context: context,
-                              builder: (context) {
-                                return StudentFAQPopUp(
-                                  widgetRef: ref,
-                                );
-                              });
+                  context: context,
+                  builder: (context) {
+                    return StudentFAQPopUp(
+                      widgetRef: ref,
+                    );
+                  });
             },
             icon: const Icon(
               Icons.help_outline_outlined,
             ),
           ),
           IconButton(
-            onPressed: () =>
-                GoRouter.of(context).pushNamed("student-notification"),
+            onPressed: () => GoRouter.of(context).pushNamed("student-notification"),
             icon: const Icon(
               Icons.notifications_outlined,
             ),
@@ -94,15 +95,15 @@ class HomePage extends ConsumerWidget {
           )
         ],
         title: Padding(
-          padding: const EdgeInsets.only(left:8.0),
+          padding: const EdgeInsets.only(left: 8.0),
           child: Text.rich(
             TextSpan(
               children: [
-                const TextSpan(text: "Hello\n", style: TextStyle(fontSize: 12)),
+                TextSpan(text: "${AppLocalizations.of(context)!.hello}\n", style: TextStyle(fontSize: 12)),
                 profile.when(
                   data: (u) => TextSpan(text: u.name),
                   error: (e, st) {
-                    return const TextSpan(text: "Error Loading User");
+                    return TextSpan(text: AppLocalizations.of(context)!.error_loading_user);
                   },
                   loading: () => const TextSpan(text: "---"),
                 ),
@@ -137,7 +138,7 @@ class HomePage extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text("Total XP available"),
+                Text(AppLocalizations.of(context)!.total_xp_available),
                 Center(
                   child: Container(
                     decoration: ShapeDecoration(
@@ -199,10 +200,10 @@ class HomePage extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Subjects"),
+                    Text(AppLocalizations.of(context)!.subjects),
                     TextButton(
                       onPressed: () => GoRouter.of(context).push("/subjects"),
-                      child: const Text("View All"),
+                      child: Text(AppLocalizations.of(context)!.view_all),
                     )
                   ],
                 ),

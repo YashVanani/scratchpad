@@ -38,6 +38,7 @@ import 'package:clarified_mobile/features/subjects/screen/complete_topic_list.da
 import 'package:clarified_mobile/features/subjects/screen/subject_view.dart';
 import 'package:clarified_mobile/features/auth/screens/login.dart';
 import 'package:clarified_mobile/features/home/screens/home.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class _authStateChanged with ChangeNotifier {
   User? user;
@@ -86,9 +87,9 @@ GoRouter initRouter() {
         print(state.uri.queryParametersAll);
         return LoadingPage();
       }
-      return const Scaffold(
+      return Scaffold(
         body: Center(
-          child: Text("Page Not Found"),
+          child: Text(AppLocalizations.of(context)!.page_not_found),
         ),
       );
     },

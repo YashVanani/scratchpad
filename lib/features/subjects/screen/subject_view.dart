@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:clarified_mobile/features/subjects/widget/subject_list.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SubjectView extends ConsumerWidget {
   const SubjectView({super.key});
@@ -11,7 +12,7 @@ class SubjectView extends ConsumerWidget {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         backgroundColor: Colors.white,
-        title: const Text("Subjects"),
+        title: Text(AppLocalizations.of(context)!.subjects),
       ),
       body: const SubjectListView(
         limit: -1,

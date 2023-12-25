@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChooseAvatarPage extends ConsumerStatefulWidget {
   const ChooseAvatarPage({super.key});
@@ -36,7 +37,7 @@ class _ChooseAvatarPageState extends ConsumerState<ChooseAvatarPage> {
         backgroundColor: Colors.white,
         elevation: 1,
         shadowColor: const Color(0xFFFCFCFD),
-        title: const Text("Choose an Avatar"),
+        title: Text(AppLocalizations.of(context)!.choose_an_avatar),
       ),
       body: Container(
         color: const Color(0xFFFCFCFD),
@@ -53,9 +54,9 @@ class _ChooseAvatarPageState extends ConsumerState<ChooseAvatarPage> {
                   setState(() => currentMode = tag);
                 },
                 selectedTag: currentMode,
-                tabs: const [
-                  (tag: "free", label: "Free Avatars"),
-                  (tag: "paid", label: "Redeem Avatars"),
+                tabs: [
+                  (tag: AppLocalizations.of(context)!.free, label: AppLocalizations.of(context)!.free_avatars),
+                  (tag: AppLocalizations.of(context)!.paid, label: AppLocalizations.of(context)!.redeem_avatars),
                 ],
               ),
             ),
@@ -64,7 +65,7 @@ class _ChooseAvatarPageState extends ConsumerState<ChooseAvatarPage> {
                 data: (avatarFullList) {
                   if (avatarFullList.isEmpty) {
                     return Center(
-                      child: Text("No $currentMode avatars available"),
+                      child: Text("${AppLocalizations.of(context)!.no} $currentMode ${AppLocalizations.of(context)!.avatars_available}"),
                     );
                   }
 
@@ -93,7 +94,7 @@ class _ChooseAvatarPageState extends ConsumerState<ChooseAvatarPage> {
                             return;
                           }
                           if (avatar.price > profile.value!.balance.current) {
-                            Fluttertoast.showToast(msg: "Not Enough balance");
+                            Fluttertoast.showToast(msg: AppLocalizations.of(context)!.not_enough_balance);
                             return;
                           }
 
@@ -102,7 +103,7 @@ class _ChooseAvatarPageState extends ConsumerState<ChooseAvatarPage> {
                               builder: (ctx) {
                                 return UnlockPopUp(
                                   message:
-                                      "Are you sure you want to spend ${avatar.price}xp to unlock this avatar?",
+                                      "${AppLocalizations.of(context)!.are_you_sure_you_want_to_spend} ${avatar.price}${AppLocalizations.of(context)!.xp_to_unlock_this_avatar}",
                                   onConfirmed: () async {
                                     await ref
                                         .read(
@@ -121,8 +122,8 @@ class _ChooseAvatarPageState extends ConsumerState<ChooseAvatarPage> {
                   );
                 },
                 error: (err, st) {
-                  return const SizedBox.expand(
-                    child: Text("Error: Load failed"),
+                  return SizedBox.expand(
+                    child: Text(AppLocalizations.of(context)!.error_load_failed),
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
@@ -156,8 +157,8 @@ class _ChooseAvatarPageState extends ConsumerState<ChooseAvatarPage> {
                           Navigator.of(context).maybePop();
                         }
                       : null,
-              child: const Text(
-                "APPLY",
+              child: Text(
+                AppLocalizations.of(context)!.apply,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -243,7 +244,7 @@ class _avatarItem extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      "${avatar.price}XP",
+                      "${avatar.price}${AppLocalizations.of(context)!.xp}",
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,

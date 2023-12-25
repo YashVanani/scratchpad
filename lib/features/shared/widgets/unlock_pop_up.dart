@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UnlockPopUp extends StatefulWidget {
   final String message;
@@ -47,8 +48,8 @@ class _UnlockPopUpState extends State<UnlockPopUp> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Confirmation',
+                    Text(
+                      AppLocalizations.of(context)!.confirmation,
                       style: TextStyle(
                         color: Color(0xFF1D2939),
                         fontSize: 20,
@@ -101,8 +102,8 @@ class _UnlockPopUpState extends State<UnlockPopUp> {
                 TextButton(
                   onPressed:
                       isBusy ? null : () => Navigator.of(context).maybePop(),
-                  child: const Text(
-                    'CANCEL',
+                  child: Text(
+                    AppLocalizations.of(context)!.cancel_capital,
                     style: TextStyle(
                       color: Color(0xFF344054),
                       fontSize: 14,
@@ -127,8 +128,8 @@ class _UnlockPopUpState extends State<UnlockPopUp> {
 
                           setState(() => isBusy = false);
                         },
-                  child: const Text(
-                    'YES, UNLOCK',
+                  child: Text(
+                    AppLocalizations.of(context)!.yes_unlock,
                     style: TextStyle(
                       color: Color(0xFF12B669),
                       fontSize: 14,

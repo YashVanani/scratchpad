@@ -4,6 +4,7 @@ import 'package:clarified_mobile/features/peers/screens/peer_intro.dart';
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -62,11 +63,11 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                   return const SizedBox();
                 }
 
-                return const Column(
+                return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CircularProgressIndicator(),
-                    Text("Submitting Answers"),
+                    Text(AppLocalizations.of(context)!.submitting_answers),
                   ],
                 );
               },
@@ -92,8 +93,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
       );
     } else {
       final ques = survey!.questions[currentQuesIndex];
-      final tanswers =
-          ques.answers.map((e) => (id: e.id, label: e.label)).toList();
+      final tanswers = ques.answers.map((e) => (id: e.id, label: e.label)).toList();
       final isLastQuestion = ques.id == survey!.questions.last.id;
 
       return Scaffold(
@@ -120,8 +120,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                     vertical: 10,
                   ),
                   child: LinearProgressIndicator(
-                    value: (currentQuesIndex + 1) /
-                        (survey?.questions.length ?? 1),
+                    value: (currentQuesIndex + 1) / (survey?.questions.length ?? 1),
                     color: const Color(0xFF2970FE),
                   ),
                 ),
@@ -167,13 +166,13 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                       ),
                       elevation: 3,
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'SEE DESCRIPTION',
+                          AppLocalizations.of(context)!.see_description,
                           style: TextStyle(
                             color: Color(0xFF475467),
                             fontSize: 10,
@@ -197,9 +196,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                             onAnswerSelected: (answerId) => setState(() {
                               answers[ques.id] = ProvidedAnswer(
                                 answer: answerId,
-                                extra: ques.answers
-                                    .firstWhere((f) => f.id == answerId)
-                                    .value,
+                                extra: ques.answers.firstWhere((f) => f.id == answerId).value,
                               );
                             }),
                           )
@@ -238,10 +235,8 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                                 : ques.type == QuestionType.slider_v
                                     ? SliderVAnsewrComponent(
                                         answers: tanswers,
-                                        selectedAnswer:
-                                            answers[ques.id]?.answer,
-                                        onAnswerSelected: (answerId) =>
-                                            setState(
+                                        selectedAnswer: answers[ques.id]?.answer,
+                                        onAnswerSelected: (answerId) => setState(
                                           () {
                                             answers[ques.id] = ProvidedAnswer(
                                               answer: answerId,
@@ -252,13 +247,10 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                                       )
                                     : ques.type == QuestionType.boolean
                                         ? BoolAnsewrComponent(
-                                            selectedAnswer:
-                                                answers[ques.id]?.answer,
-                                            onAnswerSelected:
-                                                (answerId, comment) => setState(
+                                            selectedAnswer: answers[ques.id]?.answer,
+                                            onAnswerSelected: (answerId, comment) => setState(
                                               () {
-                                                answers[ques.id] =
-                                                    ProvidedAnswer(
+                                                answers[ques.id] = ProvidedAnswer(
                                                   answer: answerId,
                                                   extra: comment,
                                                 );
@@ -267,13 +259,10 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                                           )
                                         : BoolAnsewrComponent(
                                             hasComment: true,
-                                            selectedAnswer:
-                                                answers[ques.id]?.answer,
-                                            onAnswerSelected:
-                                                (answerId, comment) => setState(
+                                            selectedAnswer: answers[ques.id]?.answer,
+                                            onAnswerSelected: (answerId, comment) => setState(
                                               () {
-                                                answers[ques.id] =
-                                                    ProvidedAnswer(
+                                                answers[ques.id] = ProvidedAnswer(
                                                   answer: answerId,
                                                   extra: comment,
                                                 );
@@ -309,8 +298,8 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                                   currentQuesIndex = currentQuesIndex - 1;
                                 }),
                         icon: const Icon(Icons.chevron_left),
-                        label: const Text(
-                          "Back",
+                        label: Text(
+                          AppLocalizations.of(context)!.back,
                           style: TextStyle(
                             color: Color(0xFF1D2939),
                             fontSize: 16,
@@ -339,7 +328,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                         onPressed: () {
                           if (answers[ques.id]?.answer == null) {
                             Fluttertoast.showToast(
-                              msg: "Please Select an Answer",
+                              msg: AppLocalizations.of(context)!.please_select_an_answer,
                             );
                             return;
                           }
@@ -354,7 +343,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                         child: Row(
                           children: [
                             Text(
-                              isLastQuestion ? "Submit" : "Next",
+                              isLastQuestion ? AppLocalizations.of(context)!.submit : AppLocalizations.of(context)!.next,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -374,7 +363,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                   ),
                 ),
                 Text(
-                  "QUESTION ${currentQuesIndex + 1} OF ${survey?.questions.length}",
+                  "${AppLocalizations.of(context)!.question} ${currentQuesIndex + 1} ${AppLocalizations.of(context)!.of_text} ${survey?.questions.length}",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Color(0xFF98A1B2),
@@ -410,8 +399,8 @@ class SurveyCompletedPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SvgPicture.asset("assets/svg/survey_completed.svg"),
-            const Text(
-              'Congratulation!',
+            Text(
+              AppLocalizations.of(context)!.congratulation,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xFF1D2939),
@@ -423,8 +412,8 @@ class SurveyCompletedPage extends StatelessWidget {
             Text.rich(
               TextSpan(
                 children: [
-                  const TextSpan(
-                    text: 'You earned ',
+                  TextSpan(
+                    text: AppLocalizations.of(context)!.you_earned,
                     style: TextStyle(
                       color: Color(0xFF1D2939),
                       fontSize: 18,
@@ -433,7 +422,7 @@ class SurveyCompletedPage extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: '${survey?.startAt.add(Duration(days: 1)).isAfter(DateTime.now())??false?survey?.reward:((survey?.reward??0)*0.5).toInt()} XP',
+                    text: '${survey?.startAt.add(Duration(days: 1)).isAfter(DateTime.now()) ?? false ? survey?.reward : ((survey?.reward ?? 0) * 0.5).toInt()} ${AppLocalizations.of(context)!.xp}',
                     style: const TextStyle(
                       color: Color(0xFFFEC84B),
                       fontSize: 18,
@@ -461,8 +450,8 @@ class SurveyCompletedPage extends StatelessWidget {
               onPressed: () {
                 GoRouter.of(context).goNamed("home");
               },
-              child: const Text(
-                "GO TO HOME",
+              child: Text(
+                AppLocalizations.of(context)!.go_to_home,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -526,7 +515,7 @@ class SurveyIntro extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        survey?.name ?? 'Unknown',
+                        survey?.name ?? AppLocalizations.of(context)!.unknown,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Color(0xFF1D2939),
@@ -554,10 +543,10 @@ class SurveyIntro extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(top: 8.0),
                         child: Text(
-                          "'⏰ There's no time limit, respond at your own pace!'",
+                          "'⏰ ${AppLocalizations.of(context)!.theres_no_time_limit_respond_at_your_own_pace}'",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Color(0xFF101828),
@@ -584,8 +573,8 @@ class SurveyIntro extends StatelessWidget {
                             Text.rich(
                               TextSpan(
                                 children: [
-                                  const TextSpan(
-                                    text: 'Complete and get ',
+                                  TextSpan(
+                                    text: AppLocalizations.of(context)!.complete_and_get,
                                     style: TextStyle(
                                       color: Color(0xFF344054),
                                       fontSize: 16,
@@ -594,7 +583,8 @@ class SurveyIntro extends StatelessWidget {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: '+${survey?.startAt.add(Duration(days: 1)).isAfter(DateTime.now())??false?survey?.reward:((survey?.reward??0)*0.5).toInt()} XP',
+                                    text:
+                                        '+${survey?.startAt.add(Duration(days: 1)).isAfter(DateTime.now()) ?? false ? survey?.reward : ((survey?.reward ?? 0) * 0.5).toInt()} ${AppLocalizations.of(context)!.xp}',
                                     style: const TextStyle(
                                       color: Color(0xFFEAA907),
                                       fontSize: 16,
@@ -624,8 +614,8 @@ class SurveyIntro extends StatelessWidget {
                     ),
                   ),
                   onPressed: () => onStartSurvey?.call(),
-                  child: const Text(
-                    "CONTINUE",
+                  child: Text(
+                    AppLocalizations.of(context)!.continue_text,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -646,6 +636,7 @@ class SurveyIntro extends StatelessWidget {
 
 class QuestionDescription extends StatelessWidget {
   final String desc;
+
   const QuestionDescription({
     super.key,
     required this.desc,
@@ -675,7 +666,7 @@ class QuestionDescription extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Question Description',
+                AppLocalizations.of(context)!.question_description,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Color(0xFF0E9384),
@@ -716,8 +707,8 @@ class QuestionDescription extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).maybePop(),
-                  child: const Text(
-                    "CLOSE DESCRIPTION",
+                  child: Text(
+                    AppLocalizations.of(context)!.close_description,
                     style: TextStyle(
                       color: Color(0xFFD92C20),
                       fontSize: 12,

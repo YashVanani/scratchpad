@@ -86,10 +86,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(bottom: 4.0),
                           child: Text(
-                            'Student ID',
+                            AppLocalizations.of(context)!.student_id,
                             style: TextStyle(
                               color: Color(0xFF344054),
                               fontSize: 16,
@@ -103,7 +103,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           keyboardType: TextInputType.text,
                           validator: (e) => e?.isNotEmpty == true
                               ? null
-                              : "Please provide ID",
+                              : AppLocalizations.of(context)!.please_provide_id,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
@@ -129,10 +129,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(bottom: 4.0),
                           child: Text(
-                            'Password',
+                            AppLocalizations.of(context)!.password,
                             style: TextStyle(
                               color: Color(0xFF344054),
                               fontSize: 16,
@@ -145,7 +145,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           controller: passwordController,
                           keyboardType: TextInputType.text,
                           validator: (e) =>
-                              e?.isNotEmpty == true ? null : "Please Password",
+                              e?.isNotEmpty == true ? null : AppLocalizations.of(context)!.please_password,
                           obscureText: !showPassword,
                           obscuringCharacter: '*',
                           autocorrect: false,

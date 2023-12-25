@@ -9,6 +9,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TopicFeedbackView extends ConsumerStatefulWidget {
   final String subjectId;
@@ -47,7 +48,7 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
       appBar: AppBar(
         automaticallyImplyLeading: mode == "home",
         title: mode == "home"
-            ? const Text("Class Survey")
+            ? Text(AppLocalizations.of(context)!.class_survey)
             : Text(
                 widget.data?["subjectName"] ?? "",
                 textAlign: TextAlign.center,
@@ -85,7 +86,7 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                           ),
                           child: Text(
                             (widget.data?["subjectName"]?.toUpperCase() ??
-                                "Unknown Subject"),
+                                AppLocalizations.of(context)!.unknown_subject),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -99,7 +100,7 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                             horizontal: 8.0,
                           ),
                           child: Text(
-                            'Your thoughts and feedback are super valuable',
+                            AppLocalizations.of(context)!.your_thoughts,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 15,
@@ -112,9 +113,9 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                     ),
                   ),
                    SizedBox(height: 12,),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text("Survey Purpose: "),
+                    child: Text(AppLocalizations.of(context)!.survey_purpose),
                   ),
                   // Expanded(
                   //   child: feedbackQuestions.when(
@@ -147,7 +148,7 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                               padding: EdgeInsets.only(left: 10),
                               width: MediaQuery.of(context).size.width - 60,
                               child: Text(
-                                "Take a moment to think about the lesson before responding.",
+                                AppLocalizations.of(context)!.take_a_moment,
                                 maxLines: 5,
                                 style: const TextStyle(
                                   color: greyTextColor,
@@ -168,7 +169,7 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                               padding: EdgeInsets.only(left: 10),
                               width: MediaQuery.of(context).size.width - 60,
                               child: Text(
-                                "Answer truthfully based on your understanding of the lesson.",
+                                AppLocalizations.of(context)!.answer_truthfully,
                                 maxLines: 5,
                                 style: const TextStyle(
                                   color: greyTextColor,
@@ -189,7 +190,7 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                               padding: EdgeInsets.only(left: 10),
                               width: MediaQuery.of(context).size.width - 60,
                               child: Text(
-                                "If there's something you didn't understand, don't hesitate to mention it. ",
+                                AppLocalizations.of(context)!.if_there_something,
                                 maxLines: 5,
                                 style: const TextStyle(
                                   color: greyTextColor,
@@ -224,10 +225,10 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                                 },
                           child: Text(
                             alreadyAnswered == null
-                                ? "LOADING"
+                                ? AppLocalizations.of(context)!.loading
                                 : alreadyAnswered == true
-                                    ? "ALREADY COMPLETED"
-                                    : "START SURVEY",
+                                    ? AppLocalizations.of(context)!.already_completed
+                                    : AppLocalizations.of(context)!.start_survey,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -239,8 +240,8 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                       },
                       error: (e, st) {
                         print([e, st]);
-                        return const SizedBox(
-                          child: Text("Failed to Previous Answers"),
+                        return SizedBox(
+                          child: Text(AppLocalizations.of(context)!.failed_to_previous),
                         );
                       },
                       loading: () => const SizedBox(),
@@ -338,8 +339,8 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                       child: SvgPicture.asset("assets/svg/celebrate.svg"),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'GOOD JOB!',
+                    Text(
+                      AppLocalizations.of(context)!.good_job,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFF2970FE),
@@ -349,7 +350,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const SizedBox(
+                    SizedBox(
                       height: 52,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -357,7 +358,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            'Happy Learning',
+                            AppLocalizations.of(context)!.happy_learning,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Color(0xFF344054),
@@ -369,7 +370,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                           SizedBox(height: 8),
                           SizedBox(
                             child: Text(
-                              'Resources for this lesson has unlocked.',
+                              AppLocalizations.of(context)!.resources_for_this,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Color(0xFF667085),
@@ -394,8 +395,8 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                       onPressed: () {
                         Navigator.of(ctxx).maybePop("finished");
                       },
-                      child: const Text(
-                        "OK",
+                      child: Text(
+                        AppLocalizations.of(context)!.ok,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -409,13 +410,13 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
               );
             }
 
-            return const Dialog(
+            return Dialog(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CircularProgressIndicator(),
-                    Text("Submitting Answers"),
+                    Text(AppLocalizations.of(context)!.submitting_answers),
                   ],
                 ),
               ),
@@ -601,8 +602,8 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                               currentQuestion = currentQuestion - 1;
                             }),
                     icon: const Icon(Icons.chevron_left),
-                    label: const Text(
-                      "Back",
+                    label: Text(
+                      AppLocalizations.of(context)!.back,
                       style: TextStyle(
                         color: Color(0xFF1D2939),
                         fontSize: 16,
@@ -626,7 +627,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                     onPressed: () {
                       if (answers[ques.id]?.answer == null) {
                         Fluttertoast.showToast(
-                          msg: "Please Select an Answer",
+                          msg: AppLocalizations.of(context)!.please_select_an_answer,
                         );
                         return;
                       }
@@ -641,7 +642,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                     child: Row(
                       children: [
                         Text(
-                          isLastQuestion ? "Submit" : "Next",
+                          isLastQuestion ? AppLocalizations.of(context)!.submit : AppLocalizations.of(context)!.next,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,

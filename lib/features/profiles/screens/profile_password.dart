@@ -1,5 +1,6 @@
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -17,7 +18,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Change Password"),
+        title: Text(AppLocalizations.of(context)!.change_password_small),
       ),
       body: ListView(
         shrinkWrap: true,
@@ -37,7 +38,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 SizedBox(
                   width: double.infinity,
                   child: PasswordInputBox(
-                    label: "Current Password",
+                    label: AppLocalizations.of(context)!.current_password,
                     textController: currentPasswordTextController,
                   ),
                 ),
@@ -45,7 +46,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 SizedBox(
                   width: double.infinity,
                   child: PasswordInputBox(
-                    label: "New Password",
+                    label: AppLocalizations.of(context)!.new_password,
                     textController: newPasswordTextController,
                   ),
                 ),
@@ -53,7 +54,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 SizedBox(
                   width: double.infinity,
                   child: PasswordInputBox(
-                    label: "Confirm Password",
+                    label: AppLocalizations.of(context)!.confirm_password,
                     textController: confirmPasswordTextController,
                   ),
                 ),
@@ -61,7 +62,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
           ),
           const SizedBox(height: 24),
-          const Column(
+          Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +70,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               SizedBox(
                 width: double.infinity,
                 child: Text(
-                  'Password must contain:',
+                  AppLocalizations.of(context)!.password_must_contain,
                   style: TextStyle(
                     color: Color(0xFF344054),
                     fontSize: 12,
@@ -87,7 +88,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   Padding(
                     padding: EdgeInsets.only(left: 8.0),
                     child: Text(
-                      'Min 6 characters',
+                      AppLocalizations.of(context)!.min_characters,
                       style: TextStyle(
                         color: Color(0xFF475467),
                         fontSize: 12,
@@ -100,7 +101,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   Padding(
                     padding: EdgeInsets.only(left: 8.0),
                     child: Text(
-                      'At least 1 special characters',
+                      AppLocalizations.of(context)!.at_least_one_special_characters,
                       style: TextStyle(
                         color: Color(0xFF475467),
                         fontSize: 12,
@@ -113,7 +114,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   Padding(
                     padding: EdgeInsets.only(left: 8.0),
                     child: Text(
-                      'At least 1 number',
+                      AppLocalizations.of(context)!.at_least_one_number,
                       style: TextStyle(
                         color: Color(0xFF475467),
                         fontSize: 12,
@@ -146,8 +147,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               onPressed: () async {
                 print("MROE MORE MOIRE");
               },
-              child: const Text(
-                "UPDATE PASSWORD",
+              child: Text(
+                AppLocalizations.of(context)!.update_password,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,

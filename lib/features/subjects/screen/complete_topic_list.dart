@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CompletedTopicList extends ConsumerWidget {
   const CompletedTopicList({
@@ -20,7 +21,7 @@ class CompletedTopicList extends ConsumerWidget {
     final studentTopic = ref.watch(studentTopicFeedbackIdProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Recent Topics"),
+        title: Text(AppLocalizations.of(context)!.recent_topics),
       ),
       backgroundColor: Colors.grey.shade100,
       body: SizedBox.expand(
@@ -38,8 +39,8 @@ class CompletedTopicList extends ConsumerWidget {
                 }
               }
               if (newList.isEmpty) {
-                return const Center(
-                  child: Text("No Topics Completed Yet"),
+                return Center(
+                  child: Text(AppLocalizations.of(context)!.no_topics_completed_yet),
                 );
               }
           
@@ -165,8 +166,12 @@ class CompletedTopicList extends ConsumerWidget {
                                         "subjectName": topic.subjectName,
                                         "topicName": topic.topicName,
                                       }),
-                                  child: const Text(
-                                    'Quick Feedback',
+                                  child: Text(
+                                    AppLocalizations.of(context)!.quick_feedback,
+                                  /*const SizedBox(width: 4),
+                                  Text(
+                                    '+50 ${AppLocalizations.of(context)!.xp}',*/
+
                                     style: TextStyle(
                                       color: Color(0xFFFCFCFD),
                                       fontSize: 12,
@@ -190,8 +195,8 @@ class CompletedTopicList extends ConsumerWidget {
                 },
               );
             },
-            orElse: () => const Center(
-              child: Text("No Topics Completed Yet"),
+            orElse: () => Center(
+              child: Text(AppLocalizations.of(context)!.no_topics_completed_yet),
             ),
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SurveyCard extends ConsumerWidget {
   const SurveyCard({super.key});
@@ -56,8 +57,8 @@ class SurveyCard extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (survey == null)
-                            const Text(
-                              'No Survey',
+                            Text(
+                              AppLocalizations.of(context)!.no_survey,
                               style: TextStyle(
                                 color: Color(0xFF1D2939),
                                 fontSize: 16,
@@ -66,8 +67,8 @@ class SurveyCard extends ConsumerWidget {
                               ),
                             )
                           else ...[
-                            const Text(
-                              'Your next quest awaits!',
+                            Text(
+                              AppLocalizations.of(context)!.your_next_quest_awaits,
                               style: TextStyle(
                                 color: Color(0xFF1D2939),
                                 fontSize: 16,
@@ -84,7 +85,7 @@ class SurveyCard extends ConsumerWidget {
                                 SvgPicture.asset("assets/svg/clock.svg"),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'See you on : ${survey.startAt.toString().split(" ").first}',
+                                  '${AppLocalizations.of(context)!.see_you_on} ${survey.startAt.toString().split(" ").first}',
                                   style: const TextStyle(
                                     color: Color(0xFF027A48),
                                     fontSize: 12,
@@ -170,8 +171,8 @@ class SurveyCard extends ConsumerWidget {
                               pathParameters: {"surveyId": survey.id},
                               extra: survey,
                             ),
-                            child: const Text(
-                              'Start Now',
+                            child: Text(
+                              AppLocalizations.of(context)!.start_now,
                               style: TextStyle(
                                 color: Color(0xFF1D2939),
                                 fontSize: 14,
@@ -203,7 +204,7 @@ class SurveyCard extends ConsumerWidget {
                               ),
                             ),
                             Text(
-                              "+${survey.reward} XP",
+                              "+${survey.reward} ${AppLocalizations.of(context)!.xp}",
                               style: const TextStyle(
                                 color: Color(0xFFF9FAFB),
                                 fontSize: 12,

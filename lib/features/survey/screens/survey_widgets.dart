@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 typedef TAnswer = ({dynamic id, String label});
 
@@ -180,9 +181,9 @@ class SliderHAnsewrComponent extends StatelessWidget {
         .label;
     return Column(
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(vertical: 8.0),
-          child: Text("Select your option:"),
+          child: Text(AppLocalizations.of(context)!.select_your_option),
         ),
         Expanded(
           child: Text(
@@ -241,9 +242,9 @@ class SliderVAnsewrComponent extends StatelessWidget {
         .label;
     return Column(
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsets.only(top: 8.0, bottom: 16),
-          child: Text("Select your option:"),
+          child: Text(AppLocalizations.of(context)!.select_your_option),
         ),
         Expanded(
           child: Row(
@@ -324,7 +325,7 @@ class _BoolAnsewrComponentState extends State<BoolAnsewrComponent> {
             Expanded(
               child: QCheckButton(
                 onSelected: () => widget.onAnswerSelected("No", widget.comment),
-                label: "No",
+                label: AppLocalizations.of(context)!.no,
                 isSelected: widget.selectedAnswer == "No",
               ),
             ),
@@ -333,7 +334,7 @@ class _BoolAnsewrComponentState extends State<BoolAnsewrComponent> {
               child: QCheckButton(
                 onSelected: () =>
                     widget.onAnswerSelected("Yes", widget.comment),
-                label: "Yes",
+                label: AppLocalizations.of(context)!.yes,
                 isSelected: widget.selectedAnswer == "Yes",
               ),
             ),

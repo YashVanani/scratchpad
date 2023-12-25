@@ -1,13 +1,14 @@
 import 'dart:async';
-import 'package:eventify/eventify.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
+
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/subjects/model/quiz_model.dart';
+import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
+import 'package:eventify/eventify.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:go_router/go_router.dart';
 
 class QuizWizardPage extends ConsumerStatefulWidget {
   final String subjectId;
@@ -31,8 +32,7 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
   int next = 0;
   String selectedLevel = "easy";
   bool startQuiz = false;
-  
-    
+
   @override
   Widget build(BuildContext context) {
     final quizAttempted = ref.watch(quizAttemptProvider);
@@ -75,10 +75,10 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(top: 8.0, bottom: 16),
                         child: Text(
-                          "Select Difficulty Level",
+                          AppLocalizations.of(context)!.select_difficulty_level,
                           style: TextStyle(
                             color: Color(0xFF1D2939),
                             fontSize: 20,
@@ -87,46 +87,19 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                           ),
                         ),
                       ),
-                      Text((quizAttempted.asData?.value??[]).first.toString()),
+                      Text((quizAttempted.asData?.value ?? []).first.toString()),
                       Expanded(
                         child: SPChecker(
                           items: [
-                            (quizAttempted.asData?.value??[]).any((element) =>
-      element['id'] == widget.topicId && element['level'].contains('easy'))?(
-                              label: "Easy",
-                              onClicked: () =>
-                                  setState(() => selectedLevel = "easy"),
-                                  isCompleted: true
-                            ):(
-                              label: "Easy",
-                              onClicked: () =>
-                                  setState(() => selectedLevel = "easy"),
-                                  isCompleted: false
-                            ),
-                             (quizAttempted.asData?.value??[]).any((element) =>
-      element['id'] == widget.topicId && element['level'].contains('medium'))?(
-                              label: "Medium ",
-                              onClicked: () =>
-                                  setState(() => selectedLevel = "medium"),
-                                   isCompleted: true
-                            ):(
-                              label: "Medium ",
-                              onClicked: () =>
-                                  setState(() => selectedLevel = "medium"),
-                                   isCompleted: false
-                            ),
-                            (quizAttempted.asData?.value??[]).any((element) =>
-      element['id'] == widget.topicId && element['level'].contains('hard'))? (
-                              label: "Hard",
-                              onClicked: () =>
-                                  setState(() => selectedLevel = "hard"),
-                                     isCompleted: true
-                            ):(
-                              label: "Hard",
-                              onClicked: () =>
-                                  setState(() => selectedLevel = "hard"),
-                                     isCompleted: false
-                            ),
+                            (quizAttempted.asData?.value ?? []).any((element) => element['id'] == widget.topicId && element['level'].contains('easy'))
+                                ? (label: "Easy", onClicked: () => setState(() => selectedLevel = "easy"), isCompleted: true)
+                                : (label: "Easy", onClicked: () => setState(() => selectedLevel = "easy"), isCompleted: false),
+                            (quizAttempted.asData?.value ?? []).any((element) => element['id'] == widget.topicId && element['level'].contains('medium'))
+                                ? (label: "Medium ", onClicked: () => setState(() => selectedLevel = "medium"), isCompleted: true)
+                                : (label: "Medium ", onClicked: () => setState(() => selectedLevel = "medium"), isCompleted: false),
+                            (quizAttempted.asData?.value ?? []).any((element) => element['id'] == widget.topicId && element['level'].contains('hard'))
+                                ? (label: "Hard", onClicked: () => setState(() => selectedLevel = "hard"), isCompleted: true)
+                                : (label: "Hard", onClicked: () => setState(() => selectedLevel = "hard"), isCompleted: false),
                           ],
                         ),
                       ),
@@ -141,8 +114,8 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                         onPressed: () {
                           setState(() => startQuiz = true);
                         },
-                        child: const Text(
-                          "CONTINUE",
+                        child: Text(
+                          AppLocalizations.of(context)!.continue_text,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -218,13 +191,13 @@ class QuizWelcomeScreen extends StatelessWidget {
                   const SizedBox(
                     height: 8,
                   ),
-                  const Row(
+                  Row(
                     children: [
                       Text.rich(
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: 'Complete and get ',
+                              text: AppLocalizations.of(context)!.complete_and_get,
                               style: TextStyle(
                                 color: Color(0xFF344054),
                                 fontSize: 16,
@@ -233,7 +206,7 @@ class QuizWelcomeScreen extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: '+100 XP',
+                              text: '+100 ${AppLocalizations.of(context)!.xp}',
                               style: TextStyle(
                                 color: Color(0xFFEAA907),
                                 fontSize: 16,
@@ -262,7 +235,7 @@ class QuizWelcomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Column(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +246,7 @@ class QuizWelcomeScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              'Quiz Goals :',
+                              AppLocalizations.of(context)!.quiz_goals,
                               style: TextStyle(
                                 color: Color(0xFF0040C1),
                                 fontSize: 10,
@@ -287,7 +260,7 @@ class QuizWelcomeScreen extends StatelessWidget {
                         SizedBox(
                           width: double.infinity,
                           child: Text(
-                            'We value your input and strive to enhance your learning experience. The purpose of this survey is to gather Quiz on the recently completed lesson. Your responses will help us understand.',
+                            AppLocalizations.of(context)!.we_value_your_input,
                             style: TextStyle(
                               color: Color(0xFF667085),
                               fontSize: 12,
@@ -308,8 +281,8 @@ class QuizWelcomeScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () => onNext(),
-                    child: const Text(
-                      "CONTINUE",
+                    child: Text(
+                      AppLocalizations.of(context)!.continue_text,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -355,14 +328,14 @@ class _SPCheckerState extends State<SPChecker> {
         final item = widget.items[index];
         return InkWell(
           onTap: () {
-            if(!item.isCompleted){
-            setState(() {
-              selected = index;
-            });
-            item.onClicked();
-            }else{
-              var snackBar = SnackBar(content: Text("Already Submitted"));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            if (!item.isCompleted) {
+              setState(() {
+                selected = index;
+              });
+              item.onClicked();
+            } else {
+              var snackBar = SnackBar(content: Text(AppLocalizations.of(context)!.already_submitted));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
           },
           child: Container(
@@ -373,7 +346,7 @@ class _SPCheckerState extends State<SPChecker> {
               bottom: 16,
             ),
             decoration: ShapeDecoration(
-              color: item.isCompleted?Colors.green.shade300: Color(0xFFFCFCFD),
+              color: item.isCompleted ? Colors.green.shade300 : Color(0xFFFCFCFD),
               shape: RoundedRectangleBorder(
                 side: const BorderSide(
                   width: 1,
@@ -411,8 +384,7 @@ class _SPCheckerState extends State<SPChecker> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                if (selected == index)
-                  const Icon(Icons.check_rounded, color: Color(0xFF83ADFF))
+                if (selected == index) const Icon(Icons.check_rounded, color: Color(0xFF83ADFF))
               ],
             ),
           ),
@@ -427,13 +399,8 @@ class QuizView extends ConsumerStatefulWidget {
   final Quiz quiz;
   final String subjectId;
   final String topicId;
-  const QuizView({
-    super.key,
-    required this.level,
-    required this.quiz,
-    required this.subjectId,
-    required this.topicId
-  });
+
+  const QuizView({super.key, required this.level, required this.quiz, required this.subjectId, required this.topicId});
 
   @override
   ConsumerState<QuizView> createState() => _QuizViewState();
@@ -455,28 +422,19 @@ class _QuizViewState extends ConsumerState<QuizView> {
   void initState() {
     super.initState();
 
-    activeQuestions =
-        widget.quiz.questions.where((q) => q.level == widget.level).toList();
-    questionSaver = ref.read(QuizManagerProvider(
-        (subjectId: widget.subjectId, topicId: widget.topicId)).notifier);
+    activeQuestions = widget.quiz.questions.where((q) => q.level == widget.level).toList();
+    questionSaver = ref.read(QuizManagerProvider((subjectId: widget.subjectId, topicId: widget.topicId)).notifier);
   }
 
   void saveCurrentAnswers(bool lastQuestion) async {
     print("+++>HERE+++>>>${emitter.count}");
-    for(var i in answers.entries){
+    for (var i in answers.entries) {
       print(i.toString());
     }
     final f = questionSaver.saveAnswer(
-      quiz: widget.quiz,
-      difficultyLevel: widget.level,
-      answers: answers,
-      completed: lastQuestion,
-      startAt:startAt,
-      ref:ref,
-      level: widget.level
-    );
+        quiz: widget.quiz, difficultyLevel: widget.level, answers: answers, completed: lastQuestion, startAt: startAt, ref: ref, level: widget.level);
     if (!lastQuestion) return;
-    
+
     await showModalBottomSheet(
       context: context,
       builder: (ctx) {
@@ -509,8 +467,8 @@ class _QuizViewState extends ConsumerState<QuizView> {
                       child: SvgPicture.asset("assets/svg/celebrate.svg"),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'GOOD JOB!',
+                    Text(
+                      AppLocalizations.of(context)!.good_job,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFF2970FE),
@@ -520,7 +478,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const SizedBox(
+                    SizedBox(
                       height: 52,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -528,7 +486,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            'Happy Learning',
+                            AppLocalizations.of(context)!.happy_learning,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Color(0xFF344054),
@@ -540,7 +498,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                           SizedBox(height: 8),
                           SizedBox(
                             child: Text(
-                              'Resources for this lesson has unlocked.',
+                              AppLocalizations.of(context)!.resources_for_this,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Color(0xFF667085),
@@ -565,8 +523,8 @@ class _QuizViewState extends ConsumerState<QuizView> {
                       onPressed: () {
                         Navigator.of(ctxx).maybePop("finished");
                       },
-                      child: const Text(
-                        "OK",
+                      child: Text(
+                        AppLocalizations.of(context)!.ok,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -580,13 +538,13 @@ class _QuizViewState extends ConsumerState<QuizView> {
               );
             }
 
-            return const Dialog(
+            return Dialog(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CircularProgressIndicator(),
-                    Text("Submitting Answers"),
+                    Text(AppLocalizations.of(context)!.submitting_answers),
                   ],
                 ),
               ),
@@ -605,7 +563,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
     final tanswers = ques.answers.map((e) => (id: e, label: e)).toList();
     final isLastQuestion = ques.id == activeQuestions.last.id;
     print("is last questiion ${isLastQuestion}");
-    print("is last questiion ${ ques.id}");
+    print("is last questiion ${ques.id}");
     print("is last questiion ${activeQuestions.last.id}");
     return Scaffold(
       backgroundColor: const Color(0xFFF2F4F7),
@@ -631,10 +589,10 @@ class _QuizViewState extends ConsumerState<QuizView> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(4.0),
                     child: Text(
-                      "Playing Quiz",
+                      AppLocalizations.of(context)!.playing_quiz,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFF475467),
@@ -660,7 +618,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                 children: [
                   Text.rich(
                     TextSpan(
-                      text: "Total Question: ",
+                      text: AppLocalizations.of(context)!.total_question,
                       children: [
                         TextSpan(
                           text: "${activeQuestions.length}",
@@ -676,11 +634,10 @@ class _QuizViewState extends ConsumerState<QuizView> {
                   ),
                   Text.rich(
                     TextSpan(
-                      text: "Answered: ",
+                      text: AppLocalizations.of(context)!.answered,
                       children: [
                         TextSpan(
-                          text:
-                              "${(answers.keys.length ).clamp(0, answers.keys.length)}",
+                          text: "${(answers.keys.length).clamp(0, answers.keys.length)}",
                           style: const TextStyle(
                             color: Color(0xFF087343),
                             fontSize: 12,
@@ -693,11 +650,10 @@ class _QuizViewState extends ConsumerState<QuizView> {
                   ),
                   Text.rich(
                     TextSpan(
-                      text: "Remaining: ",
+                      text: AppLocalizations.of(context)!.remaining,
                       children: [
                         TextSpan(
-                          text:
-                              "${(activeQuestions.length - answers.keys.length ).clamp(0, activeQuestions.length)}",
+                          text: "${(activeQuestions.length - answers.keys.length).clamp(0, activeQuestions.length)}",
                           style: const TextStyle(
                             color: Color(0xFFCA8403),
                             fontSize: 12,
@@ -721,11 +677,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
               ),
               decoration: ShapeDecoration(
                 gradient: const SweepGradient(
-                  colors: [
-                    Color(0xffecd9d9),
-                    Color(0xffd2e9fb),
-                    Color(0xffede9db)
-                  ],
+                  colors: [Color(0xffecd9d9), Color(0xffd2e9fb), Color(0xffede9db)],
                   stops: [0.25, 0.55, 0.87],
                   center: Alignment.topRight,
                 ),
@@ -741,7 +693,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Question: ${currentQuestion + 1}"),
+                    Text("${AppLocalizations.of(context)!.question} ${currentQuestion + 1}"),
                     Text(
                       ques.questionText,
                       // textAlign: TextAlign.center,
@@ -763,11 +715,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                   answers: tanswers,
                   selectedAnswer: answers[ques.id]?.answer,
                   onAnswerSelected: (submittedAnswer) => setState(() {
-                    answers[ques.id] = (
-                      answer: submittedAnswer,
-                      extra: submittedAnswer,
-                      isCorrect: submittedAnswer == ques.answer
-                    );
+                    answers[ques.id] = (answer: submittedAnswer, extra: submittedAnswer, isCorrect: submittedAnswer == ques.answer);
                   }),
                 ),
               ),
@@ -789,7 +737,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                 onPressed: () async {
                   if (answers[ques.id]?.answer == null) {
                     Fluttertoast.showToast(
-                      msg: "Please Select an Answer",
+                      msg: AppLocalizations.of(context)!.please_select_an_answer,
                     );
                     return;
                   }
@@ -802,7 +750,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
                     emitter.emit("stop:timer");
                     setState(() => pauseTimer = true);
                   }
-                  
+
                   await (() async {
                     await showModalBottomSheet(
                         context: context,
@@ -812,17 +760,14 @@ class _QuizViewState extends ConsumerState<QuizView> {
                           side: BorderSide.none,
                         ),
                         builder: (ctx) {
-                           final correctCount = answers.values
-                                    .where((e) => e.isCorrect)
-                                    .length /
-                                activeQuestions.length;
-                        
+                          final correctCount = answers.values.where((e) => e.isCorrect).length / activeQuestions.length;
+
                           return SubmittedAnswer(
                             question: ques,
                             answer: answers[ques.id]!.answer,
-                            isLastQuestion:isLastQuestion,
-                            correctCount:correctCount,
-                            pointGained:"${widget.quiz.points}",
+                            isLastQuestion: isLastQuestion,
+                            correctCount: correctCount,
+                            pointGained: "${widget.quiz.points}",
                             startTime: startAt,
                           );
                         });
@@ -834,8 +779,8 @@ class _QuizViewState extends ConsumerState<QuizView> {
                     currentQuestion = currentQuestion + 1;
                   });
                 },
-                child: const Text(
-                  "Submit",
+                child: Text(
+                  AppLocalizations.of(context)!.submit,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -970,19 +915,19 @@ class _TimerProgressBarState extends State<TimerProgressBar> {
 class SubmittedAnswer extends StatefulWidget {
   final QuizQuestion question;
   final String answer;
-  final bool isLastQuestion;  
+  final bool isLastQuestion;
   final double correctCount;
-  final String pointGained; 
+  final String pointGained;
   final DateTime startTime;
-  const SubmittedAnswer({
-    super.key,
-    required this.question,
-    required this.answer,
-    required this.correctCount,
-    required this.isLastQuestion,
-    required this.pointGained,
-    required this.startTime
-  });
+
+  const SubmittedAnswer(
+      {super.key,
+      required this.question,
+      required this.answer,
+      required this.correctCount,
+      required this.isLastQuestion,
+      required this.pointGained,
+      required this.startTime});
 
   @override
   State<SubmittedAnswer> createState() => _SubmittedAnswerState();
@@ -994,8 +939,8 @@ class _SubmittedAnswerState extends State<SubmittedAnswer> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop:()async{
-       return  allowClose;
+      onWillPop: () async {
+        return allowClose;
       },
       // canPop: allowClose,
       // onPopInvoked: (bo) => print("poped $bo"),
@@ -1009,7 +954,7 @@ class _SubmittedAnswerState extends State<SubmittedAnswer> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Correct Answer : ${widget.question.answer}',
+                  '${AppLocalizations.of(context)!.correct_Answer} ${widget.question.answer}',
                 style: const TextStyle(
                   color: Color(0xFF344054),
                   fontSize: 14,
@@ -1065,7 +1010,7 @@ class _SubmittedAnswerState extends State<SubmittedAnswer> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Row(
+                   Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -1073,7 +1018,7 @@ class _SubmittedAnswerState extends State<SubmittedAnswer> {
                       Expanded(
                         child: SizedBox(
                           child: Text(
-                            'Explanation : ',
+                            AppLocalizations.of(context)!.explanation,
                             style: TextStyle(
                               color: Color(0xFFEAA907),
                               fontSize: 14,
@@ -1128,8 +1073,8 @@ class _SubmittedAnswerState extends State<SubmittedAnswer> {
                   setState(() {
                     allowClose = true;
                   });
-                  if(widget.isLastQuestion){
-                     await showModalBottomSheet(
+                  if (widget.isLastQuestion) {
+                    await showModalBottomSheet(
                         context: context,
                         enableDrag: false,
                         isDismissible: false,
@@ -1137,19 +1082,18 @@ class _SubmittedAnswerState extends State<SubmittedAnswer> {
                           side: BorderSide.none,
                         ),
                         builder: (ctx) {
-                         
-                            return CompletePopUp(
-                              successPercent: "${(widget.correctCount * 100).ceil()}",
-                              elaspsedTime: '${DateTime.now().difference(widget.startTime).inMinutes}:${DateTime.now().difference(widget.startTime).inSeconds}',
-                              pointsGained: widget.pointGained,
-                            );
+                          return CompletePopUp(
+                            successPercent: "${(widget.correctCount * 100).ceil()}",
+                            elaspsedTime: '${DateTime.now().difference(widget.startTime).inMinutes}:${DateTime.now().difference(widget.startTime).inSeconds}',
+                            pointsGained: widget.pointGained,
+                          );
                         });
-                         Navigator.of(context).maybePop();
+                    Navigator.of(context).maybePop();
                   }
                   Navigator.of(context).maybePop();
                 },
-                child: const Text(
-                  "NEXT",
+                child: Text(
+                  AppLocalizations.of(context)!.next,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -1203,14 +1147,14 @@ class CompletePopUp extends StatelessWidget {
               child: SvgPicture.asset("assets/svg/celebrate.svg"),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Lesson Quiz Complete!',
+                  AppLocalizations.of(context)!.lesson_quiz_complete,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF1D2939),
@@ -1221,7 +1165,7 @@ class CompletePopUp extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'You are doing great.',
+                  AppLocalizations.of(context)!.you_are_doing_great,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Color(0xFF667085),
@@ -1263,8 +1207,8 @@ class CompletePopUp extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
-                          'EARNED XP',
+                        Text(
+                          AppLocalizations.of(context)!.earned_xp,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -1340,8 +1284,8 @@ class CompletePopUp extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
-                          'TIME',
+                        Text(
+                          AppLocalizations.of(context)!.time,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -1420,8 +1364,8 @@ class CompletePopUp extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
-                          'PERFECT',
+                        Text(
+                          AppLocalizations.of(context)!.perfect,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -1502,8 +1446,8 @@ class CompletePopUp extends StatelessWidget {
               onPressed: () async {
                 Navigator.pop(context);
               },
-              child: const Text(
-                "CONTINUE",
+              child: Text(
+                AppLocalizations.of(context)!.confirmation,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
