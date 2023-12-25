@@ -68,7 +68,7 @@ class CommunityScreen extends ConsumerStatefulWidget{
                 shrinkWrap: true,
               );
             },
-            error: (e, st) => SizedBox(),
+            error: (e, st) => Text(e.toString()),
             loading: () => CircularProgressIndicator()));
   }
    } 

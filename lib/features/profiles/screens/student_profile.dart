@@ -49,7 +49,7 @@ class StudentProfile extends ConsumerWidget {
                                                     gender: data.gender,
                                                   ),
                           ),
-                           Positioned(top:0,right: 0,child: Icon(Icons.edit,color: greenTextColor,size: 28,)),
+                           Positioned(bottom:0,right: 0,child: Icon(Icons.edit_square,color: greenTextColor,size: 28,)),
                         ],
                       )
                     ),

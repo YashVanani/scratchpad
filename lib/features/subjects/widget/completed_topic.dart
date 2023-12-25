@@ -1,3 +1,4 @@
+import 'package:clarified_mobile/features/home/model/entry.dart';
 import 'package:clarified_mobile/features/shared/widgets/teacher_tag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,7 @@ class CompletedTopicCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final topicListProvider = ref.watch(recentTopicListProvider);
+    final studentTopic = ref.watch(studentTopicFeedbackIdProvider);
     return SizedBox(
       height: 230,
       child: Column(
@@ -46,7 +48,15 @@ class CompletedTopicCard extends ConsumerWidget {
           Expanded(
             child: topicListProvider.when(
               data: (topicList) {
-                if (topicList.isEmpty) {
+                List<({DateTime completedAt, String subjectId, String subjectName, String teacherId, String topicId, String topicName})> newList = [];
+              for(var i in topicList??[]){
+                if(!(studentTopic.asData?.value.contains(i.topicId)??false)){
+                
+                  newList.add(i);
+                }
+              }
+             
+                if (newList.isEmpty) {
                   return Container(
                     padding: const EdgeInsets.symmetric(
                       vertical: 22,
@@ -66,7 +76,7 @@ class CompletedTopicCard extends ConsumerWidget {
                 }
 
                 return ListView.separated(
-                  itemCount: topicList.take(5).length,
+                  itemCount: newList.take(5).length,
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
                   separatorBuilder: (BuildContext context, int index) {
@@ -75,7 +85,7 @@ class CompletedTopicCard extends ConsumerWidget {
                     );
                   },
                   itemBuilder: (BuildContext context, int index) {
-                    final topic = topicList[index];
+                    final topic = newList[index];
 
                     return Container(
                       width: 250,

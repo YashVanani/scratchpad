@@ -11,5 +11,6 @@ class ImageRes {
   static String keyIcon = 'assets/keyDark.png';
   static String choosePhoto = 'assets/chosePhoto.png';
   static String checkIcon = 'assets/check.png';
+  static String peerIntro = 'assets/svg/peer_intro.svg';
 
 }

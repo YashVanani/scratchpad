@@ -757,7 +757,7 @@ class ParentsHome extends ConsumerWidget {
                                   radius: 30,
                                   backgroundColor: purpleColor,
                                   backgroundImage:
-                                      AssetImage(ImageRes.profileImage),
+                                      NetworkImage(currentChild?.profileUrl??"",),
                                 ),
                               ),
                               const SizedBox(width: 15),

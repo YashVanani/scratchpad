@@ -1,4 +1,6 @@
 import 'package:clarified_mobile/features/home/model/entry.dart';
+import 'package:clarified_mobile/features/peers/model/peers_model.dart';
+import 'package:clarified_mobile/features/peers/screens/peer_intro.dart';
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-
 class SurveyWizardPage extends ConsumerStatefulWidget {
   final String surveyId;
   final Object? extraData;
@@ -27,12 +28,17 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
   int currentQuesIndex = -1;
   bool isCompleted = false;
   final Map<String, ProvidedAnswer> answers = {};
+ 
 
   @override
   void initState() {
     super.initState();
+    print("+++++>>HERE++++");
     survey = widget.extraData as Survey;
+ 
   }
+
+ 
 
   void saveCurrentAnswers(bool lastQuestion) async {
     final f = ref.read(surveyAnswerSaverProvider.notifier).saveAnswer(
@@ -75,9 +81,10 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isCompleted) {
+    if (isCompleted ) {
       return SurveyCompletedPage(survey: survey);
     }
+   
     if (currentQuesIndex < 0) {
       return SurveyIntro(
         survey: survey,
@@ -140,6 +147,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                     onPressed: () => showDialog(
                         context: context,
                         builder: (ctx) {
+                          print(ques.description);
                           return Dialog(
                             backgroundColor: Colors.transparent,
                             surfaceTintColor: Colors.transparent,
@@ -312,9 +320,9 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                         ),
                       ),
                       SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: Image.network(ques.ninja??""),
+                        height: 60,
+                        width:60,
+                        child: Image.network(ques.characterImg??"",fit: BoxFit.cover,),
                       ),
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
@@ -498,7 +506,7 @@ class SurveyIntro extends StatelessWidget {
                       image: AssetImage("assets/survey_bg.png"),
                       fit: BoxFit.cover,
                     ):DecorationImage(
-                      image: NetworkImage(survey?.thumbnail??''),
+                      image:NetworkImage(survey?.thumbnail??""),
                       fit: BoxFit.cover,
                     ),
                   ),

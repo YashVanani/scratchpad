@@ -104,7 +104,7 @@ final postProvider = StreamProvider<List<Post>>((ref) {
                     content: doc.data()['content'],
                     mediaUrl: doc.data()['mediaUrl'],
                     likeCount: doc.data()['likeCount'],
-                    likedBy:doc.data()['likedBy'],
+                    likedBy:doc.data()['likedBy']??[],
                     user: User.fromJson(
                       doc.data()['user'],
                     )))

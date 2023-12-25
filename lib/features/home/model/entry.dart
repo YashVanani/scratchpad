@@ -39,7 +39,7 @@ class SurveyQuestion {
   final String description;
   final QuestionType type;
   final List<SurveyAnswer> answers;
-  final String? ninja;
+  final String? characterImg;
 
   const SurveyQuestion({
     required this.id,
@@ -47,7 +47,7 @@ class SurveyQuestion {
     required this.type,
     required this.description,
     required this.answers,
-    required this.ninja
+    required this.characterImg
   });
 
   factory SurveyQuestion.fromMap(Map<String, dynamic> data) {
@@ -55,7 +55,7 @@ class SurveyQuestion {
       id: (data["id"]??"").toString(),
       questionText: data["questionText"],
       description: data["description"] ?? "",
-      ninja: data['ninja']??'',
+      characterImg: data['characterImg']??'',
       type: QuestionType.values.firstWhere(
         (qt) => qt.name == data["type"],
         orElse: () => QuestionType.boolean,
@@ -129,6 +129,21 @@ final surveyInboxProvider = StreamProvider((ref) {
   );
 });
 
+
+final studentTopicFeedbackIdProvider =  StreamProvider<List<String>>((ref) {
+    final userProfile = ref.watch(profileProvider);
+  final baseDoc = ref.read(schoolDocProvider);
+  return  baseDoc
+      .collection("students")
+      .doc(userProfile.asData?.value.id).collection('topic_feedbacks').where('status',isNotEqualTo: 'pending').snapshots().map(
+            (v) {
+              print(v.docs);
+              return v.docs
+                .map((doc) => doc.id)
+                .toList();
+            },
+          ) ?? const Stream.empty();
+});
 class ProvidedAnswer {
   final dynamic answer;
   final dynamic extra;
@@ -221,4 +236,6 @@ class SurveyAnswerSaver extends AutoDisposeAsyncNotifier<void> {
       });
     });
   }
+
+
 }

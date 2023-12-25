@@ -1,5 +1,7 @@
 import 'package:clarified_mobile/consts/colors.dart';
 import 'package:clarified_mobile/features/feedback/model/feedback.dart';
+import 'package:clarified_mobile/features/peers/model/peers_model.dart';
+import 'package:clarified_mobile/features/peers/screens/peer_intro.dart';
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
 import 'package:flutter/material.dart';
@@ -218,7 +220,6 @@ class _TopicFeedbackViewState extends ConsumerState<TopicFeedbackView> {
                           onPressed: alreadyAnswered != false
                               ? null
                               : () {
-                                  print("SDFSDFSD");
                                   setState(() => mode = "quiz");
                                 },
                           child: Text(
@@ -279,6 +280,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
   bool isLastQuestion = false;
   Map<String, ({dynamic answer, String extra})> answers = {};
   late FeedbackManager questionSaver;
+   bool isPeerExist = false;
 
   @override
   void initState() {
@@ -286,6 +288,14 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
     questionSaver = ref.read(feedbackManagerProvider(
       (subjectId: widget.subjectId, topicId: widget.topicId),
     ).notifier);
+     WidgetsBinding.instance
+        .addPostFrameCallback((_) => setPeerSurvey());
+     
+  }
+
+  void setPeerSurvey()async{
+    isPeerExist = await checkPeerSurveyExist(widget.subjectId,ref);
+    print("++++PEER++${isPeerExist}");
   }
 
   void saveCurrentAnswers(bool lastQuestion) async {
@@ -415,6 +425,10 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
       },
     ).then((value) {
       if (value == "finished") Navigator.of(context).maybePop();
+      if(isPeerExist){
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>PeerIntroScreen()));
+      }
     });
   }
 

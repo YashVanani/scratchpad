@@ -70,8 +70,8 @@ class UserInfo {
         total: data['balance']['total'],
         spent: data['balance']['spent']
       ),
-      appUpdateNotification: data['appUpdateNotification'],
-      inAppNotification: data['inAppNotification']
+      appUpdateNotification: data['appUpdateNotification']??true,
+      inAppNotification: data['inAppNotification']??true
     );
   }
 }

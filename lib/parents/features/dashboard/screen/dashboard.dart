@@ -132,7 +132,7 @@ class DashboardScreen extends ConsumerWidget{
                                             children: [
                                               Text(
                                                 dashboardReport.tips?[index].title ?? "",
-                                                style: TextStyle(fontSize: 11),
+                                                style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
                                               ),
                                               const SizedBox(
                                                 height: 6,
@@ -140,7 +140,7 @@ class DashboardScreen extends ConsumerWidget{
                                               Text(
                                                    dashboardReport.tips?[index].text ?? "",
                                                 // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
-                                                style: TextStyle(fontSize: 14),
+                                                style: TextStyle(fontSize: 12),
                                               ),
                                             ]),
                                       ),

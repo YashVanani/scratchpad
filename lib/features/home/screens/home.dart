@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clarified_mobile/features/home/widgets/student_faq.dart';
+import 'package:clarified_mobile/features/peers/screens/peer_intro.dart';
 import 'package:clarified_mobile/parents/features/home/widgets/survey_card_parents.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +33,7 @@ class HomePage extends ConsumerWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(45),
           child: CachedNetworkImage(
-              imageUrl: u.avatar ?? "",
+              imageUrl: u.profileUrl ?? "",
               errorWidget: (url, err, st) {
                 return Image.asset(
                   u.gender == 'male'
@@ -79,6 +80,14 @@ class HomePage extends ConsumerWidget {
           IconButton(
             onPressed: () =>
                 GoRouter.of(context).pushNamed("student-notification"),
+            icon: const Icon(
+              Icons.notifications_outlined,
+            ),
+          ),
+           IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>PeerIntroScreen()));
+            },
             icon: const Icon(
               Icons.notifications_outlined,
             ),
