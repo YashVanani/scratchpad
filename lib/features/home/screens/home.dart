@@ -9,15 +9,22 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../main.dart';
+import '../../../parents/models/parents.dart';
+import '../../../services/app_pref.dart';
 import '../../shared/widgets/app_buttombar.dart';
 import '../../subjects/widget/completed_topic.dart';
 import '../../subjects/widget/subject_list.dart';
 import '../widgets/survey_card.dart';
 
 class HomePage extends ConsumerWidget {
-  const HomePage({
+   HomePage({
     super.key,
   });
+
+  List<String> languageName = ["English", "Hindi", "Marathi"];
+  String selectedLanguage = 'English';
+  String languageCode = '';
 
   @override
   Widget build(BuildContext context, ref) {
@@ -57,9 +64,12 @@ class HomePage extends ConsumerWidget {
         actions: [
           IconButton(
             padding: EdgeInsets.zero,
-            // onPressed: () => print("language"),
-            onPressed: () {
-              // GoRouter.of(context).pushNamed("parents-home");
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return languageDialog(ref);
+                    });
             },
             icon: const Icon(
               Icons.translate_outlined,
@@ -219,5 +229,109 @@ class HomePage extends ConsumerWidget {
         selected: 'home',
       ),
     );
+  }
+
+  languageDialog(WidgetRef ref) {
+    return StatefulBuilder(builder: (context, setState) {
+      return AlertDialog(
+        scrollable: true,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        backgroundColor: Colors.white,
+        content: Column(
+          children: [
+            Container(
+              height: 240,
+              width: 500,
+              child: ListView.builder(
+                itemCount: languageName.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: InkWell(
+                      onTap: () async {
+                        selectedLanguage =
+                        languageName[index]; // Update the selected language
+                        if (selectedLanguage == "English") {
+                          languageCode = 'en';
+                          ClarifiedApp.setLocal(context, const Locale('en'));
+
+                          await AppPref.setLanguageCode('en');
+                        } else if (selectedLanguage == "Hindi") {
+                          languageCode = 'hi';
+                          ClarifiedApp.setLocal(context, const Locale('hi'));
+                          await AppPref.setLanguageCode('hi');
+                        } else {
+                          languageCode = 'mr';
+                          ClarifiedApp.setLocal(context, const Locale('mr'));
+                          await AppPref.setLanguageCode('mr');
+                        }
+                        ref.read(selectedLanguageProvider.notifier).state =
+                            selectedLanguage;
+                        setState(() {});
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  languageName[index],
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Radio(
+                                value: languageName[index],
+                                groupValue: ref
+                                    .read(selectedLanguageProvider.notifier)
+                                    .state,
+                                onChanged: (value) async {
+                                  selectedLanguage = value.toString();
+
+                                  if (selectedLanguage == "English") {
+                                    languageCode = 'en';
+                                    ClarifiedApp.setLocal(
+                                        context, const Locale('en'));
+                                    await AppPref.setLanguageCode('en');
+                                  } else if (selectedLanguage == "Hindi") {
+                                    languageCode = 'hi';
+                                    ClarifiedApp.setLocal(
+                                        context, const Locale('hi'));
+                                    await AppPref.setLanguageCode('hi');
+                                  } else {
+                                    languageCode = 'mr';
+                                    ClarifiedApp.setLocal(
+                                        context, const Locale('mr'));
+                                    await AppPref.setLanguageCode('mr');
+                                  }
+                                  ref
+                                      .read(selectedLanguageProvider.notifier)
+                                      .state = selectedLanguage;
+                                  setState(() {});
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 }
