@@ -889,12 +889,12 @@ class ParentsHome extends ConsumerWidget {
                                     left: 15, top: 10, bottom: 10),
                                 child: Row(
                                   children: [
-                                    CircleAvatar(
-                                      radius: 22,
-                                      backgroundColor: purpleColor,
-                                      backgroundImage:
-                                          AssetImage(ImageRes.profileImage),
-                                    ),
+                                   CircleAvatar(
+                                     radius: 22,
+                                     backgroundColor: purpleColor,
+                                     backgroundImage:
+                                         NetworkImage(d[index]?.profileUrl??"",),
+                                   ),
                                     const SizedBox(width: 15),
                                     Expanded(
                                       child: Column(

@@ -95,14 +95,7 @@ class HomePage extends ConsumerWidget {
               Icons.notifications_outlined,
             ),
           ),
-           IconButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>PeerIntroScreen()));
-            },
-            icon: const Icon(
-              Icons.notifications_outlined,
-            ),
-          )
+          
         ],
         title: Padding(
           padding: const EdgeInsets.only(left: 8.0),

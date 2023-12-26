@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/subjects/model/quiz_model.dart';
 import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
+import 'package:clarified_mobile/model/clazz.dart';
 import 'package:eventify/eventify.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -33,6 +34,12 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
   String selectedLevel = "easy";
   bool startQuiz = false;
 
+@override
+  void initState() {
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => ref.read(isQuizLevelAvaliable.notifier).state=false);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final quizAttempted = ref.watch(quizAttemptProvider);
@@ -87,7 +94,6 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                           ),
                         ),
                       ),
-                      Text((quizAttempted.asData?.value ?? []).first.toString()),
                       Expanded(
                         child: SPChecker(
                           items: [
@@ -103,24 +109,27 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                           ],
                         ),
                       ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          splashFactory: NoSplash.splashFactory,
-                          backgroundColor: const Color(0xFF04686E),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      Visibility(
+                        visible: ref.read(isQuizLevelAvaliable.notifier).state,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            splashFactory: NoSplash.splashFactory,
+                            backgroundColor: const Color(0xFF04686E),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
-                        ),
-                        onPressed: () {
-                          setState(() => startQuiz = true);
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.continue_text,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontFamily: 'Lexend',
-                            fontWeight: FontWeight.w400,
+                          onPressed: () {
+                            setState(() => startQuiz = true);
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.continue_text,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontFamily: 'Lexend',
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
                       ),
@@ -301,95 +310,119 @@ class QuizWelcomeScreen extends StatelessWidget {
   }
 }
 
-class SPChecker extends StatefulWidget {
+class SPChecker extends ConsumerStatefulWidget {
   final List<({String label, Function onClicked, bool isCompleted})> items;
 
   const SPChecker({
     super.key,
     required this.items,
   });
-
+  
   @override
-  State<SPChecker> createState() => _SPCheckerState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>_SPCheckerState();
+
 }
 
-class _SPCheckerState extends State<SPChecker> {
+class _SPCheckerState extends ConsumerState<SPChecker> {
   int selected = 0;
+  bool isAvaliable = false;
+  @override
+  void initState() {
+    for(var i in widget.items){
+        if(!i.isCompleted){
+          isAvaliable = true;
+          ref.read(isQuizLevelAvaliable.notifier).state = true;
+        }
+    }
+    setState(() {
+      
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      itemCount: widget.items.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return const SizedBox(height: 20);
-      },
-      itemBuilder: (BuildContext context, int index) {
-        final item = widget.items[index];
-        return InkWell(
-          onTap: () {
-            if (!item.isCompleted) {
-              setState(() {
-                selected = index;
-              });
-              item.onClicked();
-            } else {
-              var snackBar = SnackBar(content: Text(AppLocalizations.of(context)!.already_submitted));
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            }
+    return Column(
+      children: [
+        Visibility(visible: !isAvaliable,child: Text("All levels are completed.")),
+        ListView.separated(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          itemCount: widget.items.length,
+          separatorBuilder: (BuildContext context, int index) {
+            return const SizedBox(height: 20);
           },
-          child: Container(
-            padding: const EdgeInsets.only(
-              top: 16,
-              left: 24,
-              right: 16,
-              bottom: 16,
-            ),
-            decoration: ShapeDecoration(
-              color: item.isCompleted ? Colors.green.shade300 : Color(0xFFFCFCFD),
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(
-                  width: 1,
-                  color: Color(0xFF83ADFF),
+          itemBuilder: (BuildContext context, int index) {
+            final item = widget.items[index];
+            if(item.isCompleted){
+              return SizedBox();
+            }
+            return InkWell(
+              onTap: () {
+                if (!item.isCompleted) {
+                  setState(() {
+                    selected = index;
+                  });
+                  item.onClicked();
+                } else {
+                  var snackBar = SnackBar(content: Text(AppLocalizations.of(context)!.already_submitted));
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.only(
+                  top: 16,
+                  left: 24,
+                  right: 16,
+                  bottom: 16,
                 ),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              shadows: const [
-                BoxShadow(
-                  color: Color(0xFF84ADFF),
-                  blurRadius: 0,
-                  offset: Offset(0, 3),
-                  spreadRadius: 0,
-                )
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.cell_tower_sharp,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    item.label,
-                    style: const TextStyle(
-                      color: Color(0xFF045E63),
-                      fontSize: 16,
-                      fontFamily: 'Lexend',
-                      fontWeight: FontWeight.w400,
+                decoration: ShapeDecoration(
+                  color: item.isCompleted ? Colors.green.shade300 : Color(0xFFFCFCFD),
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(
+                      width: 1,
+                      color: Color(0xFF83ADFF),
                     ),
+                    borderRadius: BorderRadius.circular(16),
                   ),
+                  shadows: const [
+                    BoxShadow(
+                      color: Color(0xFF84ADFF),
+                      blurRadius: 0,
+                      offset: Offset(0, 3),
+                      spreadRadius: 0,
+                    )
+                  ],
                 ),
-                const SizedBox(width: 16),
-                if (selected == index) const Icon(Icons.check_rounded, color: Color(0xFF83ADFF))
-              ],
-            ),
-          ),
-        );
-      },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.cell_tower_sharp,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        item.label,
+                        style: const TextStyle(
+                          color: Color(0xFF045E63),
+                          fontSize: 16,
+                          fontFamily: 'Lexend',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    if (selected == index) const Icon(Icons.check_rounded, color: Color(0xFF83ADFF))
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

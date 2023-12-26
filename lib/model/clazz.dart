@@ -243,3 +243,5 @@ final teacherInfo = FutureProvider.family((ref, String teacherId) {
       .get()
       .then((rec) => rec.exists ? Teacher.fromMap(rec.data()!) : null);
 });
+
+final isQuizLevelAvaliable = StateProvider<bool>((_) => false);

@@ -68,20 +68,18 @@ final peerSurveyProvider = StreamProvider((ref) {
   final schoolDoc = ref.watch(schoolDocProvider);
 
   return schoolDoc
-      .collection("subject_feedbacks")
+      .collection("surveys")
       .doc(ref.read(currentSurveyId.notifier).state)
       .collection('peer_survey')
       .doc(ref.read(currentPeerSurveyId.notifier).state)
       .get()
-      .then(
-          (value) {
-            print(ref.read(currentSurveyId.notifier).state);
-            print(ref.read(currentPeerSurveyId.notifier).state);
-            print(value.data());
-            print("+++GETSURRVEY DETAIL");
-          return PeerSurvey.fromJson(value.data() as Map<String, dynamic>);
-          })
-      .asStream();
+      .then((value) {
+    print(ref.read(currentSurveyId.notifier).state);
+    print(ref.read(currentPeerSurveyId.notifier).state);
+    print(value.data());
+    print("+++GETSURRVEY DETAIL");
+    return PeerSurvey.fromJson(value.data() as Map<String, dynamic>);
+  }).asStream();
 });
 //   .where("id", whereIn: userProfile.value?.surveyInbox)
 //   .where("type", isEqualTo: "student")
@@ -108,8 +106,8 @@ Future<List<u.UserInfo>> classRoomUserListProvider(WidgetRef ref) async {
         .get();
     for (QueryDocumentSnapshot i in data.docs ?? []) {
       print("+++++DONE ${ref.read(donePeerIdList.notifier).state}");
-      if(!ref.read(donePeerIdList.notifier).state.contains(i.id)){
-      users.add(u.UserInfo.fromMap(i.data() as Map<String, dynamic>));
+      if (!ref.read(donePeerIdList.notifier).state.contains(i.id)) {
+        users.add(u.UserInfo.fromMap(i.data() as Map<String, dynamic>));
       }
     }
     return users;
@@ -120,31 +118,28 @@ Future<List<u.UserInfo>> classRoomUserListProvider(WidgetRef ref) async {
 }
 
 Future<bool> checkPeerSurveyExist(String surveyId, WidgetRef ref) async {
-  print("+++++SURVEY ID +++${surveyId}");
   final baseDoc = ref.read(schoolDocProvider);
   ref.read(currentSurveyId.notifier).state = surveyId;
   QuerySnapshot res = await baseDoc
-      .collection('subject_feedbacks')
+      .collection('surveys')
       .doc(surveyId)
       .collection('peer_survey')
       .get();
   print("++++RES${res.docs}");
   if (res.docs.isNotEmpty) {
-    List peers=[];
-    try{
-    QueryDocumentSnapshot data= await res.docs[0];
-    var d  = data.data();
-    peers=((d  as Map<String, dynamic>)['peerDone']??[]);
-    print("+PEERDONE+${d}");
-    }catch(e){
-      print("+++ERROR ${e}");
-    }
-    ref.read(donePeerIdList.notifier).state=peers;
+    List peers = [];
+    try {
+      QueryDocumentSnapshot data = await res.docs[0];
+      var d = data.data();
+      peers = ((d as Map<String, dynamic>)['peerDone'] ?? []);
+    } catch (e) {}
+    ref.read(donePeerIdList.notifier).state = peers;
     ref.read(currentPeerSurveyId.notifier).state = res.docs[0].id;
     return true;
   }
   return false;
 }
+
 final peerManagerProvider = AsyncNotifierProvider.autoDispose
     .family<PeerManager, bool?, ({String surveyId, String peerId})>(
   PeerManager.new,
@@ -169,16 +164,25 @@ class PeerManager extends AutoDisposeFamilyAsyncNotifier<bool?,
   }
 
   Future<void> saveAnswer({
-    required Map<String, Map<String, double>>answers,
+    required Map<String, Map<String, double>> answers,
     bool completed = false,
   }) async {
-    final userDoc = ref.read(userDocProvider);
- final baseDoc = ref.read(schoolDocProvider);
+    final baseDoc = ref.read(schoolDocProvider);
+    final userProfile = ref.watch(profileProvider);
+    
     final answerDoc =
-        userDoc.value!.collection("peer_feedbacks").doc(arg.peerId);
+        baseDoc
+      .collection("surveys")
+      .doc(ref.read(currentSurveyId.notifier).state)
+      .collection('peer_survey')
+      .doc(ref.read(currentPeerSurveyId.notifier).state).collection('responses').doc(userProfile.asData?.value.id);
 
     final answerOpt = SetOptions(
-      mergeFields: ["status", "answers", "updated_at", ],
+      mergeFields: [
+        "status",
+        "answers",
+        "updated_at",
+      ],
     );
 
     final data = {
@@ -188,36 +192,40 @@ class PeerManager extends AutoDisposeFamilyAsyncNotifier<bool?,
       "updated_at": Timestamp.now(),
       "status": completed ? "submitted" : "pending",
       "answers": answers
-  
     };
 
     if (!completed) {
       return answerDoc.set(data, answerOpt);
     }
     return FirebaseFirestore.instance.runTransaction((trx) async {
-     try{
-      await baseDoc.collection('subject_feedbacks').doc(arg.surveyId).collection('peer_survey').doc(arg.peerId).update({
-        'peerDone':FieldValue.arrayUnion(ref.read(selectedPeerIdList.notifier).state)
-      });
-     }catch(e){
-      print("++++ERROR++${e}");
-     }
-      trx
-          .set(
-            answerDoc,
-            data,
-            answerOpt,
-          );
-      ref.read(selectedPeerList.notifier).state =[];
-      ref.read(selectedPeerIdList.notifier).state =[];
-      ref.read(currentSurveyId.notifier).state ='';
-      ref.read(currentPeerSurveyId.notifier).state ='';
-      ref.read(donePeerIdList.notifier).state =[];
-      
+      try {
+        await baseDoc
+            .collection('surveys')
+            .doc(arg.surveyId)
+            .collection('peer_survey')
+            .doc(arg.peerId)
+            .update({
+          'recievedIds': FieldValue.arrayUnion(
+              ref.read(selectedPeerIdList.notifier).state),
+          'givenIds': FieldValue.arrayUnion([userProfile.asData?.value.id]),
+        });
+      } catch (e) {
+        print("++++ERROR++${e}");
+      }
+      trx.set(
+        answerDoc,
+        data,
+        answerOpt,
+      );
+      ref.read(selectedPeerList.notifier).state = [];
+      ref.read(selectedPeerIdList.notifier).state = [];
+      ref.read(currentSurveyId.notifier).state = '';
+      ref.read(currentPeerSurveyId.notifier).state = '';
+      ref.read(donePeerIdList.notifier).state = [];
     });
-
   }
 }
+
 final donePeerIdList = StateProvider<List>((_) => []);
 final selectedPeerList = StateProvider<List<u.UserInfo?>>((_) => []);
 final selectedPeerIdList = StateProvider<List<String>>((_) => []);

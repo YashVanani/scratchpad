@@ -29,14 +29,19 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
   int currentQuesIndex = -1;
   bool isCompleted = false;
   final Map<String, ProvidedAnswer> answers = {};
- 
+   bool isPeerExist = false;
 
   @override
   void initState() {
     super.initState();
-    print("+++++>>HERE++++");
     survey = widget.extraData as Survey;
- 
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => setPeerSurvey());
+     
+  }
+ void setPeerSurvey()async{
+    isPeerExist = await checkPeerSurveyExist(widget.surveyId,ref);
+    print("++++PEER++${isPeerExist}");
   }
 
  
@@ -83,7 +88,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
   @override
   Widget build(BuildContext context) {
     if (isCompleted ) {
-      return SurveyCompletedPage(survey: survey);
+      return SurveyCompletedPage(survey: survey,isPeerExist: isPeerExist,);
     }
    
     if (currentQuesIndex < 0) {
@@ -386,9 +391,11 @@ class SurveyCompletedPage extends StatelessWidget {
   const SurveyCompletedPage({
     super.key,
     required this.survey,
+    required this.isPeerExist
   });
 
   final Survey? survey;
+  final bool isPeerExist;
 
   @override
   Widget build(BuildContext context) {
@@ -448,7 +455,13 @@ class SurveyCompletedPage extends StatelessWidget {
                 elevation: 3,
               ),
               onPressed: () {
-                GoRouter.of(context).goNamed("home");
+                
+                if(isPeerExist){
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>PeerIntroScreen()));
+      }else{
+        GoRouter.of(context).goNamed("home");
+      }
               },
               child: Text(
                 AppLocalizations.of(context)!.go_to_home,

@@ -281,7 +281,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
   bool isLastQuestion = false;
   Map<String, ({dynamic answer, String extra})> answers = {};
   late FeedbackManager questionSaver;
-   bool isPeerExist = false;
+ 
 
   @override
   void initState() {
@@ -289,16 +289,10 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
     questionSaver = ref.read(feedbackManagerProvider(
       (subjectId: widget.subjectId, topicId: widget.topicId),
     ).notifier);
-     WidgetsBinding.instance
-        .addPostFrameCallback((_) => setPeerSurvey());
-     
+  
   }
 
-  void setPeerSurvey()async{
-    isPeerExist = await checkPeerSurveyExist(widget.subjectId,ref);
-    print("++++PEER++${isPeerExist}");
-  }
-
+ 
   void saveCurrentAnswers(bool lastQuestion) async {
     final f = questionSaver.saveAnswer(
       answers: answers,
@@ -426,10 +420,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
       },
     ).then((value) {
       if (value == "finished") Navigator.of(context).maybePop();
-      if(isPeerExist){
-        Navigator.pop(context);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>PeerIntroScreen()));
-      }
+      
     });
   }
 
