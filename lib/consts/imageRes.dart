@@ -12,5 +12,11 @@ class ImageRes {
   static String choosePhoto = 'assets/chosePhoto.png';
   static String checkIcon = 'assets/check.png';
   static String peerIntro = 'assets/svg/peer_intro.svg';
+  static String markLession = 'assets/svg/markLession.svg';
+  static String createLession = 'assets/svg/createLession.svg';
+  static String surveyReport = 'assets/svg/surveyReport.svg';
+  static String studentCorner = 'assets/svg/studentCorner.svg';
+  static String favorite= 'assets/svg/favorite.svg';
+  static String live = 'assets/live.png';
 
 }

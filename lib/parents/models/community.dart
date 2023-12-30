@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/model/user.dart' as u;
 import 'package:clarified_mobile/parents/models/parents.dart';
+import 'package:clarified_mobile/parents/models/teacher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -227,16 +228,16 @@ Future<ParentInfo?> getPostParent(
     null;
   }
 }
-Future<ParentInfo?> getPostTeacher(
+Future<TeacherInfo?> getPostTeacher(
     String userId, String userType, WidgetRef ref) async {
   try {
-    print("++++++++++GET PARENT ${userId}");
+    print("++++++++++GET Teacher ${userId}");
     final baseDoc = ref.read(schoolDocProvider);
     return await baseDoc
         .collection("staffs")
         .doc(userId)
         .get()
-        .then((value) => ParentInfo.fromMap(value.data()!));
+        .then((value) => TeacherInfo.fromJson(value.data()!));
   } catch (e) {
     null;
   }

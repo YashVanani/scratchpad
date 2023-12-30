@@ -51,13 +51,37 @@ class MenuType extends Equatable  {
 }
 
 @immutable
+class ParentSurveyInbox extends Equatable{
+  final String? studentId;
+  final List? inbox;
+  const ParentSurveyInbox({this.inbox,this.studentId});
+   factory ParentSurveyInbox.fromJson(Map<String, dynamic> json) => ParentSurveyInbox(
+        inbox: ( json['inbox']??[]).cast<String>(),
+        studentId: json["studentId"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "studentId": studentId,
+        "inbox": inbox,
+    };
+    factory ParentSurveyInbox.empty() {
+    return const ParentSurveyInbox(
+      inbox: [],
+      studentId: '',
+    );
+  }
+    
+      @override
+      List<Object?> get props => [inbox,studentId,];
+}
+@immutable
 class ParentInfo {
   final String id;
   final String firstName;
   final String lastName;
   final String email;
   final String profileUrl;
-  final List<String?> surveyInbox;
+  final List<ParentSurveyInbox?> surveyInbox;
   final List<String> childrens;
   final List<String> favoriteActivities;
   final bool inAppNotification;
@@ -90,7 +114,7 @@ class ParentInfo {
       firstName: data["firstName"],
       lastName: data["lastName"],
       profileUrl: data["profileUrl"],
-      surveyInbox: (data["surveyInbox"] ?? []).cast<String?>(),
+      surveyInbox: data["surveyInbox"] == null ? [] : List<ParentSurveyInbox>.from(data["surveyInbox"]!.map((x) => ParentSurveyInbox.fromJson(x))),
       childrens: (data["childrens"] ?? []).cast<String>(),
       inAppNotification: data['inAppNotification']??true,
       appUpdateNotification: data['appUpdateNotification']??true,
@@ -117,6 +141,7 @@ final parentProfileProvider = StreamProvider<ParentInfo>((ref) {
   return parentDoc.value?.snapshots().where((ev) => ev.exists).map(
             (v){
              ParentInfo parentInfo = ParentInfo.fromMap(v.data()!);
+              ref.read(parentSurveyInbox.notifier).state = parentInfo.surveyInbox;
               ref.read(favoriteActivityState.notifier).state = parentInfo.favoriteActivities;
                ref.refresh(favoriteActivityProvider);
              return parentInfo;
@@ -312,8 +337,10 @@ final updatedFavoriteActivityProvider =
 
 final myCurrentReportType = StateProvider<MenuType?>((ref) => null);
 final myChildClassroom = StateProvider<Classroom>((_) => Classroom.empty());
+final parentSurveyInbox = StateProvider<List<ParentSurveyInbox?>>((_) => []);
 final myCurrentChild = StateProvider<u.UserInfo?>((_) => null);
 final selectedLanguageProvider = StateProvider<String>((_) => "English");
+
 final previousIndexNavbarProvider = StateProvider<String>((_)=>'parent-home');
     final selectedCategoryProvider = StateProvider((String) => 'All');
   final filterProvider = StateProvider((_) => {});

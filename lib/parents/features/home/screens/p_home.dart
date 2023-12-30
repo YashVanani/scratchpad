@@ -9,6 +9,7 @@ import 'package:clarified_mobile/parents/features/widgets/p_bottombar.dart';
 import 'package:clarified_mobile/parents/models/dashboard.dart';
 import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
+import 'package:clarified_mobile/parents/models/survey_parent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -940,6 +941,7 @@ class ParentsHome extends ConsumerWidget {
                                           Navigator.pop(context);
                                           // _site = value;
                                         });
+                                        ref.refresh(surveyInboxParentProvider);
                                       },
                                     ),
                                   ],

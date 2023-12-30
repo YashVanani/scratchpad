@@ -5,11 +5,12 @@ import 'package:clarified_mobile/features/home/model/entry.dart';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/model/user.dart';
 import 'package:clarified_mobile/parents/models/parents.dart';
+import 'package:clarified_mobile/teachers/model/teacher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 @immutable
-class ParentSurvey {
+class TeacherSurvey {
   final String id;
   final String name;
   final String desc;
@@ -19,7 +20,7 @@ class ParentSurvey {
   final List<SurveyQuestion> questions;
   final List<String> purpose;
   final String imageUrl;
-  const ParentSurvey({
+  const TeacherSurvey({
     required this.id,
     required this.name,
     required this.desc,
@@ -31,8 +32,8 @@ class ParentSurvey {
     required this.imageUrl
   });
 
-  factory ParentSurvey.fromMap(Map<String, dynamic> data) {
-    return ParentSurvey(
+  factory TeacherSurvey.fromMap(Map<String, dynamic> data) {
+    return TeacherSurvey(
       id: data["id"],
       name: data["name"]??"",
       desc: data["desc"]??"",
@@ -48,30 +49,21 @@ class ParentSurvey {
   }
 }
 
-final surveyInboxParentProvider = StreamProvider((ref) {
+final surveyInboxTeacherProvider = StreamProvider((ref) {
   final schoolDoc = ref.watch(schoolDocProvider);
-  final userProfile = ref.watch(parentProfileProvider);
+  final userProfile = ref.watch(teacherProfileProvider);
 
   if (userProfile.value?.surveyInbox.isNotEmpty != true) {
-    return Stream<ParentSurvey?>.value(null);
+    return Stream<TeacherSurvey?>.value(null);
   }
-  List surveyId = [];
   if(ref.read(myCurrentChild.notifier).state?.id==null){
     ref.watch(userListProvider);
   }
- List<ParentSurveyInbox?>? survey = userProfile.value?.surveyInbox.where((element) => element?.studentId==ref.read(myCurrentChild.notifier).state?.id).toList();
-  print(survey);
-  print(ref.read(myCurrentChild.notifier).state?.id);
-  print("++++PARENT SURVEY+++");
-  for(ParentSurveyInbox? s in survey??[]){
-    surveyId.addAll(s?.inbox??[]);
-  }
-  print(surveyId);
-  if(surveyId.isNotEmpty){
+ 
   return schoolDoc
       .collection("surveys")
-      .where("id", whereIn: surveyId)
-      .where("type", isEqualTo: "parent")
+      .where("id", whereIn: ref.read(teacherSurveyInbox.notifier).state)
+      .where("type", isEqualTo: "teacher")
       .where("expiresAt", isGreaterThanOrEqualTo: Timestamp.now())
       .orderBy("expiresAt")
       .orderBy("startAt")
@@ -81,37 +73,35 @@ final surveyInboxParentProvider = StreamProvider((ref) {
     (rec) {
        print(rec.docs);
        print("++++SURVEY+++");
-      return rec.size != 1 ? null : ParentSurvey.fromMap(rec.docs.first.data());
+      return rec.size != 1 ? null : TeacherSurvey.fromMap(rec.docs.first.data());
     },
   );
-  }
-    return Stream<ParentSurvey?>.value(null);
-});
+ });
 
-class ProvidedAnswerParent {
+class ProvidedAnswerTeacher {
   final dynamic answer;
   final dynamic extra;
 
-  const ProvidedAnswerParent({
+  const ProvidedAnswerTeacher({
     required this.answer,
     required this.extra,
   });
 }
 
-final surveyAnswerSaverParentProviderParent =
-    AsyncNotifierProvider.autoDispose<SurveyAnswerSaverParent, void>(
-  SurveyAnswerSaverParent.new,
+final surveyAnswerSaverTeacherProviderTeacher =
+    AsyncNotifierProvider.autoDispose<SurveyAnswerSaverTeacher, void>(
+  SurveyAnswerSaverTeacher.new,
 );
 
-class SurveyAnswerSaverParent extends AutoDisposeAsyncNotifier<void> {
+class SurveyAnswerSaverTeacher extends AutoDisposeAsyncNotifier<void> {
   @override
   Future<void> build() async {
     // The logic we previously had in our FutureProvider is now in the build method.
   }
 
   Future<void> saveAnswer({
-    required ParentSurvey survey,
-    required Map<String, ProvidedAnswerParent> answers,
+    required TeacherSurvey survey,
+    required Map<String, ProvidedAnswerTeacher> answers,
     bool completed = false,
   }) async {
    try{

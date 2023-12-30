@@ -92,7 +92,6 @@ class PostCard extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            
                             post.user?.userType == 'student'
                     ? FutureBuilder(
                         future: getPostStudent(
@@ -123,6 +122,9 @@ class PostCard extends ConsumerWidget {
                         future: getPostTeacher(
                             post.user?.userId ?? "", 'parent', ref),
                         builder: (context, snapshot) {
+                          if(snapshot.hasError){
+                            print(snapshot.error.toString());
+                          }
                           if (snapshot.hasData) {
                             return Text(
                               (snapshot.data?.name) ?? '',

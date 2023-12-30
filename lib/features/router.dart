@@ -22,6 +22,7 @@ import 'package:clarified_mobile/parents/features/profile/screen/p_profile.dart'
 import 'package:clarified_mobile/parents/features/report/screen/p_report.dart';
 import 'package:clarified_mobile/parents/features/survey/screen/survey_parent_screen.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
+import 'package:clarified_mobile/teachers/features/home/t_home.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,6 +62,9 @@ String getInitialRoute(email) {
   }
    if(email.split('')[0].toUpperCase()=='S'){
     return "/";
+  }
+   if(email.split('')[0].toUpperCase()=='T'){
+    return "/t_home";
   }
   print(email.split('')[0].toUpperCase());
   return "/login";
@@ -293,6 +297,11 @@ GoRouter initRouter() {
         path: '/p_profile',
         name: "parents-profile",
         builder: (context, state) => ParentProfile(),
+      ),
+       GoRoute(
+        path: '/t_home',
+        name: "teachers-home",
+        builder: (context, state) => TeacherHomeScreen(),
       ),
     ],
   );

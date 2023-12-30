@@ -328,16 +328,17 @@ class _SPCheckerState extends ConsumerState<SPChecker> {
   bool isAvaliable = false;
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((a)=>getQuizAvailiable());
+    
+    super.initState();
+  }
+  void getQuizAvailiable(){
     for(var i in widget.items){
         if(!i.isCompleted){
           isAvaliable = true;
           ref.read(isQuizLevelAvaliable.notifier).state = true;
         }
     }
-    setState(() {
-      
-    });
-    super.initState();
   }
 
   @override

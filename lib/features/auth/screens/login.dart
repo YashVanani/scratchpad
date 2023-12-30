@@ -42,6 +42,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if (loginIdController.text.split('')[0].toUpperCase() == 'S') {
         GoRouter.of(context).goNamed("home");
       }
+       if (loginIdController.text.split('')[0].toUpperCase() == 'T') {
+        GoRouter.of(context).goNamed("teachers-home");
+      }
     } catch (e) {
       print(e);
       var snackBar = SnackBar(content: Text(e.toString()));

@@ -4,6 +4,7 @@ import 'package:clarified_mobile/consts/imageRes.dart';
 import 'package:clarified_mobile/features/home/model/entry.dart';
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
+import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:clarified_mobile/parents/models/survey_parent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -418,7 +419,7 @@ class SurveyCompletedParentPage extends StatelessWidget {
   }
 }
 
-class SurveyIntro extends StatelessWidget {
+class SurveyIntro extends ConsumerWidget {
   const SurveyIntro({
     super.key,
     required this.survey,
@@ -428,8 +429,10 @@ class SurveyIntro extends StatelessWidget {
   final Function onStartSurvey;
   final ParentSurvey? survey;
 
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+     final currentChild = ref.watch(myCurrentChild);
     return Scaffold(
       appBar: AppBar(
         title: Text(survey!.name),
@@ -446,27 +449,47 @@ class SurveyIntro extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),  
                               gradient: LinearGradient(colors: [purpleColor, blueColor], begin: Alignment.topLeft, end: Alignment.bottomRight),
                             ),
-                    padding: const EdgeInsets.only(bottom: 15, top: 5),
+                    padding: const EdgeInsets.only(bottom: 15, top: 15),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: purpleColor,
-                            backgroundImage: AssetImage(ImageRes.profileImage),
-                          ),
-                        ),
-                        SizedBox(width: 15),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Arjun Gupta", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold)),
-                              Text("Class VII B", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 12, color: greyTextColor)),
-                            ],
-                          ),
-                        ),
+                        SizedBox(width: 15,),
+                      CircleAvatar(
+                                     radius: 22,
+                                     backgroundColor: purpleColor,
+                                     backgroundImage:
+                                         NetworkImage(currentChild?.profileUrl??"",),
+                                   ),
+                                    const SizedBox(width: 15),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(currentChild?.name,
+                                              style: CommonStyle
+                                                  .lexendMediumStyle
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                          FutureBuilder(
+                                              future: getClassroom(
+                                                  currentChild?.currentClassId??"", ref),
+                                              builder: ((context, snapshot) => Text(
+                                                  snapshot.data?.name ?? "",
+                                                  style: CommonStyle
+                                                      .lexendMediumStyle
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 12,
+                                                          color:
+                                                              greyTextColor)))),
+                                        ],
+                                      ),
+                                    ),
+                                   
                        
                       ],
                     ),

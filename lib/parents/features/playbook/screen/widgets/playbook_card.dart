@@ -41,10 +41,30 @@ class PlayBookCard extends ConsumerWidget{
                   children: [
                     Text(playbook.title ?? "",
                         style: TextStyle(fontWeight: FontWeight.w500)),
-                      Row(children: [  InkWell(
-                          onTap: (){
-                            print("++++${playbook.id}");
-                            if( ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false){
+                      Row(children: [  
+                    //     InkWell(
+                    //       onTap: (){
+                    //         print("++++${playbook.id}");
+                    //         if( ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false){
+                              
+                    //           print("+++Re=mpved");
+                    //            ref.read(favoriteActivityState.notifier).state.remove(playbook.id);
+                    //         }else{
+                    //           print("+++ADDED");
+                    //            ref.read(favoriteActivityState.notifier).state.add(playbook.id??"");
+                    //         }
+                    //         ref.refresh(updatedFavoriteActivityProvider);
+                            
+                    //       },
+                    //       child: Icon(
+                    //   Icons.favorite,
+                    //   color:ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false?Colors.red: Colors.grey,
+                    // ),
+                    //     ),
+                        SizedBox(width: 10,),
+                    InkWell(
+                      onTap:(){
+                           if( ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false){
                               
                               print("+++Re=mpved");
                                ref.read(favoriteActivityState.notifier).state.remove(playbook.id);
@@ -54,16 +74,11 @@ class PlayBookCard extends ConsumerWidget{
                             }
                             ref.refresh(updatedFavoriteActivityProvider);
                             
-                          },
-                          child: Icon(
-                      Icons.favorite,
-                      color:ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false?Colors.red: Colors.grey,
-                    ),
-                        ),
-                        SizedBox(width: 10,),
-                    Icon(
+                      },
+                      child:Icon(
                       Icons.star,
-                      color:playbook.isActive??false?Colors.yellow: Colors.grey,
+                      color:ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false?Colors.yellow: Colors.grey,
+                    )
                     ),],)
                   ]),
             ),

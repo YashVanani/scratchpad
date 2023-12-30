@@ -1,5 +1,8 @@
+import 'package:clarified_mobile/consts/colors.dart';
+import 'package:clarified_mobile/consts/imageRes.dart';
 import 'package:clarified_mobile/features/home/model/entry.dart';
 import 'package:clarified_mobile/parents/models/survey_parent.dart';
+import 'package:clarified_mobile/teachers/model/survey.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -7,17 +10,16 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:flutter/material.dart';
 
-class SurveyCardParent extends ConsumerWidget {
-  const SurveyCardParent({super.key});
+class SurveyCardTeacher extends ConsumerWidget {
+  const SurveyCardTeacher({super.key});
 
   @override
   Widget build(BuildContext context, ref) {
-    final surveyData = ref.watch(surveyInboxParentProvider);
+    final surveyData = ref.watch(surveyInboxTeacherProvider);
     // return CircularProgressIndicator();
     return SizedBox(
       child: surveyData.when(
         data: (survey) {
-          print("+++++++++++SURVEY Parebt ${survey}");
           if (survey == null || survey.startAt.isAfter(DateTime.now())) {
             return Container(
               height: 112,
@@ -114,8 +116,8 @@ class SurveyCardParent extends ConsumerWidget {
                 begin: Alignment(0.00, -1.00),
                 end: Alignment(0, 1),
                 colors: [
-                  Color(0xFFF28181),
-                  Color(0xFFB84848),
+                  Color(0xFFFAE6A1),
+                  Color(0xFFFAE6A1),
                 ],
               ),
               shape: RoundedRectangleBorder(
@@ -139,8 +141,8 @@ class SurveyCardParent extends ConsumerWidget {
                       children: [
                         Text(
                           survey.name,
-                          style: const TextStyle(
-                            color: Color(0xFFF9FAFB),
+                          style: TextStyle(
+                            color: textMainColor,
                             fontSize: 20,
                             fontFamily: 'Lexend',
                             fontWeight: FontWeight.w600,
@@ -150,7 +152,7 @@ class SurveyCardParent extends ConsumerWidget {
                           survey.desc,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            color: Color(0xFFEAECF0),
+                            color: textMainColor,
                             fontSize: 12,
                             fontFamily: 'Lexend',
                             fontWeight: FontWeight.w400,
@@ -161,29 +163,50 @@ class SurveyCardParent extends ConsumerWidget {
                             height: double.infinity,
                           ),
                         ),
-                        Container(
-                          decoration: ShapeDecoration(
-                            color: Color.fromARGB(255, 245, 234, 199),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.watch_later_outlined,
+                              color: Color(0xFFA15B06),
                             ),
-                          ),
-                          child: TextButton(
-                            onPressed: () => GoRouter.of(context).pushNamed(
-                              "parent-survey-wizard",
-                              pathParameters: {"surveyId": survey.id},
-                              extra: survey,
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!.start_now,
+                            SizedBox(width: 6,),
+                            Text(
+                              'Available till : ${survey.endAt
+                                      .toString()
+                                      .substring(0, 10) ??
+                                  ''}',
                               style: TextStyle(
-                                color: Color(0xFF1D2939),
-                                fontSize: 14,
+                                color: Color(0xFFA15B06),
+                                fontSize: 12,
+                                fontFamily: 'Lexend',
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
-                          ),
+                          ],
                         )
+                        // Container(
+                        //   decoration: ShapeDecoration(
+                        //     color: Color.fromARGB(255, 245, 234, 199),
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(8),
+                        //     ),
+                        //   ),
+                        //   child: TextButton(
+                        //     onPressed: () => GoRouter.of(context).pushNamed(
+                        //       "parent-survey-wizard",
+                        //       pathParameters: {"surveyId": survey.id},
+                        //       extra: survey,
+                        //     ),
+                        //     child: Text(
+                        //       AppLocalizations.of(context)!.start_now,
+                        //       style: TextStyle(
+                        //         color: Color(0xFF1D2939),
+                        //         fontSize: 14,
+                        //         fontWeight: FontWeight.w400,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
@@ -195,29 +218,8 @@ class SurveyCardParent extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0, right: 16.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            SvgPicture.asset(
-                              "assets/svg/crown.svg",
-                              theme: const SvgTheme(
-                                currentColor: Color(0xFFFAC515),
-                              ),
-                            ),
-                            Text(
-                              "+${survey.reward} XP",
-                              style: const TextStyle(
-                                color: Color(0xFFF9FAFB),
-                                fontSize: 12,
-                                fontFamily: 'Lexend',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                          padding: const EdgeInsets.only(top: 8.0, right: 16.0),
+                          child: Image.asset(ImageRes.live)),
                       (survey.imageUrl != null &&
                               (survey.imageUrl?.isNotEmpty ?? false))
                           ? Image.network(
@@ -236,7 +238,7 @@ class SurveyCardParent extends ConsumerWidget {
         },
         error: (err, st) {
           print([err, st]);
-          return  Text(err.toString());
+          return Text(err.toString());
         },
         loading: () => const SizedBox(),
       ),
