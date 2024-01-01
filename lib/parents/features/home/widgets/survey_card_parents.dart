@@ -147,7 +147,7 @@ class SurveyCardParent extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          survey.desc,
+                          survey.cardDesc,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Color(0xFFEAECF0),

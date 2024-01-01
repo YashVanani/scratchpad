@@ -81,7 +81,7 @@ class Survey {
   final List<SurveyQuestion> questions;
   final String? thumbnail;
   final String? cardImage;
-
+  final String? cardDesc;
   const Survey({
     required this.id,
     required this.name,
@@ -92,6 +92,7 @@ class Survey {
     required this.questions,
     required this.thumbnail,
     required this.cardImage,
+    required this.cardDesc
   });
 
   factory Survey.fromMap(Map<String, dynamic> data) {
@@ -106,7 +107,8 @@ class Survey {
           .map<SurveyQuestion>((q) => SurveyQuestion.fromMap(q))
           .toList(),
       thumbnail: data['thumbnail']??"",
-      cardImage: data['card_image']??""
+      cardImage: data['card_image']??"",
+      cardDesc: data['card_desc']??""
     );
   }
 }

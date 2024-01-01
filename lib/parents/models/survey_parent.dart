@@ -19,6 +19,7 @@ class ParentSurvey {
   final List<SurveyQuestion> questions;
   final List<String> purpose;
   final String cardImage;
+  final String cardDesc;
   final String thumbnail;
   const ParentSurvey({
     required this.id,
@@ -30,7 +31,8 @@ class ParentSurvey {
     required this.questions,
     required this.purpose,
     required this.cardImage,
-    required this.thumbnail
+    required this.thumbnail,
+    required this.cardDesc
   });
 
   factory ParentSurvey.fromMap(Map<String, dynamic> data) {
@@ -46,7 +48,8 @@ class ParentSurvey {
           .toList(),
       purpose: (data["purpose"]??[]).cast<String>(),
       cardImage: data['card_image']??"",
-      thumbnail: data['thumbnail']??""
+      thumbnail: data['thumbnail']??"",
+      cardDesc: data['card_desc']??"",
     );
   }
 }
