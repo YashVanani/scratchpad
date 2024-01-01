@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 class SurveyWizardPage extends ConsumerStatefulWidget {
   final String surveyId;
   final Object? extraData;
@@ -190,6 +191,14 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                       ],
                     ),
                   ),
+                ),
+                ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount:ques.comparativeImage.length??0 ,
+                  itemBuilder: (context,index){
+                    return Image.network(ques.comparativeImage[index]??"",width: MediaQuery.of(context).size.width,height: 150,);
+                  },
                 ),
                 Expanded(
                   child: Padding(
@@ -502,18 +511,24 @@ class SurveyIntro extends StatelessWidget {
             children: [
               Expanded(
                 flex: 6,
-                child: Container(
-                  decoration:  BoxDecoration(
-                    image: (survey?.thumbnail?.isEmpty)??true? DecorationImage(
-                      image: AssetImage("assets/survey_bg.png"),
-                      fit: BoxFit.cover,
-                    ):DecorationImage(
-                      image:NetworkImage(survey?.thumbnail??""),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: const SizedBox(),
-                ),
+                child: CachedNetworkImage(
+          imageUrl: (survey?.thumbnail??"").replaceAll("'", '').replaceAll("'",''),
+          placeholder: (context, url) => CircularProgressIndicator(),
+          errorWidget: (context, url, error) =>  Text(url),
+        ),
+      
+                // child: Container(
+                //   decoration:  BoxDecoration(
+                //     image: (survey?.thumbnail?.isEmpty)??true? DecorationImage(
+                //       image: AssetImage("assets/survey_bg.png"),
+                //       fit: BoxFit.cover,
+                //     ):DecorationImage(
+                //       image:NetworkImage(survey?.thumbnail??""),
+                //       fit: BoxFit.cover,
+                //     ),
+                //   ),
+                //   child: const SizedBox(),
+                // ),
               ),
               Expanded(
                 flex: 5,

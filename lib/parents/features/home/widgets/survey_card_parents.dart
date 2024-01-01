@@ -218,10 +218,10 @@ class SurveyCardParent extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      (survey.imageUrl != null &&
-                              (survey.imageUrl?.isNotEmpty ?? false))
+                      (survey.cardImage != null &&
+                              (survey.cardImage?.isNotEmpty ?? false))
                           ? Image.network(
-                              survey.imageUrl ?? "",
+                              survey.cardImage ?? "",
                               height: 120,
                             )
                           : SvgPicture.asset(

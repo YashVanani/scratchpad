@@ -215,9 +215,15 @@ class SurveyCard extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      SvgPicture.asset(
-                        "assets/svg/survey_insight.svg",
-                      ),
+                       (survey.cardImage != null &&
+                              (survey.cardImage?.isNotEmpty ?? false))
+                          ? Image.network(
+                              survey.cardImage ?? "",
+                              height: 120,
+                            )
+                          : SvgPicture.asset(
+                              "assets/svg/survey_insight.svg",
+                            ),
                     ],
                   ),
                 ),

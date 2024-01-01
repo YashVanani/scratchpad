@@ -131,7 +131,7 @@ Future<bool> checkPeerSurveyExist(String surveyId, WidgetRef ref) async {
     try {
       QueryDocumentSnapshot data = await res.docs[0];
       var d = data.data();
-      peers = ((d as Map<String, dynamic>)['peerDone'] ?? []);
+      peers = ((d as Map<String, dynamic>)['recievedIds'] ?? []);
     } catch (e) {}
     ref.read(donePeerIdList.notifier).state = peers;
     ref.read(currentPeerSurveyId.notifier).state = res.docs[0].id;

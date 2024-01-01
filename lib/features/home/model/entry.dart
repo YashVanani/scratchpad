@@ -40,6 +40,7 @@ class SurveyQuestion {
   final QuestionType type;
   final List<SurveyAnswer> answers;
   final String? characterImg;
+  final List<String> comparativeImage;
 
   const SurveyQuestion({
     required this.id,
@@ -47,7 +48,8 @@ class SurveyQuestion {
     required this.type,
     required this.description,
     required this.answers,
-    required this.characterImg
+    required this.characterImg,
+    required this.comparativeImage
   });
 
   factory SurveyQuestion.fromMap(Map<String, dynamic> data) {
@@ -63,6 +65,7 @@ class SurveyQuestion {
       answers: (data["answers"] ?? [])
           .map<SurveyAnswer>((e) => SurveyAnswer.fromMap(e))
           .toList(),
+      comparativeImage: ( data['comparative_image']??[]).cast<String>(),
     );
   }
 }
@@ -77,6 +80,7 @@ class Survey {
   final DateTime endAt;
   final List<SurveyQuestion> questions;
   final String? thumbnail;
+  final String? cardImage;
 
   const Survey({
     required this.id,
@@ -86,7 +90,8 @@ class Survey {
     required this.startAt,
     required this.endAt,
     required this.questions,
-    required this.thumbnail
+    required this.thumbnail,
+    required this.cardImage,
   });
 
   factory Survey.fromMap(Map<String, dynamic> data) {
@@ -100,7 +105,8 @@ class Survey {
       questions: data["questions"]
           .map<SurveyQuestion>((q) => SurveyQuestion.fromMap(q))
           .toList(),
-      thumbnail: data['thumbnail']??""
+      thumbnail: data['thumbnail']??"",
+      cardImage: data['card_image']??""
     );
   }
 }
