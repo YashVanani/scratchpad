@@ -36,13 +36,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       setState(() {
       isLoading = false;
     });
-      if (loginIdController.text.split('')[0].toUpperCase() == 'P') {
+      if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'parent') {
         GoRouter.of(context).goNamed("parents-home");
       }
-      if (loginIdController.text.split('')[0].toUpperCase() == 'S') {
+      if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'student') {
         GoRouter.of(context).goNamed("home");
       }
-       if (loginIdController.text.split('')[0].toUpperCase() == 'T') {
+       if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'teacher') {
         GoRouter.of(context).goNamed("teachers-home");
       }
     } catch (e) {
