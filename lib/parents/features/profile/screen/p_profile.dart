@@ -50,8 +50,8 @@ class ParentProfile extends ConsumerWidget {
                 color: textMainColor),
           ),
           actions: [
-            IconButton(
-                onPressed: () {
+            InkWell(
+                onTap: () {
                   showDialog(
                       context: context,
                       builder: (ctx) {
@@ -77,9 +77,16 @@ class ParentProfile extends ConsumerWidget {
                         );
                       });
                 },
-                icon: const Icon(
-                  Icons.logout,
-                  color: Color(0xffF04438),
+                child: Row(
+                  children: [
+                    Text(AppLocalizations.of(context)!.logout,style: TextStyle(color:Color(0xffF04438), ),),
+                    SizedBox(width: 5,),
+                    const Icon(
+                      Icons.logout,
+                      color: Color(0xffF04438),
+                    ),
+                      SizedBox(width: 10,),
+                  ],
                 )),
           ],
         ),

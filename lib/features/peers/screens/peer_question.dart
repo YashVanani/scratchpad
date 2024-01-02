@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:clarified_mobile/consts/colors.dart';
 import 'package:clarified_mobile/features/peers/model/peers_model.dart';
 import 'package:clarified_mobile/features/peers/screens/peer_select.dart';
+import 'package:clarified_mobile/features/survey/screens/survey_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,10 +26,11 @@ class _PeerQuestionScreenState extends ConsumerState<PeerQuestionScreen> {
   late PeerManager questionSaver;
   bool isPeerExist = false;
   Map<String, Map<String, double>> answerMap = {};
-
+  bool isCompleted = false;
   List<double> value = [0, 0, 0];
   @override
   void initState() {
+     isCompleted = false;
     super.initState();
     questionSaver = ref.read(peerManagerProvider(
       (
@@ -58,127 +60,10 @@ class _PeerQuestionScreenState extends ConsumerState<PeerQuestionScreen> {
     );
 
     if (!lastQuestion) return;
-
-    await showModalBottomSheet(
-      context: context,
-      builder: (ctx) {
-        return FutureBuilder(
-          future: f,
-          builder: (ctxx, snap) {
-            if (snap.connectionState == ConnectionState.done) {
-              return Container(
-                padding: const EdgeInsets.only(
-                  top: 48,
-                  left: 24,
-                  right: 24,
-                  bottom: 24,
-                ),
-                clipBehavior: Clip.antiAlias,
-                decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(
-                      width: 112,
-                      height: 48,
-                      child: SvgPicture.asset("assets/svg/celebrate.svg"),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'GOOD JOB!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF2970FE),
-                        fontSize: 24,
-                        fontFamily: 'Lexend',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const SizedBox(
-                      height: 52,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Happy Learning',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFF344054),
-                              fontSize: 16,
-                              fontFamily: 'Lexend',
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          SizedBox(
-                            child: Text(
-                              'Resources for this lesson has unlocked.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFF667085),
-                                fontSize: 14,
-                                fontFamily: 'Lexend',
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        splashFactory: NoSplash.splashFactory,
-                        backgroundColor: const Color(0xFF04686E),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(ctxx).maybePop("finished");
-                      },
-                      child: const Text(
-                        "OK",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Lexend',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return const Dialog(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                    Text("Submitting Answers"),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    ).then((value) {
-      if (value == "finished") Navigator.of(context).maybePop();
+    setState(() {
+      isCompleted = true;
     });
+   
   }
 
   @override
@@ -189,7 +74,13 @@ class _PeerQuestionScreenState extends ConsumerState<PeerQuestionScreen> {
     final isLastQuestion =
         ((ques?.id ?? "") == (widget.peerSurvey?.questions?.last.id)) ?? true;
     List tempA = [];
-
+ if (isCompleted ) {
+      return SurveyCompletedPage(
+        survey: null,
+        isPeerExist: isPeerExist,
+      );
+    }
+    
     return Scaffold(
       body: SafeArea(
         child: SizedBox(

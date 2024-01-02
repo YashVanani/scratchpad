@@ -104,6 +104,7 @@
   "of_text": "OF",
   "thank_you": "Thank You!",
   "your_valuable_feedback_will_help_us": "Your valuable feedback will help us improve.",
+  "parents_feedback_message":"Your input is a precious step towards your child's well-being.",
   "go_to_home": "GO TO HOME",
   "survey_purpose": "Survey Purpose",
   "continue_text": "CONTINUE",
@@ -113,7 +114,7 @@
   "cancel": "Cancel",
   "open": "OPEN",
 
- "student_id": "Student ID",
+ "student_id": "User ID",
   "please_provide_id": "Please provide ID",
   "password": "Password",
   "please_password": "Please Password",
@@ -225,7 +226,7 @@
   "perfect": "PERFECT",
   "locked": "Locked",
   "unlocked": "Unlocked",
-  "unknown": "Unknown"
-
+  "unknown": "Unknown",
+  "contact_help":"Contact us for help"
 
 }

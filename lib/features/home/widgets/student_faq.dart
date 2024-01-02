@@ -3,6 +3,7 @@ import 'package:clarified_mobile/parents/models/faq.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 
 class StudentFAQPopUp extends StatefulWidget {
@@ -95,7 +96,7 @@ class _StudentFAQPopUpState extends State<StudentFAQPopUp> {
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 20),
                                     child: Text(
-                                      snapshot.data?.studentFaq?[index].question ?? "",
+                                      snapshot.data?.studentFaq?[index].answer ?? "",
                                       style: TextStyle(fontSize: 12, color: Color(0xff475467), fontWeight: FontWeight.w400),
                                     ),
                                   ),
@@ -168,7 +169,65 @@ class _StudentFAQPopUpState extends State<StudentFAQPopUp> {
                             });
                       }
                       return SizedBox();
-                    })
+                    }),
+             SizedBox(
+                  height: 10,
+                ),
+                Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () async{
+                                    launchUrl(Uri.parse('https://wa.link/uixak3'));
+                                  // if (loginFormKey.currentState?.validate() ==
+                                  //     true) {
+                                  //   attemptLogin();
+                                  // }
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 14,
+                                  ),
+                                  decoration: ShapeDecoration(
+                                    color: const Color(0xFF04686E),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    shadows: const [
+                                      BoxShadow(
+                                        color: Color(0x0C101828),
+                                        blurRadius: 2,
+                                        offset: Offset(0, 1),
+                                        spreadRadius: 0,
+                                      )
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: 
+                                     
+                                      Text(
+                                        // 'LOGIN',
+                                        AppLocalizations.of(context)!.contact_help,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontFamily: 'Lexend',
+                                          fontWeight: FontWeight.w400,
+                                          height: 0.09,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                     
               ],
             ),
           ),

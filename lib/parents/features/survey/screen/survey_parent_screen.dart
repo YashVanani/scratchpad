@@ -372,7 +372,7 @@ class SurveyCompletedParentPage extends StatelessWidget {
               TextSpan(
                 children: [
                    TextSpan(
-                    text: AppLocalizations.of(context)!.your_valuable_feedback_will_help_us,
+                    text: AppLocalizations.of(context)!.parents_feedback_message,
                     style: TextStyle(
                       color: Color(0xFF1D2939),
                       fontSize: 14,

@@ -48,21 +48,21 @@ class Playbook {
     });
 
     factory Playbook.fromJson(Map<String, dynamic> json) => Playbook(
-        desc: json["desc"],
-        action: json["actions"],
-        goals: json["goals"],
-        effortLevel: json["effortLevel"],
+        desc: json["desc"]??"",
+        action: json["actions"]??"",
+        goals: json["goals"]??"",
+        effortLevel: json["effortLevel"]??"",
         materialList: json["materialList"] == null ? [] : List<MaterialList>.from(json["materialList"]!.map((x) => MaterialList.fromJson(x))),
-        activityMaterialDesc: json["activityMaterialDesc"],
-        title: json["title"],
-        isActive: json["isActive"],
+        activityMaterialDesc: json["activityMaterialDesc"]??"",
+        title: json["title"]??"",
+        isActive: json["isActive"]??true,
         focusAreas: json["focusAreas"] == null ? [] : List<String>.from(json["focusAreas"]!.map((x) => x)),
-        activityMaterialUrl: json["activityMaterialUrl"],
-        videoUrl: json["videoUrl"],
-        domain: json["domain"],
-        stages: json["stages"],
-        id: json["id"],
-        categories: json["categories"],
+        activityMaterialUrl: json["activityMaterialUrl"]??"",
+        videoUrl: json["videoUrl"]??"",
+        domain: "",
+        stages: "",
+        id: json["id"]??"",
+        categories: json["categories"]??"",
         whyThisWorks:json['whyThisWorks']??""
     );
 
@@ -129,7 +129,10 @@ final playbookProvider = StreamProvider<List<Playbook>>((ref) {
 
   return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
             (v) => v.docs
-                .map((doc) => Playbook.fromJson(doc.data()))
+                .map((doc){
+                  print(doc.id);
+                  return Playbook.fromJson(doc.data());
+                })
                 .toList(),
           ) ??
       const Stream.empty();

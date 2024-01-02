@@ -133,7 +133,17 @@ Future<bool> checkPeerSurveyExist(String surveyId, WidgetRef ref) async {
       var d = data.data();
       peers = ((d as Map<String, dynamic>)['recievedIds'] ?? []);
     } catch (e) {}
-    ref.read(donePeerIdList.notifier).state = peers;
+      Map<String, int> idCount = Map();
+  for (String id in peers) {
+    idCount[id] = (idCount[id] ?? 0) + 1;
+  }
+
+  // Filter IDs that are present less than 3 times
+  List<String> result = idCount.entries
+      .where((entry) => entry.value >= 3)
+      .map((entry) => entry.key)
+      .toList();
+    ref.read(donePeerIdList.notifier).state = result;
     ref.read(currentPeerSurveyId.notifier).state = res.docs[0].id;
     return true;
   }

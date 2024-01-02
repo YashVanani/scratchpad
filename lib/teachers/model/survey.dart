@@ -142,7 +142,7 @@ class SurveyAnswerSaverTeacher extends AutoDisposeAsyncNotifier<void> {
 
       print("+AAASSaaaaaasqqqqA ${survey.id}");
      ref.read(parentSurveyInbox.notifier).state.removeWhere((element) => (element?.inbox?.contains(survey.id))??false);
-    print( ref.read(parentSurveyInbox.notifier).state[0]);
+   
     return FirebaseFirestore.instance.runTransaction((trx) async {
      trx.set(answerDoc, data, answerOpt).update(userDoc.value!, {
         "surveyInbox": ref.read(parentSurveyInbox.notifier).state.map((e) => e?.toJson()),

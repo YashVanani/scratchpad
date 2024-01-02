@@ -32,8 +32,8 @@ class SubjectItem extends StatelessWidget {
     return Container(
       clipBehavior: Clip.antiAlias,
       padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 20,
+        horizontal: 8,
+        vertical: 15,
       ),
       decoration: ShapeDecoration(
         color: theme.bg,
@@ -64,35 +64,33 @@ class SubjectItem extends StatelessWidget {
         },
         child: Column(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Expanded(
-              child: SizedBox.square(
-                child: Container(
-                  decoration: ShapeDecoration(
-                    color: theme.border,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+            SizedBox.square(
+              child: Container(
+             
+                decoration: ShapeDecoration(
+                  color: theme.border,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: SvgPicture.asset(
-                    "assets/svg/subjects/science.svg",
-                    fit: BoxFit.contain,
-                  ),
+                ),
+                child: SvgPicture.asset(
+                  "assets/svg/subjects/science.svg",
+                     height: 25,
+                width: 25,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
             Text(
               subject.name
-                  .substring(
-                    0,
-                    subject.name.length > 7 ? 7 : subject.name.length,
-                  )
+                  
                   .toUpperCase(),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFF1D2939),
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w400,
               ),
             ),

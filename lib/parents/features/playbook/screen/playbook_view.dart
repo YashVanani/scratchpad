@@ -221,7 +221,7 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
 
                           return SizedBox();
                         }).toList(),
-                    error: (e, st) => [SizedBox()],
+                    error: (e, st) => [Text(st.toString())],
                     loading: () => [CircularProgressIndicator()])
               ]),
             )

@@ -11,6 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
 class SurveyWizardPage extends ConsumerStatefulWidget {
   final String surveyId;
   final Object? extraData;
@@ -30,22 +31,19 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
   int currentQuesIndex = -1;
   bool isCompleted = false;
   final Map<String, ProvidedAnswer> answers = {};
-   bool isPeerExist = false;
+  bool isPeerExist = false;
 
   @override
   void initState() {
     super.initState();
     survey = widget.extraData as Survey;
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => setPeerSurvey());
-     
-  }
- void setPeerSurvey()async{
-    isPeerExist = await checkPeerSurveyExist(widget.surveyId,ref);
-    print("++++PEER++${isPeerExist}");
+    WidgetsBinding.instance.addPostFrameCallback((_) => setPeerSurvey());
   }
 
- 
+  void setPeerSurvey() async {
+    isPeerExist = await checkPeerSurveyExist(widget.surveyId, ref);
+    print("++++PEER++${isPeerExist}");
+  }
 
   void saveCurrentAnswers(bool lastQuestion) async {
     final f = ref.read(surveyAnswerSaverProvider.notifier).saveAnswer(
@@ -88,10 +86,17 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isCompleted ) {
-      return SurveyCompletedPage(survey: survey,isPeerExist: isPeerExist,);
+    if (isCompleted && !isPeerExist) {
+      return SurveyCompletedPage(
+        survey: survey,
+        isPeerExist: isPeerExist,
+      );
     }
-   
+     if (isCompleted && isPeerExist) {
+      return PeerIntroScreen(
+      );
+    }
+
     if (currentQuesIndex < 0) {
       return SurveyIntro(
         survey: survey,
@@ -99,7 +104,8 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
       );
     } else {
       final ques = survey!.questions[currentQuesIndex];
-      final tanswers = ques.answers.map((e) => (id: e.id, label: e.label)).toList();
+      final tanswers =
+          ques.answers.map((e) => (id: e.id, label: e.label)).toList();
       final isLastQuestion = ques.id == survey!.questions.last.id;
 
       return Scaffold(
@@ -126,7 +132,8 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                     vertical: 10,
                   ),
                   child: LinearProgressIndicator(
-                    value: (currentQuesIndex + 1) / (survey?.questions.length ?? 1),
+                    value: (currentQuesIndex + 1) /
+                        (survey?.questions.length ?? 1),
                     color: const Color(0xFF2970FE),
                   ),
                 ),
@@ -195,9 +202,13 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount:ques.comparativeImage.length??0 ,
-                  itemBuilder: (context,index){
-                    return Image.network(ques.comparativeImage[index]??"",width: MediaQuery.of(context).size.width,height: 150,);
+                  itemCount: ques.comparativeImage.length ?? 0,
+                  itemBuilder: (context, index) {
+                    return Image.network(
+                      ques.comparativeImage[index] ?? "",
+                      width: MediaQuery.of(context).size.width,
+                      height: 150,
+                    );
                   },
                 ),
                 Expanded(
@@ -210,7 +221,9 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                             onAnswerSelected: (answerId) => setState(() {
                               answers[ques.id] = ProvidedAnswer(
                                 answer: answerId,
-                                extra: ques.answers.firstWhere((f) => f.id == answerId).value,
+                                extra: ques.answers
+                                    .firstWhere((f) => f.id == answerId)
+                                    .value,
                               );
                             }),
                           )
@@ -249,8 +262,10 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                                 : ques.type == QuestionType.slider_v
                                     ? SliderVAnsewrComponent(
                                         answers: tanswers,
-                                        selectedAnswer: answers[ques.id]?.answer,
-                                        onAnswerSelected: (answerId) => setState(
+                                        selectedAnswer:
+                                            answers[ques.id]?.answer,
+                                        onAnswerSelected: (answerId) =>
+                                            setState(
                                           () {
                                             answers[ques.id] = ProvidedAnswer(
                                               answer: answerId,
@@ -261,10 +276,13 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                                       )
                                     : ques.type == QuestionType.boolean
                                         ? BoolAnsewrComponent(
-                                            selectedAnswer: answers[ques.id]?.answer,
-                                            onAnswerSelected: (answerId, comment) => setState(
+                                            selectedAnswer:
+                                                answers[ques.id]?.answer,
+                                            onAnswerSelected:
+                                                (answerId, comment) => setState(
                                               () {
-                                                answers[ques.id] = ProvidedAnswer(
+                                                answers[ques.id] =
+                                                    ProvidedAnswer(
                                                   answer: answerId,
                                                   extra: comment,
                                                 );
@@ -273,10 +291,13 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                                           )
                                         : BoolAnsewrComponent(
                                             hasComment: true,
-                                            selectedAnswer: answers[ques.id]?.answer,
-                                            onAnswerSelected: (answerId, comment) => setState(
+                                            selectedAnswer:
+                                                answers[ques.id]?.answer,
+                                            onAnswerSelected:
+                                                (answerId, comment) => setState(
                                               () {
-                                                answers[ques.id] = ProvidedAnswer(
+                                                answers[ques.id] =
+                                                    ProvidedAnswer(
                                                   answer: answerId,
                                                   extra: comment,
                                                 );
@@ -324,8 +345,11 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                       ),
                       SizedBox(
                         height: 60,
-                        width:60,
-                        child: Image.network(ques.characterImg??"",fit: BoxFit.cover,),
+                        width: 60,
+                        child: Image.network(
+                          ques.characterImg ?? "",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
@@ -342,7 +366,8 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                         onPressed: () {
                           if (answers[ques.id]?.answer == null) {
                             Fluttertoast.showToast(
-                              msg: AppLocalizations.of(context)!.please_select_an_answer,
+                              msg: AppLocalizations.of(context)!
+                                  .please_select_an_answer,
                             );
                             return;
                           }
@@ -357,7 +382,9 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                         child: Row(
                           children: [
                             Text(
-                              isLastQuestion ? AppLocalizations.of(context)!.submit : AppLocalizations.of(context)!.next,
+                              isLastQuestion
+                                  ? AppLocalizations.of(context)!.submit
+                                  : AppLocalizations.of(context)!.next,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -397,11 +424,8 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
 }
 
 class SurveyCompletedPage extends StatelessWidget {
-  const SurveyCompletedPage({
-    super.key,
-    required this.survey,
-    required this.isPeerExist
-  });
+  const SurveyCompletedPage(
+      {super.key, required this.survey, required this.isPeerExist});
 
   final Survey? survey;
   final bool isPeerExist;
@@ -425,7 +449,7 @@ class SurveyCompletedPage extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Text.rich(
+            survey!=null?Text.rich(
               TextSpan(
                 children: [
                   TextSpan(
@@ -438,7 +462,8 @@ class SurveyCompletedPage extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: '${survey?.startAt.add(Duration(days: 1)).isAfter(DateTime.now()) ?? false ? survey?.reward : ((survey?.reward ?? 0) * 0.5).toInt()} ${AppLocalizations.of(context)!.xp}',
+                    text:
+                        '${survey?.startAt.add(Duration(days: 1)).isAfter(DateTime.now()) ?? false ? survey?.reward : ((survey?.reward ?? 0) * 0.5).toInt()} ${AppLocalizations.of(context)!.xp}',
                     style: const TextStyle(
                       color: Color(0xFFFEC84B),
                       fontSize: 18,
@@ -449,7 +474,7 @@ class SurveyCompletedPage extends StatelessWidget {
                 ],
               ),
               textAlign: TextAlign.center,
-            ),
+            ):SizedBox(),
             const Expanded(child: SizedBox()),
             OutlinedButton(
               style: OutlinedButton.styleFrom(
@@ -464,14 +489,9 @@ class SurveyCompletedPage extends StatelessWidget {
                 elevation: 3,
               ),
               onPressed: () {
-                
-                if(isPeerExist){
-        Navigator.pop(context);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>PeerIntroScreen()));
-      }else{
-        GoRouter.of(context).goNamed("home");
-      }
-              },
+               
+                 Navigator.pop(context);
+                             },
               child: Text(
                 AppLocalizations.of(context)!.go_to_home,
                 style: TextStyle(
@@ -512,11 +532,13 @@ class SurveyIntro extends StatelessWidget {
               Expanded(
                 flex: 6,
                 child: CachedNetworkImage(
-          imageUrl: (survey?.thumbnail??"").replaceAll("'", '').replaceAll("'",''),
-          placeholder: (context, url) => CircularProgressIndicator(),
-          errorWidget: (context, url, error) =>  Text(url),
-        ),
-      
+                  imageUrl: (survey?.thumbnail ?? "")
+                      .replaceAll("'", '')
+                      .replaceAll("'", ''),
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Text(url),
+                ),
+
                 // child: Container(
                 //   decoration:  BoxDecoration(
                 //     image: (survey?.thumbnail?.isEmpty)??true? DecorationImage(
@@ -602,7 +624,8 @@ class SurveyIntro extends StatelessWidget {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: AppLocalizations.of(context)!.complete_and_get,
+                                    text: AppLocalizations.of(context)!
+                                        .complete_and_get,
                                     style: TextStyle(
                                       color: Color(0xFF344054),
                                       fontSize: 16,

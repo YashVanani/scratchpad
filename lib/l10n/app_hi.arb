@@ -114,7 +114,7 @@
   "open": "खुला",
   "post_lesson_doubt": "पोस्ट पाठ संदेह",
 
-  "student_id": "स्टूडेंट आईडी",
+  "student_id": "उपयोगकर्ता आईडी",
   "please_provide_id": "कृपया आईडी प्रदान करें",
   "password": "पासवर्ड",
   "please_password": "कृपया पासवर्ड डालें",
@@ -226,5 +226,9 @@
   "perfect": "उत्तम",
   "locked": "बंद",
   "unlocked": "अनलॉक केले",
-  "unknown": "अज्ञात"
+  "unknown": "अज्ञात",
+  "parents_feedback_message":"आपका इनपुट आपके बच्चे की भलाई की दिशा में एक अनमोल कदम है।",
+
+  "contact_help":"सहायता के लिए हमसे संपर्क करें"
+  
 }
