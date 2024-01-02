@@ -43,3 +43,4 @@ final schoolProvider = FutureProvider((ref) async {
       .get()
       .then((value) => School.fromMap(value.data()!));
 });
+
