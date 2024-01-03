@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/parents/features/playbook/screen/playbook_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,12 +23,12 @@ class Playbook {
     List<String>? focusAreas;
     String? activityMaterialUrl;
     String? videoUrl;
-    String? domain;
-    String? stages;
+    List<String>? domain;
+    List<String>? stages;
     String? id;
     String? categories;
     String? whyThisWorks;
-
+    String? type;
     Playbook({
         this.desc,
         this.action,
@@ -44,7 +45,8 @@ class Playbook {
         this.stages,
         this.id,
         this.categories,
-        this.whyThisWorks
+        this.whyThisWorks,
+        this.type
     });
 
     factory Playbook.fromJson(Map<String, dynamic> json) => Playbook(
@@ -59,11 +61,12 @@ class Playbook {
         focusAreas: json["focusAreas"] == null ? [] : List<String>.from(json["focusAreas"]!.map((x) => x)),
         activityMaterialUrl: json["activityMaterialUrl"]??"",
         videoUrl: json["videoUrl"]??"",
-        domain: "",
-        stages: "",
+        domain: json["domain"] == null ? [] : List<String>.from(json["domain"]!.map((x) => x)),
+        stages: json["stages"] == null ? [] : List<String>.from(json["stages"]!.map((x) => x)),
         id: json["id"]??"",
         categories: json["categories"]??"",
-        whyThisWorks:json['whyThisWorks']??""
+        whyThisWorks:json['whyThisWorks']??"",
+        type: json['type']??''
     );
 
     Map<String, dynamic> toJson() => {
@@ -109,6 +112,39 @@ class MaterialList {
         "url": url,
     };
 }
+Categories categoriesFromJson(String str) => Categories.fromJson(json.decode(str));
+
+String categoriesToJson(Categories data) => json.encode(data.toJson());
+
+class Categories {
+    List<String>? academics;
+    List<String>? sew;
+    List<String>? classroomClimate;
+    List<String>? LifeSkills;
+    List<String>? Behaviour;
+
+    Categories({
+        this.academics,
+        this.sew,
+        this.classroomClimate,
+        this.Behaviour,
+        this.LifeSkills
+    });
+
+    factory Categories.fromJson(Map<String, dynamic> json) => Categories(
+        academics: json["Academics"] == null ? [] : List<String>.from(json["Academics"]!.map((x) => x)),
+        sew: json["SEW"] == null ? [] : List<String>.from(json["SEW"]!.map((x) => x)),
+        classroomClimate: json["ClassroomClimate"] == null ? [] : List<String>.from(json["ClassroomClimate"]!.map((x) => x)),
+        Behaviour: json["Behaviour"] == null ? [] : List<String>.from(json["Behaviour"]!.map((x) => x)),
+        LifeSkills: json["Life Skills"] == null ? [] : List<String>.from(json["Life Skills"]!.map((x) => x)),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "Academics": academics == null ? [] : List<dynamic>.from(academics!.map((x) => x)),
+        "SEW": sew == null ? [] : List<dynamic>.from(sew!.map((x) => x)),
+        "Classroom Climate": classroomClimate == null ? [] : List<dynamic>.from(classroomClimate!.map((x) => x)),
+    };
+}
 
 final userProvider = StreamProvider(
   (ref) => FirebaseAuth.instance.authStateChanges(),
@@ -131,8 +167,9 @@ final playbookProvider = StreamProvider<List<Playbook>>((ref) {
             (v) => v.docs
                 .map((doc){
                   print(doc.id);
+                  if(doc.data()['type']=='parent'){}
                   return Playbook.fromJson(doc.data());
-                })
+                }).where((element) => element.type=='parent')
                 .toList(),
           ) ??
       const Stream.empty();
@@ -150,15 +187,24 @@ final playbookSearchProvider = StreamProvider<List<Playbook>>((ref,) {
   ) ?? const Stream.empty();
 });
 
-final playbookCategoryProvider =StreamProvider<List<String>>((ref) {
-  final playbookDocs = ref.watch(playbookColProvider);
+final playbookCategoryProvider =StreamProvider<Categories>((ref) {
+  try{
+      final playbookDocs = ref.watch(playbookColProvider);
+  final baseDoc = ref.watch(schoolDocProvider);
 
-  return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
-            (v) => v.docs
-                .map((doc) => Playbook.fromJson(doc.data()).categories??"").toSet()
-                .toList(),
-          ) ??
-      const Stream.empty();
+  return baseDoc
+      .collection("config")
+      .doc("playbook")
+      .get().then((value){
+        print(value.data());
+        return Categories.fromJson(value.data()?['categories'] as Map<String, dynamic>);
+      }).asStream();
+      
+  }catch(e){
+
+    return  const Stream.empty();
+  }
+ 
 });
 
 final playbookDomainProvider =StreamProvider<List<String>>((ref) {
@@ -166,7 +212,7 @@ final playbookDomainProvider =StreamProvider<List<String>>((ref) {
 
   return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
             (v) => v.docs
-                .map((doc) => Playbook.fromJson(doc.data()).domain??"").toSet()
+                .map((doc) => Playbook.fromJson(doc.data()).domain??[]).expand((list) => list).toList().toSet()
                 .toList(),
           ) ??
       const Stream.empty();
@@ -177,7 +223,7 @@ final playbookDevelopStageProvider =StreamProvider<List<String>>((ref) {
 
   return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
             (v) => v.docs
-                .map((doc) => Playbook.fromJson(doc.data()).stages??"").toSet()
+                .map((doc) => Playbook.fromJson(doc.data()).stages??[]).expand((list) => list).toList().toSet()
                 .toList(),
           ) ??
       const Stream.empty();

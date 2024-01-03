@@ -39,8 +39,12 @@ class PlayBookCard extends ConsumerWidget{
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(playbook.title ?? "",
-                        style: TextStyle(fontWeight: FontWeight.w500)),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width*0.6,
+                      child: Text(playbook.title ?? "",
+                          maxLines: 2,
+                          style: TextStyle(fontWeight: FontWeight.w500)),
+                    ),
                       Row(children: [  
                     //     InkWell(
                     //       onTap: (){
@@ -97,16 +101,23 @@ class PlayBookCard extends ConsumerWidget{
                     EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Focus area",
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
-                    Row(
-                      children: [
-                        ...(playbook.focusAreas??[]).take(2).map((e) => Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text(e,style: TextStyle(fontSize: 12),))).toList(),
-                        ((playbook.focusAreas??[]).length - 2)!=0?Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text('+${(playbook.focusAreas??[]).length - 2}')):SizedBox(),
-                    ],)
+                    SizedBox(
+                       width: MediaQuery.of(context).size.width*0.59,
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        runSpacing: 5,
+                        spacing: 5,
+                        children: [
+                          ...(playbook.focusAreas??[]).take(2).map((e) => Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text(e,style: TextStyle(fontSize: 12),))).toList(),
+                          ((playbook.focusAreas??[]).length - 2)!=0?Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text('+${(playbook.focusAreas??[]).length - 2}')):SizedBox(),
+                      ],),
+                    )
                   ],
                 )),
                 Padding(

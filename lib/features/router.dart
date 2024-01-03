@@ -57,16 +57,15 @@ String getInitialRoute(email) {
    String email =  FirebaseAuth.instance.currentUser?.email??"";
      print("++++++++++>>>GET>>${email}");
    // final authWatcher = _authStateChanged();
-  if(email.split('')[0].toUpperCase()=='P'){
+   if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'parent') {
     return "/p_home";
   }
-   if(email.split('')[0].toUpperCase()=='S'){
+  if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'student') {
     return "/";
   }
-   if(email.split('')[0].toUpperCase()=='T'){
+  if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'teacher') {
     return "/t_home";
   }
-  print(email.split('')[0].toUpperCase());
   return "/login";
   }catch(e){
     print("++++++++++>>>>>$e");

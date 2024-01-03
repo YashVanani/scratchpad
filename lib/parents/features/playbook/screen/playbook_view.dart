@@ -97,6 +97,7 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
 
                       if (res != null) {
                         ref.read(filterProvider.notifier).state = {'domain': res[0], 'developmentalStage': res[1], 'effort': res[2]};
+                        ref.refresh(playbookCategoryProvider);
                       }
                     },
                     child: Container(
@@ -119,10 +120,42 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
             ),
             category.when(
                 data: (e) {
-                  if (!e.contains('All')) {
-                    e.add("All");
+                  print("+++CATEGORY LOADED${filter['domain']} ${e.academics?.length}");
+                  List<String> list = [];
+                  if(filter['domain']==null || filter['domain']=='All'){
+                    list = (e.academics??[]);
+                    list.addAll(e.sew??[]);
+                    list.addAll(e.classroomClimate??[]);
+                      list.add("All");
+                   list= list.toSet().toList();
                   }
-                  e.sort((a, b) => a.compareTo(b));
+                  if(filter['domain']=='Academics'){
+                    list = (e.academics??[]);
+                    list.add("All");
+                   list= list.toSet().toList();
+                  }
+                  if(filter['domain']=='Life Skills'){
+                     list = (e.LifeSkills??[]);
+                    list.add("All");
+                   list= list.toSet().toList();
+                  }
+                  if(filter['domain']=='Behaviour'){
+                     list = (e.Behaviour??[]);
+                    list.add("All");
+                   list= list.toSet().toList();
+                  }
+                   if(filter['domain']=='SEW'){
+                    list = (e.sew??[]);
+                    list.add("All");
+                   list= list.toSet().toList();
+                  }
+                  print("+++DOMAIN $filter['domain']");
+                   if(filter['domain']=='Classroom Climate'){
+                    list = (e.classroomClimate??[]);
+                    list.add("All");
+                   list= list.toSet().toList();
+                  }
+                  list.sort((a, b) => a.compareTo(b));
                   return Container(
                     height: 60,
                     width: MediaQuery.of(context).size.width + 20,
@@ -134,25 +167,25 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
                           children: [
                             InkWell(
                               onTap: () {
-                                ref.read(selectedCategoryProvider.notifier).state = e[index];
+                                ref.read(selectedCategoryProvider.notifier).state = list[index];
                               },
                               child: Container(
                                 margin: EdgeInsets.only(left: 10),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: e[index] == selectedCategory ? Color(0xff04686E) : Colors.black, width: 1),
-                                    color: e[index] == selectedCategory ? Color(0xff04686E) : Colors.white),
+                                    border: Border.all(color: list[index] == selectedCategory ? Color(0xff04686E) : Colors.black, width: 1),
+                                    color: list[index] == selectedCategory ? Color(0xff04686E) : Colors.white),
                                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                 child: Text(
-                                  e[index],
-                                  style: TextStyle(color: e[index] == selectedCategory ? Colors.white : Colors.black),
+                                  list[index],
+                                  style: TextStyle(color: list[index] == selectedCategory ? Colors.white : Colors.black),
                                 ),
                               ),
                             ),
                           ],
                         );
                       },
-                      itemCount: e.length,
+                      itemCount: list.length,
                     ),
                   );
                 },
@@ -173,13 +206,13 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
                             ]
                           : u.map((e) {
                               if (filter['domain'] == null) {
-                                return (e.categories == selectedCategory || selectedCategory == 'All')
+                                return (e.focusAreas?.contains(selectedCategory)??false  || selectedCategory == 'All')
                                     ? PlayBookCard(
                                         playbook: e,
                                       )
                                     : SizedBox();
                               } else {
-                                return (e.categories == selectedCategory || selectedCategory == 'All') &&
+                                return (e.focusAreas?.contains(selectedCategory)??false  || selectedCategory == 'All') &&
                                         (e.domain == filter['domain'] || filter['domain'] == 'All') &&
                                         (e.stages == filter['developmentalStage'] || filter['developmentalStage'] == 'All') &&
                                         (e.effortLevel == filter['effort'] || filter['effort'] == 'All')
@@ -202,14 +235,16 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
               child: ListView(shrinkWrap: true, physics: NeverScrollableScrollPhysics(), children: [
                 ...playbook.when(
                     data: (u) => u.map((e) {
-                          if (filter['domain'] == null) {
-                            return (e.categories == selectedCategory || selectedCategory == 'All')
+                      print("+++SELECTED CATEGORY ${selectedCategory} ${e.focusAreas?.contains(selectedCategory)}");
+                      e.focusAreas?.map((e) => print(e));
+                          if (filter['domain'] == null || filter['domain'] == 'All') {
+                            return ((e.focusAreas?.contains(selectedCategory)??true) || selectedCategory == 'All')
                                 ? PlayBookCard(
                                     playbook: e,
                                   )
                                 : SizedBox();
                           } else {
-                            return (e.categories == selectedCategory || selectedCategory == 'All') &&
+                            return ((e.focusAreas?.contains(selectedCategory)??false ) || selectedCategory == 'All') ||
                                     (e.domain == filter['domain'] || filter['domain'] == 'All') &&
                                     (e.stages == filter['developmentalStage'] || filter['developmentalStage'] == 'All') &&
                                     (e.effortLevel == filter['effort'] || filter['effort'] == 'All')

@@ -112,8 +112,10 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
                         AppLocalizations.of(context)!.developmental_stage,
                         style: TextStyle(fontWeight: FontWeight.w500),
                       ),
-                      Text(
-                        widget.playbook.stages ?? "",
+                      Row(
+                        children: widget.playbook.stages?.map((e)=>Text(
+                        e ?? "",
+                      )).toList()??[],
                       ),
                     ],
                   )),
