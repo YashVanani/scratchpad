@@ -348,6 +348,9 @@ class ParentProfile extends ConsumerWidget {
                                         .value
                                         ?.childrens ??
                                     [],
+                                token: ref
+                                        .read(parentProfileProvider)
+                                        .value?.token??"",    
                                 inAppNotification: ref
                                         .read(parentProfileProvider)
                                         .value
@@ -561,6 +564,7 @@ class ParentProfile extends ConsumerWidget {
             firstName: nameController.text,
             lastName: lastNameController.text,
             email: emailController.text,
+            token: ref.read(parentProfileProvider).value?.token??"",
             profileUrl: rres,
             surveyInbox:
                 ref.read(parentProfileProvider).value?.surveyInbox ?? [],
@@ -589,6 +593,7 @@ class ParentProfile extends ConsumerWidget {
             firstName: nameController.text,
             lastName: lastNameController.text,
             email: emailController.text,
+             token: ref.read(parentProfileProvider).value?.token??"",
             profileUrl: rres,
             surveyInbox:
                 ref.read(parentProfileProvider).value?.surveyInbox ?? [],

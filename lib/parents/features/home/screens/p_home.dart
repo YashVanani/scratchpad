@@ -442,7 +442,7 @@ class ParentsHome extends ConsumerWidget {
                                     );
                                   }),
                             ),
-                        error: (e, j) => SizedBox(),
+                        error: (e, j) => Text("No Dashboards"),
                         loading: () => SizedBox()),
                     const SizedBox(height: 20),
                     Container(

@@ -86,6 +86,7 @@ class ParentInfo {
   final List<String> favoriteActivities;
   final bool inAppNotification;
   final bool appUpdateNotification;
+  final String token;
   const ParentInfo({
     required this.id,
     required this.firstName,
@@ -97,6 +98,7 @@ class ParentInfo {
     required this.appUpdateNotification,
     required this.inAppNotification,
     required this.favoriteActivities,
+    required this.token
   });
 
   get name {
@@ -111,9 +113,10 @@ class ParentInfo {
     return ParentInfo(
       id: data['id'],
       email: data["email"] ?? "noemail-provide@platform.com",
-      firstName: data["firstName"],
-      lastName: data["lastName"],
-      profileUrl: data["profileUrl"],
+      firstName: data["firstName"]??"",
+      lastName: data["lastName"]??"",
+      profileUrl: data["profileUrl"]??"",
+      token: data['token']??"",
       surveyInbox: data["surveyInbox"] == null ? [] : List<ParentSurveyInbox>.from(data["surveyInbox"]!.map((x) => ParentSurveyInbox.fromJson(x))),
       childrens: (data["childrens"] ?? []).cast<String>(),
       inAppNotification: data['inAppNotification']??true,
@@ -241,7 +244,7 @@ final userListProvider = FutureProvider((ref) async {
         surveyInbox: [],
         inAppNotification: false,
         appUpdateNotification: false,
-
+        token: ''
         ));
   }
   if(ref.read(myCurrentChild.notifier).state==null){
@@ -333,6 +336,14 @@ final updatedFavoriteActivityProvider =
     );
   }
 });
+
+Future<void> updateParentTokenProvider (String value, WidgetRef ref) async {
+  final parentDoc = ref.watch(parentDocProvider);
+  if (parentDoc.value != null) {
+    await parentDoc.value!.update({
+      'token': value,    });
+  }
+}
 
 
 final myCurrentReportType = StateProvider<MenuType?>((ref) => null);

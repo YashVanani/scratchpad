@@ -50,13 +50,8 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-            ),
             SizedBox(
-              height: 20,
+              height: 8,
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),

@@ -107,7 +107,9 @@ class TopicStateUpdatedManager extends AutoDisposeAsyncNotifier<void> {
       {required Topic topic,
       required String subjectId,
       required String artifact,
-      required BuildContext context}) async {
+      required BuildContext context,
+      required WidgetRef ref
+      }) async {
     final userDoc = ref.read(userDocProvider);
     final schoolDoc = ref.read(schoolDocProvider);
 
@@ -165,6 +167,7 @@ class TopicStateUpdatedManager extends AutoDisposeAsyncNotifier<void> {
             "module": "topic-item",
             "message": "$artifact for ${topic.name} unlocked"
           });
+      createStudentNotification('Unlocked Resource', "$artifact for ${topic.name} unlocked", 'Resource', ref);    
     });
   }
 }

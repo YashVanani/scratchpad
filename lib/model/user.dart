@@ -1,6 +1,7 @@
 import 'package:clarified_mobile/features/notification/screen/notification_setting.dart';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/parents/features/profile/screen/p_profile.dart';
+import 'package:clarified_mobile/services/notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class UserInfo {
   final String? avatar;
   final List<String> unlockedAvatars;
   final List<String> surveyInbox;
+  final String token;
   
   final bool inAppNotification;
   final bool appUpdateNotification;
@@ -40,7 +42,8 @@ class UserInfo {
     required this.balance,
     required this.surveyInbox,
     required this.appUpdateNotification,
-    required this.inAppNotification
+    required this.inAppNotification,
+    required this.token
   });
 
   get name {
@@ -55,14 +58,14 @@ class UserInfo {
     return UserInfo(
       id: data['id'],
       email: data["email"] ?? "noemail-provide@platform.com",
-      firstName: data["firstName"],
-      lastName: data["lastName"],
+      firstName: data["firstName"]??"",
+      lastName: data["lastName"]??"",
       otherNames: data["otherNames"] ?? "",
       dateOfBirth: data["dateOfBirth"]?.toDate() ?? DateTime.timestamp(),
-      gender: data["gender"],
-      currentClassId: data["currentClassId"],
-      profileUrl: data["profileUrl"],
-      avatar: data["avatar"],
+      gender: data["gender"]??"",
+      currentClassId: data["currentClassId"]??"",
+      profileUrl: data["profileUrl"]??"",
+      avatar: data["avatar"]??"",
       surveyInbox: List.from(data["surveyInbox"] ?? []),
       unlockedAvatars: List.from(data["unlockedAvatars"] ?? []),
       balance: (
@@ -71,7 +74,8 @@ class UserInfo {
         spent: data['balance']['spent']
       ),
       appUpdateNotification: data['appUpdateNotification']??true,
-      inAppNotification: data['inAppNotification']??true
+      inAppNotification: data['inAppNotification']??true,
+      token: data['token']??""
     );
   }
 }
@@ -109,7 +113,7 @@ final studentNotificationProvider =  StreamProvider<List<n.Notification>>((ref) 
 
    return  baseDoc
       .collection("students")
-      .doc(parentStream.asData?.value.id.split(":").first).collection('notifications').snapshots().map(
+      .doc(parentStream.asData?.value.id.split(":").first).collection('notifications').orderBy('createdAt',descending: true).snapshots().map(
             (v) {
               print(v.docs);
               return v.docs
@@ -146,4 +150,28 @@ Future<void> updateStudentAppUpdateNotification(bool value, WidgetRef ref)async{
         content: Text("Notification status updated successfully"),
       ),
     );
+}
+
+Future<void> updateStudentTokenProvider (String value, WidgetRef ref) async {
+  final parentDoc = ref.watch(userDocProvider);
+  if (parentDoc.value != null) {
+    await parentDoc.value!.update({
+      'token': value,    });
+  }
+}
+
+Future<void> createStudentNotification(String title,String message, String module,WidgetRef ref)async{
+final baseDoc = ref.read(schoolDocProvider);
+  final parentStream = ref.watch(profileProvider);
+
+   baseDoc
+      .collection("students")
+      .doc(parentStream.asData?.value.id.split(":").first).collection('notifications').add({
+        'title':title,
+        'message':message,
+        'createdAt':Timestamp.now(),
+        'module':module
+      });
+      NotificationService notificationService=NotificationService(); 
+  notificationService.sendNotification(title: title,message: message,token: parentStream.asData?.value.token??"");    
 }

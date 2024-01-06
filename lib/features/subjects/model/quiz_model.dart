@@ -296,6 +296,7 @@ class QuizManager extends AutoDisposeFamilyAsyncNotifier<bool?,
 
       return FirebaseFirestore.instance.runTransaction((trx) async {
         try {
+          createStudentNotification("Points Added",'You had earn ${quiz.points??50} in quiz','quiz',ref);
           await userDoc.value?.update({
             "balance.total": FieldValue.increment(quiz.points ?? 50),
             "balance.current": FieldValue.increment(quiz.points ?? 50),

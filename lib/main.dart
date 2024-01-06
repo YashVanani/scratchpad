@@ -1,6 +1,7 @@
 import 'package:clarified_mobile/l10n/L10n.dart';
 import 'package:clarified_mobile/parents/features/community/screen/post_detail.dart';
 import 'package:clarified_mobile/services/app_pref.dart';
+import 'package:clarified_mobile/services/notification.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +11,23 @@ import 'package:clarified_mobile/features/router.dart';
 import 'package:clarified_mobile/services/firebase.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initFirebase();
  await FirebaseAppCheck.instance.activate();
- 
+ AwesomeNotifications().initialize(
+     null,
+    [
+      NotificationChannel(
+        channelKey: 'basic_channel',
+        channelName: 'Basic notifications',
+        channelDescription: 'Notification channel for basic notifications',
+        defaultColor: Color(0xFF9D50DD),
+        ledColor: Colors.white,
+      ),
+    ],
+  );
   runApp(
     ProviderScope(
       child: ClarifiedApp(
@@ -40,6 +53,7 @@ class ClarifiedApp extends StatefulWidget {
 
 class _ClarifiedAppState extends State<ClarifiedApp> {
   Locale? _locale;
+  final NotificationService _notificationService = NotificationService();
 
   setLocale(Locale locale){
     setState(() {
@@ -47,6 +61,7 @@ class _ClarifiedAppState extends State<ClarifiedApp> {
     });
   }
  
+  
 
   @override
   void didChangeDependencies() {
@@ -59,6 +74,7 @@ class _ClarifiedAppState extends State<ClarifiedApp> {
   @override
   void initState() {
     super.initState();
+    _notificationService.setupFirebase();
   }
 
   // This widget is the root of your application.

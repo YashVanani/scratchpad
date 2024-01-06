@@ -50,6 +50,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
           survey: survey!,
           answers: answers,
           completed: lastQuestion,
+          ref: ref
         );
 
     if (!lastQuestion) return;

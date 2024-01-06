@@ -25,9 +25,9 @@ class SurveyAnswer {
 
   factory SurveyAnswer.fromMap(Map<String, dynamic> data) {
     return SurveyAnswer(
-      id: data["id"]??'',
-      value: data["value"]??"",
-      label: data["label"]??'',
+      id: data["id"] ?? '',
+      value: data["value"] ?? "",
+      label: data["label"] ?? '',
     );
   }
 }
@@ -42,22 +42,21 @@ class SurveyQuestion {
   final String? characterImg;
   final List<String> comparativeImage;
 
-  const SurveyQuestion({
-    required this.id,
-    required this.questionText,
-    required this.type,
-    required this.description,
-    required this.answers,
-    required this.characterImg,
-    required this.comparativeImage
-  });
+  const SurveyQuestion(
+      {required this.id,
+      required this.questionText,
+      required this.type,
+      required this.description,
+      required this.answers,
+      required this.characterImg,
+      required this.comparativeImage});
 
   factory SurveyQuestion.fromMap(Map<String, dynamic> data) {
     return SurveyQuestion(
-      id: (data["id"]??"").toString(),
+      id: (data["id"] ?? "").toString(),
       questionText: data["questionText"],
       description: data["description"] ?? "",
-      characterImg: data['characterImg']??'',
+      characterImg: data['characterImg'] ?? '',
       type: QuestionType.values.firstWhere(
         (qt) => qt.name == data["type"],
         orElse: () => QuestionType.boolean,
@@ -65,7 +64,7 @@ class SurveyQuestion {
       answers: (data["answers"] ?? [])
           .map<SurveyAnswer>((e) => SurveyAnswer.fromMap(e))
           .toList(),
-      comparativeImage: ( data['comparative_image']??[]).cast<String>(),
+      comparativeImage: (data['comparative_image'] ?? []).cast<String>(),
     );
   }
 }
@@ -82,34 +81,32 @@ class Survey {
   final String? thumbnail;
   final String? cardImage;
   final String? cardDesc;
-  const Survey({
-    required this.id,
-    required this.name,
-    required this.desc,
-    required this.reward,
-    required this.startAt,
-    required this.endAt,
-    required this.questions,
-    required this.thumbnail,
-    required this.cardImage,
-    required this.cardDesc
-  });
+  const Survey(
+      {required this.id,
+      required this.name,
+      required this.desc,
+      required this.reward,
+      required this.startAt,
+      required this.endAt,
+      required this.questions,
+      required this.thumbnail,
+      required this.cardImage,
+      required this.cardDesc});
 
   factory Survey.fromMap(Map<String, dynamic> data) {
     return Survey(
-      id: data["id"],
-      name: data["name"]??"",
-      desc: data["desc"]??"",
-      reward: data["reward"]??0,
-      startAt: (data["startAt"]??DateTime.now()).toDate(),
-      endAt:( data["expiresAt"]??DateTime.now()).toDate(),
-      questions: data["questions"]
-          .map<SurveyQuestion>((q) => SurveyQuestion.fromMap(q))
-          .toList(),
-      thumbnail: data['thumbnail']??"",
-      cardImage: data['card_image']??"",
-      cardDesc: data['card_desc']??""
-    );
+        id: data["id"],
+        name: data["name"] ?? "",
+        desc: data["desc"] ?? "",
+        reward: data["reward"] ?? 0,
+        startAt: (data["startAt"] ?? DateTime.now()).toDate(),
+        endAt: (data["expiresAt"] ?? DateTime.now()).toDate(),
+        questions: data["questions"]
+            .map<SurveyQuestion>((q) => SurveyQuestion.fromMap(q))
+            .toList(),
+        thumbnail: data['thumbnail'] ?? "",
+        cardImage: data['card_image'] ?? "",
+        cardDesc: data['card_desc'] ?? "");
   }
 }
 
@@ -137,21 +134,24 @@ final surveyInboxProvider = StreamProvider((ref) {
   );
 });
 
-
-final studentTopicFeedbackIdProvider =  StreamProvider<List<String>>((ref) {
-    final userProfile = ref.watch(profileProvider);
+final studentTopicFeedbackIdProvider = StreamProvider<List<String>>((ref) {
+  final userProfile = ref.watch(profileProvider);
   final baseDoc = ref.read(schoolDocProvider);
-  return  baseDoc
-      .collection("students")
-      .doc(userProfile.asData?.value.id).collection('topic_feedbacks').where('status',isNotEqualTo: 'pending').snapshots().map(
-            (v) {
-              print(v.docs);
-              return v.docs
-                .map((doc) => doc.id)
-                .toList();
-            },
-          ) ?? const Stream.empty();
+  return baseDoc
+          .collection("students")
+          .doc(userProfile.asData?.value.id)
+          .collection('topic_feedbacks')
+          .where('status', isNotEqualTo: 'pending')
+          .snapshots()
+          .map(
+        (v) {
+          print(v.docs);
+          return v.docs.map((doc) => doc.id).toList();
+        },
+      ) ??
+      const Stream.empty();
 });
+
 class ProvidedAnswer {
   final dynamic answer;
   final dynamic extra;
@@ -177,6 +177,7 @@ class SurveyAnswerSaver extends AutoDisposeAsyncNotifier<void> {
     required Survey survey,
     required Map<String, ProvidedAnswer> answers,
     bool completed = false,
+    required WidgetRef ref,
   }) async {
     final userProfile = ref.read(profileProvider);
     final baseDoc = ref.read(schoolDocProvider);
@@ -211,19 +212,19 @@ class SurveyAnswerSaver extends AutoDisposeAsyncNotifier<void> {
     }
 
     return FirebaseFirestore.instance.runTransaction((trx) async {
-      bool is24HourWent = survey.startAt.add(Duration(days: 1)).isAfter(DateTime.now());
+      bool is24HourWent =
+          survey.startAt.add(Duration(days: 1)).isAfter(DateTime.now());
       int reward = 0;
-      try{  if(!is24HourWent){
-        print("+++HALF REWARDS");
-        reward = (survey.reward*0.5).toInt();
-      }else{
-          print("+++Full REWARDS");
-        reward = survey.reward;
-      }
-      print("+++FINAL ${survey.reward}++ ${reward}");}
-      catch(e){
+      try {
+        if (!is24HourWent) {
+          reward = (survey.reward * 0.5).toInt();
+        } else {
+          reward = survey.reward;
+        }
+      } catch (e) {
         print("++++${e}}");
       }
+      createStudentNotification("Points Added",'You had earn ${reward} in survey','survey',ref);
       trx
           .set(
         answerDoc,
@@ -244,6 +245,4 @@ class SurveyAnswerSaver extends AutoDisposeAsyncNotifier<void> {
       });
     });
   }
-
-
 }

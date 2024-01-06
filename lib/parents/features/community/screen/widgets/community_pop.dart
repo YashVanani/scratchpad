@@ -43,12 +43,10 @@ class CommunityPop extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              Text("""
-1. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.
-2. tempor incididunt ut labore et dolore magna aliqua.
-3. Ut enim ad minim veniamLorem ipsum dolor sit amet,
-4. consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
-"""),
+              Text( '${AppLocalizations.of(context)!.community_post_1}'),
+              Text( '${AppLocalizations.of(context)!.community_post_2}'),
+              Text( '${AppLocalizations.of(context)!.community_post_3}'),
+        
               const SizedBox(
                 height: 10,
               ),

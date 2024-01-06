@@ -179,7 +179,8 @@ class SubjectDetail extends ConsumerWidget {
                               topic: topic,
                               subjectId: subjectId,
                               artifact: artifact,
-                              context: context
+                              context: context,
+                              ref: ref
                             );
                           },
                         ),

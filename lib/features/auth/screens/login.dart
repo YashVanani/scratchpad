@@ -1,5 +1,6 @@
 import 'package:clarified_mobile/consts/colors.dart';
 import 'package:clarified_mobile/model/school.dart';
+import 'package:clarified_mobile/services/notification.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   bool showPassword = false;
   bool isBusy = false;
   bool isLoading = false;
+  
+  final NotificationService _notificationService = NotificationService();
+
   void attemptLogin() async {
     final schoolId = ref.read(schoolIdProvider);
     print("attempting school $schoolId");
@@ -37,12 +41,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       isLoading = false;
     });
       if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'parent') {
+        _notificationService.updateTokenOnLogin('parent',ref);
         GoRouter.of(context).goNamed("parents-home");
       }
       if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'student') {
+          _notificationService.updateTokenOnLogin('student',ref);
         GoRouter.of(context).goNamed("home");
       }
        if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'teacher') {
+          _notificationService.updateTokenOnLogin('teacher',ref);
         GoRouter.of(context).goNamed("teachers-home");
       }
     } catch (e) {

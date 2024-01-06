@@ -19,7 +19,7 @@ dependencies:
   cloud_firestore: ^4.13.1
   firebase_auth: ^4.14.0
   firebase_analytics: ^10.7.0
-  firebase_messaging: ^14.7.4
+  firebase_messaging: ^14.7.10
   firebase_storage: ^11.5.1
   firebase_remote_config: ^4.3.4
   flutter_svg: ^2.0.9
@@ -36,12 +36,15 @@ dependencies:
   video_player: ^2.8.1
   autoscale_tabbarview: ^1.0.2
   flutter_localization:
-  intl:
+  intl: ^0.18.1
   firebase_dynamic_links: ^5.4.8
   flutter_rating_bar: ^4.0.1
   share_plus: ^7.2.1
   flutter_file_downloader: ^1.2.0
   equatable: ^2.0.5
+  awesome_notifications: ^0.8.2
+  dio: ^5.4.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

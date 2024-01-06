@@ -55,27 +55,23 @@ class Post {
 
 class User {
     String? name;
-    String? profileUrl;
     String? userId;
     String? userType;
 
     User({
         this.name,
-        this.profileUrl,
         this.userId,
         this.userType,
     });
 
     factory User.fromJson(Map<String, dynamic> json) => User(
         name: json["name"]??'',
-        profileUrl: json["profileUrl"]??'',
         userId: json["userId"]??"",
         userType: json["userType"]??"",
     );
 
     Map<String, dynamic> toJson() => {
         "name": name,
-        "profileUrl": profileUrl,
         "userId": userId,
         "userType": userType,
     };

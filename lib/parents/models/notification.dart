@@ -58,3 +58,17 @@ final parentNotificationProvider =  StreamProvider<List<Notification>>((ref) {
           ) ?? const Stream.empty();
 });
 
+
+Future<void> createStudentNotification(String title,String message, String module,WidgetRef ref)async{
+final baseDoc = ref.read(schoolDocProvider);
+  final parentStream = ref.watch(parentProvider);
+
+   baseDoc
+      .collection("parents")
+      .doc(parentStream.value?.uid.split(":").first).collection('notifications').add({
+        'title':title,
+        'message':message,
+        'createdAt':Timestamp.now(),
+        'module':module
+      });
+}
