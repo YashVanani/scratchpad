@@ -17,12 +17,12 @@ const List<TabItem> pItems = [
   TabItem(
     icon: Icons.menu_book,
     title: 'Playbook',
-    key: 'parents-playbook',
+    key: 'teachers-playbook',
   ),
    TabItem(
     icon: Icons.av_timer,
     title: 'My Space',
-    key: 'parents-playbook',
+    key: 'parents-playbooks',
   ),
   TabItem(
     icon: Icons.account_circle,

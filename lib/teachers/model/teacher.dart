@@ -54,7 +54,7 @@ class TeacherInfo {
       email: data["email"] ?? "noemail-provide@platform.com",
       firstName: data["firstName"],
       lastName: data["lastName"],
-      profileUrl: data["profileUrl"],
+      profileUrl: data["profileUrl"]??"",
       surveyInbox:( data['surveyInbox']??[]).cast<String>(),
       childrens: (data["childrens"] ?? []).cast<String>(),
       inAppNotification: data['inAppNotification']??true,
@@ -64,8 +64,8 @@ class TeacherInfo {
       appliedActivities:( data['appliedActivities']??[]).cast<String>(),
       dashboardFavorites: ( data['dashboardFavorites']??[]).cast<String>(),
       classIds:( data['classIds']??[]).cast<String>(),
-      isActive: data['isActive'],
-      staffId: data['staffId']
+      isActive: data['isActive']??true,
+      staffId: data['id']
     );
   }
 }
@@ -94,5 +94,13 @@ final teacherProfileProvider = StreamProvider<TeacherInfo>((ref) {
           ) ??
       const Stream.empty();
 });
+
+Future<void> updateStudentTokenProvider (String value, WidgetRef ref) async {
+  final parentDoc = ref.watch(teacherDocProvider);
+  if (parentDoc.value != null) {
+    await parentDoc.value!.update({
+      'token': value,    });
+  }
+}
 
 final teacherSurveyInbox = StateProvider<List<String?>>((_) => []);

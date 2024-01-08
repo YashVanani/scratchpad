@@ -23,6 +23,8 @@ import 'package:clarified_mobile/parents/features/report/screen/p_report.dart';
 import 'package:clarified_mobile/parents/features/survey/screen/survey_parent_screen.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:clarified_mobile/teachers/features/home/t_home.dart';
+import 'package:clarified_mobile/teachers/features/playbook/playbook.dart';
+import 'package:clarified_mobile/teachers/features/playbook/playbook_detail.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -301,6 +303,16 @@ GoRouter initRouter() {
         path: '/t_home',
         name: "teachers-home",
         builder: (context, state) => TeacherHomeScreen(),
+      ),
+      GoRoute(
+        path: '/t_playbook',
+        name: "teachers-playbook",
+        builder: (context, state) => PlaybookTeacherScreen(),
+      ),
+      GoRoute(
+        path: '/t_playbook_detail',
+        name: "teachers-playbook-detail",
+        builder: (context, state) => PlaybookTeacherDetailScreen(playbook:( state.extra! as Playbook),),
       ),
     ],
   );

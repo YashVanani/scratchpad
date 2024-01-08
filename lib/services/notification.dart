@@ -64,6 +64,10 @@ class NotificationService {
     if (userType == 'student') {
       updateStudentTokenProvider(token ?? "", ref);
     }
+
+    if(userType == 'teacher'){
+      
+    }
     // You can send the updated token to your server or perform any additional logic here
   }
 
