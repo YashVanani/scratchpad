@@ -104,8 +104,9 @@ class HomePage extends ConsumerWidget {
               children: [
                 TextSpan(text: "${AppLocalizations.of(context)!.hello}\n", style: TextStyle(fontSize: 12)),
                 profile.when(
-                  data: (u) => TextSpan(text: u.name),
+                  data: (u) => TextSpan(text: u.firstName,),
                   error: (e, st) {
+                    print(st);
                     return TextSpan(text: AppLocalizations.of(context)!.error_loading_user);
                   },
                   loading: () => const TextSpan(text: "---"),

@@ -111,7 +111,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
 
       return Scaffold(
         appBar: AppBar(
-          title: Text(survey!.name),
+          title: Text(survey!.name?.toJson()[Localizations.localeOf(context).languageCode]),
           centerTitle: true,
         ),
         backgroundColor: Colors.grey.shade100,
@@ -146,7 +146,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                     bottom: 6,
                   ),
                   child: Text(
-                    ques.questionText,
+                    ques.questionText?.toJson()[Localizations.localeOf(context).languageCode],
                     style: const TextStyle(
                       color: Color(0xFF344054),
                       fontSize: 18,
@@ -166,7 +166,7 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                             surfaceTintColor: Colors.transparent,
                             shadowColor: Colors.transparent,
                             child: QuestionDescription(
-                              desc: ques.description,
+                              desc: ques.description?.toJson()[Localizations.localeOf(context).languageCode],
                             ),
                           );
                         }),
@@ -566,7 +566,7 @@ class SurveyIntro extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        survey?.name ?? AppLocalizations.of(context)!.unknown,
+                        survey?.name?.toJson()[Localizations.localeOf(context).languageCode]  ?? AppLocalizations.of(context)!.unknown,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Color(0xFF1D2939),
@@ -582,7 +582,7 @@ class SurveyIntro extends StatelessWidget {
                             vertical: 2.0,
                           ),
                           child: Markdown(
-                            data: survey?.desc ?? "",
+                            data: survey?.desc?.toJson()[Localizations.localeOf(context).languageCode]  ?? "",
                             shrinkWrap: true,
                             styleSheet: MarkdownStyleSheet(),
                             // textAlign: TextAlign.center,

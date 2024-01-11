@@ -147,6 +147,7 @@ final parentProfileProvider = StreamProvider<ParentInfo>((ref) {
               ref.read(parentSurveyInbox.notifier).state = parentInfo.surveyInbox;
               ref.read(favoriteActivityState.notifier).state = parentInfo.favoriteActivities;
                ref.refresh(favoriteActivityProvider);
+               
              return parentInfo;
             },
           ) ??
@@ -226,9 +227,11 @@ final userListProvider = FutureProvider((ref) async {
   final baseDoc = ref.read(schoolDocProvider);
   final profile = ref.watch(parentProfileProvider);
   List user = [];
+  print("MY CHILDRENS ${profile.asData?.value?.childrens}");
   for (String i in profile.asData?.value?.childrens ?? []) {
     DocumentSnapshot data = await baseDoc.collection("students").doc(i).get();
-    user.add(u.UserInfo(
+    try{
+      user.add(u.UserInfo(
         id: data.get('id'),
         firstName: data.get('firstName'),
         lastName: data.get('lastName'),
@@ -246,6 +249,9 @@ final userListProvider = FutureProvider((ref) async {
         appUpdateNotification: false,
         token: ''
         ));
+    }catch(e){
+      print("ERROR ${e}");
+    }
   }
   if(ref.read(myCurrentChild.notifier).state==null){
     ref.read(myCurrentChild.notifier).state = (user[0] as u.UserInfo);

@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:clarified_mobile/consts/localisedModel.dart';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,10 +19,10 @@ class DashboardReport {
     String? id;
     bool? isActive;
     String? type;
-    String? title;
+    LocalizedValue<String>? title;
     String? url;
     List<Tip>? tips;
-    String? desc;
+    LocalizedValue<String>? desc;
     String? imageUrl;
 
     DashboardReport({
@@ -41,10 +42,10 @@ class DashboardReport {
         id: json["id"],
         isActive: json["isActive"],
         type: json["type"],
-        title: json["title"],
+        title: LocalizedValue.fromJson(json["title"]),
         url: json["url"],
         tips: json["tips"] == null ? [] : List<Tip>.from(json["tips"]!.map((x) => Tip.fromJson(x))),
-        desc: json["desc"],
+        desc: LocalizedValue.fromJson(json["desc"]),
         imageUrl: json['imageUrl']??""
     );
 
@@ -62,9 +63,9 @@ class DashboardReport {
 }
 
 class Tip {
-    String? text;
+     LocalizedValue<String>? text;
     String? id;
-    String? title;
+     LocalizedValue<String>? title;
 
     Tip({
         this.text,
@@ -73,9 +74,9 @@ class Tip {
     });
 
     factory Tip.fromJson(Map<String, dynamic> json) => Tip(
-        text: json["text"],
+        text: LocalizedValue.fromJson(json["text"]),
         id: json["id"],
-        title: json["title"],
+        title: LocalizedValue.fromJson(json["title"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -119,6 +120,7 @@ final reportDashboardProvider = StreamProvider((ref) {
   final baseDoc = ref.watch(schoolDocProvider);
   return baseDoc
       .collection("dashboards")
+      .where('isActive',isEqualTo: true)
       .snapshots()
       .map((event) {
         print(event.docs[0].data());
@@ -130,3 +132,27 @@ final reportDashboardProvider = StreamProvider((ref) {
   return const Stream.empty();
  }
 });
+
+final reportDashboardProviderParent = StreamProvider((ref) {
+ try{
+   print("++REPORT DASHBOARD++");
+  final baseDoc = ref.watch(schoolDocProvider);
+  final parentDoc = ref.watch(parentDocProvider);
+  return baseDoc
+      .collection("dashboards")
+      .doc(ref.read(selectedDashboardProvider.notifier).state)
+      .collection('reports')
+      .doc(parentDoc.asData?.value.id)
+      .snapshots()
+      .map((event) {
+        print(event.get('url'));
+        return event.get('url');
+  });
+ }catch(e){
+  print("+++++++++ERRROR+++++++++++++++");
+  print(e);
+  return const Stream.empty();
+ }
+});
+
+    final selectedDashboardProvider = StateProvider((String) => '');

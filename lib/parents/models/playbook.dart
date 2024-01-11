@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:clarified_mobile/consts/localisedModel.dart';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/parents/features/playbook/screen/playbook_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,22 +13,22 @@ Playbook playbookFromJson(String str) => Playbook.fromJson(json.decode(str));
 String playbookToJson(Playbook data) => json.encode(data.toJson());
 
 class Playbook {
-    String? desc;
-    String? action;
-    String? goals;
-    String? effortLevel;
+   LocalizedValue<String>?  desc;
+    LocalizedValue<String>? action;
+    LocalizedValue<String>?  goals;
+    LocalizedValue<String>?  effortLevel;
     List<MaterialList>? materialList;
     String? activityMaterialDesc;
-    String? title;
+    LocalizedValue<String>?  title;
     bool? isActive;
-    List<String>? focusAreas;
+    List<LocalizedValue<String> >? focusAreas;
     String? activityMaterialUrl;
     String? videoUrl;
-    List<String>? domain;
-    List<String>? stages;
+    List<LocalizedValue<String> >? domain;
+    List<LocalizedValue<String> >? stages;
     String? id;
     String? categories;
-    String? whyThisWorks;
+    LocalizedValue<String>?  whyThisWorks;
     String? type;
     Playbook({
         this.desc,
@@ -50,22 +51,22 @@ class Playbook {
     });
 
     factory Playbook.fromJson(Map<String, dynamic> json) => Playbook(
-        desc: json["desc"]??"",
-        action: json["actions"]??"",
-        goals: json["goals"]??"",
-        effortLevel: json["effortLevel"]??"",
+        desc: LocalizedValue.fromJson(json["desc"]??""),
+        action: LocalizedValue.fromJson(json["actions"]??""),
+        goals: LocalizedValue.fromJson(json["goals"]??""),
+        effortLevel: LocalizedValue.fromJson(json["effortLevel"]??""),
         materialList: json["materialList"] == null ? [] : List<MaterialList>.from(json["materialList"]!.map((x) => MaterialList.fromJson(x))),
         activityMaterialDesc: json["activityMaterialDesc"]??"",
-        title: json["title"]??"",
+        title: LocalizedValue.fromJson(json["title"]??""),
         isActive: json["isActive"]??true,
-        focusAreas: json["focusAreas"] == null ? [] : List<String>.from(json["focusAreas"]!.map((x) => x)),
+         focusAreas: json["focusAreas"] == null ? [] : List< LocalizedValue<String>>.from(json["focusAreas"]!.map((x) => LocalizedValue<String>.fromJson(x))),
         activityMaterialUrl: json["activityMaterialUrl"]??"",
         videoUrl: json["videoUrl"]??"",
-        domain: json["domain"] == null ? [] : List<String>.from(json["domain"]!.map((x) => x)),
-        stages: json["stages"] == null ? [] : List<String>.from(json["stages"]!.map((x) => x)),
+        domain: json["domain"] == null ? [] : List<LocalizedValue<String>>.from(json["domain"]!.map((x) =>  LocalizedValue<String>.fromJson(x))),
+        stages: json["stages"] == null ? [] : List<LocalizedValue<String>>.from(json["stages"]!.map((x) => LocalizedValue<String>.fromJson(x))),
         id: json["id"]??"",
         categories: json["categories"]??"",
-        whyThisWorks:json['whyThisWorks']??"",
+        whyThisWorks:LocalizedValue.fromJson(json['whyThisWorks']??""),
         type: json['type']??''
     );
 
@@ -90,7 +91,7 @@ class Playbook {
 }
 
 class MaterialList {
-    String? name;
+     LocalizedValue<String>? name;
     String? id;
     String? url;
 
@@ -101,7 +102,7 @@ class MaterialList {
     });
 
     factory MaterialList.fromJson(Map<String, dynamic> json) => MaterialList(
-        name: json["name"],
+        name: LocalizedValue.fromJson(json["name"]),
         id: json["id"],
         url: json["url"],
     );
@@ -167,8 +168,10 @@ final playbookProvider = StreamProvider<List<Playbook>>((ref) {
             (v) => v.docs
                 .map((doc){
                   print(doc.id);
-                  if(doc.data()['type']=='parent'){}
+                  if(doc.data()['type']=='parent'){
                   return Playbook.fromJson(doc.data());
+                  }
+                  return Playbook();
                 }).where((element) => element.type=='parent')
                 .toList(),
           ) ??
@@ -182,7 +185,7 @@ final playbookSearchProvider = StreamProvider<List<Playbook>>((ref,) {
   return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
     (v) => v.docs
         .map((doc) => Playbook.fromJson(doc.data()))
-        .where((playbook) => (playbook.title??'').toLowerCase().contains(searchQuery.toLowerCase()))
+        .where((playbook) => (playbook.title?.en??'').toLowerCase().contains(searchQuery.toLowerCase()))
         .toList(),
   ) ?? const Stream.empty();
 });
@@ -207,7 +210,7 @@ final playbookCategoryProvider =StreamProvider<Categories>((ref) {
  
 });
 
-final playbookDomainProvider =StreamProvider<List<String>>((ref) {
+final playbookDomainProvider =StreamProvider<  List<LocalizedValue<String> >?>((ref) {
   final playbookDocs = ref.watch(playbookColProvider);
 
   return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
@@ -218,7 +221,7 @@ final playbookDomainProvider =StreamProvider<List<String>>((ref) {
       const Stream.empty();
 });
 
-final playbookDevelopStageProvider =StreamProvider<List<String>>((ref) {
+final playbookDevelopStageProvider =StreamProvider<  List<LocalizedValue<String> >>((ref) {
   final playbookDocs = ref.watch(playbookColProvider);
 
   return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(

@@ -60,7 +60,7 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Text(
-                  widget.playbook.title ?? "",
+                  widget.playbook.title?.toJson()[Localizations.localeOf(context).languageCode] ?? "",
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
                 ),
               ),
@@ -79,9 +79,9 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
                         children: [
                           Icon(
                             Icons.crisis_alert,
-                            color: widget.playbook.effortLevel == 'Easy'
+                            color: widget.playbook.effortLevel?.toJson()[Localizations.localeOf(context).languageCode] == 'Easy'
                                 ? Color(0xff16B364)
-                                : widget.playbook.effortLevel == 'Medium'
+                                : widget.playbook.effortLevel?.toJson()[Localizations.localeOf(context).languageCode] == 'Medium'
                                     ? Colors.orange
                                     : Colors.red,
                             size: 16,
@@ -90,11 +90,11 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
                             width: 5,
                           ),
                           Text(
-                            widget.playbook.effortLevel ?? "Easy",
+                            widget.playbook.effortLevel?.toJson()[Localizations.localeOf(context).languageCode] ?? "Easy",
                             style: TextStyle(
-                              color: widget.playbook.effortLevel == 'Easy'
+                              color: widget.playbook.effortLevel?.toJson()[Localizations.localeOf(context).languageCode] == 'Easy'
                                   ? Color(0xff16B364)
-                                  : widget.playbook.effortLevel == 'Medium'
+                                  : widget.playbook.effortLevel?.toJson()[Localizations.localeOf(context).languageCode] == 'Medium'
                                       ? Colors.orange
                                       : Colors.red,
                             ),
@@ -114,7 +114,7 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
                       ),
                       Row(
                         children: widget.playbook.stages?.map((e)=>Text(
-                        e ?? "",
+                        e.toJson()[Localizations.localeOf(context).languageCode] ?? "",
                       )).toList()??[],
                       ),
                     ],
@@ -141,11 +141,11 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
                                       borderRadius: BorderRadius.circular(10),
                                       color: Color(0xffEAECF0)),
                                   child: Text(
-                                    e,
+                                    e?.toJson()[Localizations.localeOf(context).languageCode],
                                     style: TextStyle(fontSize: 12),
                                   )))
                               .toList(),
-                          ((widget.playbook.focusAreas ?? []).length - 2) != 0
+                          ((widget.playbook.focusAreas ?? []).length - 2) > 0
                               ? Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 7, vertical: 4),
@@ -166,7 +166,7 @@ class _PlaybookDetailScreenState extends State<PlaybookDetailScreen> {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: Text(widget.playbook.desc ?? ""),
+                child: Text(widget.playbook.desc?.toJson()[Localizations.localeOf(context).languageCode] ?? ""),
               ),
               Container(
                 margin:
@@ -275,7 +275,7 @@ class _PlayBookPDCardState extends State<PlayBookPDFCard> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("${widget.materialList.name ?? ""}"),
+          Text("${widget.materialList.name?.toJson()[Localizations.localeOf(context).languageCode] ?? ""}"),
           SizedBox(
             width: 10,
           ),
@@ -284,7 +284,7 @@ class _PlayBookPDCardState extends State<PlayBookPDFCard> {
               //You can download a single file
               await FileDownloader.downloadFile(
                   url:widget.materialList.url??"",
-                  name: widget.materialList.name, //(optional)
+                  name: widget.materialList.name?.toJson()[Localizations.localeOf(context).languageCode], //(optional)
                   notificationType: NotificationType.all,
                   onProgress: (fileName, progress) {
                     setState(() {
@@ -364,7 +364,7 @@ class PlaybookTab extends StatelessWidget {
                           SizedBox(
                             width: 5,
                           ),
-                          Text("Why This Works")
+                          Text(AppLocalizations.of(context)!.why_this_work)
                           // Text(AppLocalizations.of(context)!.action)
                         ]),
                   ),
@@ -375,12 +375,12 @@ class PlaybookTab extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
                 child: AutoScaleTabBarView(children: [
                   MarkdownBody(
-                    data: playbook.goals ?? "",
+                    data: playbook.goals?.toJson()[Localizations.localeOf(context).languageCode] ?? "",
                   ),
                   Html(
-                    data: playbook.action ?? "",
+                    data: playbook.action?.toJson()[Localizations.localeOf(context).languageCode] ?? "",
                   ),
-                  Text(playbook.whyThisWorks ?? ""),
+                  Text(playbook.whyThisWorks?.toJson()[Localizations.localeOf(context).languageCode] ?? ""),
                   // Column(
                   //   mainAxisSize: MainAxisSize.min,
                   //   crossAxisAlignment: CrossAxisAlignment.start,

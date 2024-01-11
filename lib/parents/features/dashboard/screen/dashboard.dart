@@ -2,6 +2,7 @@ import 'package:clarified_mobile/parents/features/playbook/screen/widgets/playbo
 import 'package:clarified_mobile/parents/models/dashboard.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -11,7 +12,7 @@ class DashboardScreen extends ConsumerWidget{
   final DashboardReport dashboardReport;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
+    final dashboard = ref.watch(reportDashboardProviderParent);
     final playbook = ref.watch(dashboardPlaybookListProvider);
     ref.refresh(dashboardPlaybookListProvider);
      return Scaffold(
@@ -35,7 +36,7 @@ class DashboardScreen extends ConsumerWidget{
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                (dashboardReport.title ?? '').replaceAll('-', ' ').toUpperCase(),
+                (dashboardReport.title?.toJson()[Localizations.localeOf(context).languageCode] ?? '').replaceAll('-', ' ').toUpperCase(),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
@@ -45,7 +46,7 @@ class DashboardScreen extends ConsumerWidget{
              Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                  dashboardReport.desc??"",),
+                  dashboardReport.desc?.toJson()[Localizations.localeOf(context).languageCode]??"",),
                   // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
             ),
             const SizedBox(
@@ -86,7 +87,7 @@ class DashboardScreen extends ConsumerWidget{
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 0.8,
                       child: TabBarView(children: [
-                        const Placeholder(),
+                        dashboard.when(data: (d)=>InAppWebView(initialUrlRequest: URLRequest(url: WebUri(d)),), error: (e,j)=>Column(mainAxisAlignment: MainAxisAlignment.center,children: [Text(AppLocalizations.of(context)!.no_dashboard)]), loading: ()=>Text(''),),
                         SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,23 +127,29 @@ class DashboardScreen extends ConsumerWidget{
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 24.0, vertical: 24),
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                dashboardReport.tips?[index].title ?? "",
-                                                style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
-                                              ),
-                                              const SizedBox(
-                                                height: 6,
-                                              ),
-                                              Text(
-                                                   dashboardReport.tips?[index].text ?? "",
-                                                // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
-                                                style: TextStyle(fontSize: 12),
-                                              ),
-                                            ]),
+                                        child: Scrollbar(
+                                           thumbVisibility: true,
+                                          child: SingleChildScrollView(
+                                            
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                   (dashboardReport.tips?[index].title?.toJson()[Localizations.localeOf(context).languageCode] ?? ''),
+                                                    style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 6,
+                                                  ),
+                                                  Text(
+                                                       dashboardReport.tips?[index].text?.toJson()[Localizations.localeOf(context).languageCode] ?? "",
+                                                    // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                                                    style: TextStyle(fontSize: 12),
+                                                  ),
+                                                ]),
+                                          ),
+                                        ),
                                       ),
                                     );
                                   },
@@ -163,7 +170,8 @@ class DashboardScreen extends ConsumerWidget{
                                     ),
                                     error: (e,j)=>Text(''),
                                     loading: ()=>Center(child: CircularProgressIndicator(),),
-                                     )
+                                     ),
+                                     SizedBox(height: 30,)
                                 
                                  
                             ],

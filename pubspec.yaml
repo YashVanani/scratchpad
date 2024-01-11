@@ -44,7 +44,8 @@ dependencies:
   equatable: ^2.0.5
   awesome_notifications: ^0.8.2
   dio: ^5.4.0
-
+  flutter_inappwebview: ^6.0.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

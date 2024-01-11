@@ -309,10 +309,7 @@ class ParentsHome extends ConsumerWidget {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                        (d[index].title ?? '')
-                                                            .replaceAll(
-                                                                '-', ' ')
-                                                            .toUpperCase(),
+                                                        (d[index]?.title.toJson()[Localizations.localeOf(context).languageCode] ?? ''),
                                                         style: CommonStyle
                                                             .lexendMediumStyle
                                                             .copyWith(
@@ -324,7 +321,7 @@ class ParentsHome extends ConsumerWidget {
                                                                     textMainColor)),
                                                     const SizedBox(height: 5),
                                                     Text(
-                                                      d[index].desc ?? "",
+                                                      d[index].desc?.toJson()[Localizations.localeOf(context).languageCode] ?? '' ?? "",
                                                       maxLines: 2,
                                                       style: CommonStyle
                                                           .lexendMediumStyle
@@ -345,6 +342,8 @@ class ParentsHome extends ConsumerWidget {
                                                       children: [
                                                         InkWell(
                                                           onTap: () {
+                                                            ref.read(selectedDashboardProvider.notifier).state = d[index].id;
+                                                            
                                                             ref
                                                                 .read(playbookIdsState
                                                                     .notifier)
@@ -442,7 +441,7 @@ class ParentsHome extends ConsumerWidget {
                                     );
                                   }),
                             ),
-                        error: (e, j) => Text("No Dashboards"),
+                        error: (e, j) => Text(AppLocalizations.of(context)!.no_dashboard),
                         loading: () => SizedBox()),
                     const SizedBox(height: 20),
                     Container(
@@ -750,7 +749,7 @@ class ParentsHome extends ConsumerWidget {
                                 return PlayBookCard(playbook: d[index]);
                               });
                         },
-                        error: (i, j) => Text(i.toString()),
+                        error: (i, j) => Text(j.toString()),
                         loading: () => SizedBox())
                   ],
                 ),

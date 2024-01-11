@@ -128,21 +128,21 @@ class ParentsReport extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text((report.title ?? '').replaceAll('-', ' ').toUpperCase(),
+                  Text((report.title?.toJson()[Localizations.localeOf(context).languageCode] ?? ''),
                       style: CommonStyle.lexendMediumStyle.copyWith(
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                           color: textMainColor)),
-                  Icon(
-                    Icons.star,
-                    color:report.isActive??false?yellowColor: whiteColor,
-                  )
+                  // Icon(
+                  //   Icons.star,
+                  //   color:report.isActive??false?yellowColor: whiteColor,
+                  // )
                 ],
               ),
             ),
             SizedBox(height: 15),
             Text(
-              report.desc ?? '',
+              report.desc?.toJson()[Localizations.localeOf(context).languageCode]  ?? '',
               style: CommonStyle.lexendMediumStyle
                   .copyWith(fontSize: 12, color: textMainColor),
             ),

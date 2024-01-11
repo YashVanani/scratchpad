@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clarified_mobile/consts/localisedModel.dart';
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/subjects/model/quiz_model.dart';
 import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
@@ -52,6 +53,7 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
         ),
       ),
     );
+    print(quiz.asData?.value?.levels);
 
     return startQuiz
         ? QuizView(
@@ -97,16 +99,15 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                       Expanded(
                         child: SPChecker(
                           items: [
-                            (quizAttempted.asData?.value ?? []).any((element) => element['id'] == widget.topicId && element['level'].contains('easy'))
+                            (quizAttempted.asData?.value ?? []).any((element) => (element['id'] == widget.topicId && element['level'].contains('easy')))
                                 ? (label: "Easy", onClicked: () => setState(() => selectedLevel = "easy"), isCompleted: true)
-                                : (label: "Easy", onClicked: () => setState(() => selectedLevel = "easy"), isCompleted: false),
-                            (quizAttempted.asData?.value ?? []).any((element) => element['id'] == widget.topicId && element['level'].contains('medium'))
+                                : quiz.asData?.value?.levels.contains('easy')??false?(label: "Easy", onClicked: () => setState(() => selectedLevel = "easy"), isCompleted: false):(label: "Easy", onClicked: () => setState(() => selectedLevel = "easy"), isCompleted: true),
+                            (quizAttempted.asData?.value ?? []).any((element) => (false))
                                 ? (label: "Medium ", onClicked: () => setState(() => selectedLevel = "medium"), isCompleted: true)
-                                : (label: "Medium ", onClicked: () => setState(() => selectedLevel = "medium"), isCompleted: false),
-                            (quizAttempted.asData?.value ?? []).any((element) => element['id'] == widget.topicId && element['level'].contains('hard'))
+                                : quiz.asData?.value?.levels.contains('medium')??false?(label: "Medium", onClicked: () => setState(() => selectedLevel = "medium"), isCompleted: false):(label: "Medium", onClicked: () => setState(() => selectedLevel = "medium"), isCompleted: true),
+                             (quizAttempted.asData?.value ?? []).any((element) => element['id'] == widget.topicId && element['level'].contains('hard'))
                                 ? (label: "Hard", onClicked: () => setState(() => selectedLevel = "hard"), isCompleted: true)
-                                : (label: "Hard", onClicked: () => setState(() => selectedLevel = "hard"), isCompleted: false),
-                          ],
+                           : quiz.asData?.value?.levels.contains('hard')??false?(label: "Hard", onClicked: () => setState(() => selectedLevel = "hard"), isCompleted: false):(label: "Hard", onClicked: () => setState(() => selectedLevel = "hard"), isCompleted: true),],
                         ),
                       ),
                       Visibility(
@@ -334,6 +335,7 @@ class _SPCheckerState extends ConsumerState<SPChecker> {
   }
   void getQuizAvailiable(){
     for(var i in widget.items){
+      print("+ISCOMPLETED+${i.label} ${i.isCompleted}");
         if(!i.isCompleted){
           isAvaliable = true;
           ref.read(isQuizLevelAvaliable.notifier).state = true;
@@ -745,7 +747,7 @@ class _QuizViewState extends ConsumerState<QuizView> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: SCQAnsewrComponent(
+                child: SCQAnsewrComponentQuiz(
                   answers: tanswers,
                   selectedAnswer: answers[ques.id]?.answer,
                   onAnswerSelected: (submittedAnswer) => setState(() {

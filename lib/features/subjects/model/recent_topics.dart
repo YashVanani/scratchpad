@@ -130,6 +130,8 @@ class TopicStateUpdatedManager extends AutoDisposeAsyncNotifier<void> {
         .doc(subjectId)
         .collection('assets')
         .where('type', isEqualTo: artifact)
+        .where('topicId',isEqualTo:topic.id)
+        .where('subjectId',isEqualTo: subjectId)
         .get();
     if (artifactDocs.docs.isEmpty) {
       var snackBar = SnackBar(content: Text("no material available"));

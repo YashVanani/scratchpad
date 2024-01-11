@@ -1,6 +1,7 @@
 
 import 'dart:math';
 
+import 'package:clarified_mobile/consts/localisedModel.dart';
 import 'package:clarified_mobile/features/home/model/entry.dart';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/model/user.dart';
@@ -11,15 +12,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 @immutable
 class ParentSurvey {
   final String id;
-  final String name;
-  final String desc;
+  final LocalizedValue<String>? name;
+  final LocalizedValue<String>? desc;
   final int reward;
   final DateTime startAt;
   final DateTime endAt;
   final List<SurveyQuestion> questions;
-  final List<String> purpose;
+  final List<LocalizedValue<String>?> purpose;
   final String cardImage;
-  final String cardDesc;
+  final LocalizedValue<String>? cardDesc;
   final String thumbnail;
   const ParentSurvey({
     required this.id,
@@ -38,18 +39,18 @@ class ParentSurvey {
   factory ParentSurvey.fromMap(Map<String, dynamic> data) {
     return ParentSurvey(
       id: data["id"],
-      name: data["name"]??"",
-      desc: data["desc"]??"",
+      name: LocalizedValue.fromJson(data["name"]??""),
+      desc: LocalizedValue.fromJson(data["desc"]??""),
       reward: data["reward"]??0,
       startAt: (data["startAt"]??DateTime.now()).toDate(),
       endAt:( data["expiresAt"]??DateTime.now()).toDate(),
       questions: data["questions"]
           .map<SurveyQuestion>((q) => SurveyQuestion.fromMap(q))
           .toList(),
-      purpose: (data["purpose"]??[]).cast<String>(),
+      purpose: data["purpose"] == null ? [] : List< LocalizedValue<String>>.from(data["purpose"]!.map((x) => LocalizedValue<String>.fromJson(x))),
       cardImage: data['card_image']??"",
       thumbnail: data['thumbnail']??"",
-      cardDesc: data['card_desc']??"",
+      cardDesc: LocalizedValue.fromJson(data['card_desc']??""),
     );
   }
 }

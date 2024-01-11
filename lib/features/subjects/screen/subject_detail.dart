@@ -130,6 +130,7 @@ class SubjectDetail extends ConsumerWidget {
                                 "topicId": topic.id,
                                 "topicName": topic.name,
                                 "subjectName": rez.subject?.name ?? "",
+                                
                               },
                             );
                             return;

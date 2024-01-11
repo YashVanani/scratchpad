@@ -85,8 +85,8 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
                           context: context,
                           builder: (BuildContext context) {
                             return PlayBookFilter(
-                              developmentalStage: developmentStage.asData?.value ?? ["All"],
-                              domain: domain.asData?.value ?? ['All'],
+                              developmentalStage: developmentStage.asData?.value.map((e) => e.en).toSet().toList() ?? ["All"],
+                              domain: domain.asData?.value?.map((e) => e.en).toSet().toList() ?? ['All'],
                             );
                           });
 
@@ -251,7 +251,7 @@ class _PlaybookScreenState extends ConsumerState<PlaybookScreen> {
 
                           return SizedBox();
                         }).toList(),
-                    error: (e, st) => [Text(st.toString())],
+                    error: (e, st) => [Text(e.toString())],
                     loading: () => [CircularProgressIndicator()])
               ]),
             )

@@ -45,6 +45,7 @@ class Quiz {
   final String topicId;
   final String subjectId;
   final int points;
+  final List<String> levels;
   final List<QuizQuestion> questions;
 
   const Quiz(
@@ -55,17 +56,19 @@ class Quiz {
       required this.points,
       required this.questions,
       required this.subjectId,
+      required this.levels,
       required this.topicId});
 
   factory Quiz.fromMap(Map<String, dynamic> data) {
     return Quiz(
       id: data["id"],
-      headline: data["headline"],
+      headline: data["headline"]??"",
       duration: data["dur"] ?? 0,
-      goals: data["goals"],
-      points: data["points"],
+      goals: data["goals"]??"",
+      points: data["points"]??0,
       topicId: data['topicId'] ?? "",
       subjectId: data['subjectid'] ?? '',
+      levels: ( data['levels']??[]).cast<String>(),
       questions: List.from(
         data["questions"] is Iterable ? data["questions"] : [],
       ).map((q) => QuizQuestion.fromMap(q)).toList(),
@@ -80,7 +83,7 @@ final quizProvider = FutureProvider.family((ref,
       String type,
     }) p) {
   final schoolDoc = ref.watch(schoolDocProvider);
-
+  print("QUIZ ${p.subjectId}  ${p.topicId}  ${p.type}");
   return schoolDoc
       .collection("subjects")
       .doc(p.subjectId)
@@ -90,7 +93,12 @@ final quizProvider = FutureProvider.family((ref,
       .where("subjectId", isEqualTo: p.subjectId)
       .limit(1)
       .get()
-      .then((v) => v.size == 1 ? Quiz.fromMap(v.docs.first.data()) : null);
+      .then((v){
+        Quiz q = Quiz.fromMap(v.docs.first.data());
+        print(q.levels);
+        print("++++LEVELS+++");
+       return v.size == 1 ? Quiz.fromMap(v.docs.first.data()) : null;
+      });
 });
 
 final caseStudyProvider = FutureProvider.family((ref,

@@ -58,7 +58,7 @@ class StudentProfile extends ConsumerWidget {
                     height: 16,
                   ),
                   Text(
-                    data.name,
+                    data.firstName??"",
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Color(0xFF1D2939),

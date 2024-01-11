@@ -98,7 +98,7 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
 
       return Scaffold(
         appBar: AppBar(
-          title: Text(survey!.name),
+          title: Text(survey!.name?.toJson()[Localizations.localeOf(context).languageCode]),
         ),
          body: SafeArea(
           child: Container(
@@ -126,7 +126,7 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 24,vertical: 16),
                   child: Text(
-                    ques.questionText,
+                    ques.questionText?.toJson()[Localizations.localeOf(context).languageCode],
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Color(0xFF344054),
@@ -435,7 +435,7 @@ class SurveyIntro extends ConsumerWidget {
      final currentChild = ref.watch(myCurrentChild);
     return Scaffold(
       appBar: AppBar(
-        title: Text(survey!.name),
+        title: Text(survey!.name?.toJson()[Localizations.localeOf(context).languageCode]),
       ),
       body: SafeArea(
         child: Container(
@@ -507,7 +507,7 @@ class SurveyIntro extends ConsumerWidget {
                   itemBuilder: (context,index){
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical:5.0),
-                    child: Text("\u2022 ${survey?.purpose[index]??""}",style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w400, fontSize: 14, color: greyTextColor)),
+                    child: Text("\u2022 ${survey?.purpose[index]?.toJson()[Localizations.localeOf(context).languageCode]??""}",style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w400, fontSize: 14, color: greyTextColor)),
                   );
                 }),
               ),

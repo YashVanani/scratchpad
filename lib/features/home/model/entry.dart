@@ -1,3 +1,4 @@
+import 'package:clarified_mobile/consts/localisedModel.dart';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/model/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,7 +16,7 @@ enum QuestionType {
 class SurveyAnswer {
   final String id;
   final dynamic value;
-  final String label;
+  final LocalizedValue<String>? label;
 
   const SurveyAnswer({
     required this.id,
@@ -25,9 +26,9 @@ class SurveyAnswer {
 
   factory SurveyAnswer.fromMap(Map<String, dynamic> data) {
     return SurveyAnswer(
-      id: data["id"] ?? '',
-      value: data["value"] ?? "",
-      label: data["label"] ?? '',
+      id: (data["id"] ?? '').toString(),
+      value: (data["value"] ?? "").toString(),
+      label: LocalizedValue.fromJson(data["label"] ?? ''),
     );
   }
 }
@@ -35,8 +36,8 @@ class SurveyAnswer {
 @immutable
 class SurveyQuestion {
   final String id;
-  final String questionText;
-  final String description;
+  final LocalizedValue<String>?  questionText;
+  final LocalizedValue<String>?  description;
   final QuestionType type;
   final List<SurveyAnswer> answers;
   final String? characterImg;
@@ -54,8 +55,8 @@ class SurveyQuestion {
   factory SurveyQuestion.fromMap(Map<String, dynamic> data) {
     return SurveyQuestion(
       id: (data["id"] ?? "").toString(),
-      questionText: data["questionText"],
-      description: data["description"] ?? "",
+      questionText: LocalizedValue.fromJson(data["questionText"]),
+      description: data["description"]!=null?LocalizedValue.fromJson(data["description"] ?? {}):LocalizedValue(en: "", hi: "", mr: ""),
       characterImg: data['characterImg'] ?? '',
       type: QuestionType.values.firstWhere(
         (qt) => qt.name == data["type"],
@@ -72,15 +73,15 @@ class SurveyQuestion {
 @immutable
 class Survey {
   final String id;
-  final String name;
-  final String desc;
+  final LocalizedValue<String>? name;
+  final LocalizedValue<String>? desc;
   final int reward;
   final DateTime startAt;
   final DateTime endAt;
   final List<SurveyQuestion> questions;
   final String? thumbnail;
   final String? cardImage;
-  final String? cardDesc;
+  final LocalizedValue<String>?  cardDesc;
   const Survey(
       {required this.id,
       required this.name,
@@ -96,8 +97,8 @@ class Survey {
   factory Survey.fromMap(Map<String, dynamic> data) {
     return Survey(
         id: data["id"],
-        name: data["name"] ?? "",
-        desc: data["desc"] ?? "",
+        name: LocalizedValue.fromJson(data["name"] ?? ""),
+        desc: LocalizedValue.fromJson(data["desc"] ?? ""),
         reward: data["reward"] ?? 0,
         startAt: (data["startAt"] ?? DateTime.now()).toDate(),
         endAt: (data["expiresAt"] ?? DateTime.now()).toDate(),
@@ -106,7 +107,7 @@ class Survey {
             .toList(),
         thumbnail: data['thumbnail'] ?? "",
         cardImage: data['card_image'] ?? "",
-        cardDesc: data['card_desc'] ?? "");
+        cardDesc: LocalizedValue.fromJson(data['card_desc'] ?? ""));
   }
 }
 

@@ -138,7 +138,7 @@ class SurveyCardParent extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          survey.name,
+                          survey.name?.toJson()[Localizations.localeOf(context).languageCode],
                           style: const TextStyle(
                             color: Color(0xFFF9FAFB),
                             fontSize: 20,
@@ -147,7 +147,7 @@ class SurveyCardParent extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          survey.cardDesc,
+                          survey.cardDesc?.toJson()[Localizations.localeOf(context).languageCode],
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Color(0xFFEAECF0),

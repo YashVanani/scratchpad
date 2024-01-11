@@ -1,7 +1,43 @@
+import 'package:clarified_mobile/consts/localisedModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-typedef TAnswer = ({dynamic id, String label});
+typedef TAnswer = ({dynamic id, LocalizedValue<String>? label});
+typedef TAnswerQuiz = ({dynamic id, String label});
+
+class SCQAnsewrComponentQuiz extends StatelessWidget {
+  final List<TAnswerQuiz> answers;
+  final String? selectedAnswer;
+  final Function(String) onAnswerSelected;
+
+  const SCQAnsewrComponentQuiz({
+    super.key,
+    required this.answers,
+    required this.selectedAnswer,
+    required this.onAnswerSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      itemCount: answers.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(
+          height: 10,
+        );
+      },
+      itemBuilder: (BuildContext context, int index) {
+        final ans = answers[index];
+
+        return QCheckButton(
+          onSelected: () => onAnswerSelected(ans.id),
+          label: ans.label,
+          isSelected: ans.id == selectedAnswer,
+        );
+      },
+    );
+  }
+}
 
 class SCQAnsewrComponent extends StatelessWidget {
   final List<TAnswer> answers;
@@ -29,7 +65,7 @@ class SCQAnsewrComponent extends StatelessWidget {
 
         return QCheckButton(
           onSelected: () => onAnswerSelected(ans.id),
-          label: ans.label,
+          label: ans.label?.toJson()[Localizations.localeOf(context).languageCode],
           isSelected: ans.id == selectedAnswer,
         );
       },
@@ -135,7 +171,7 @@ class MCQAnsewrComponent extends StatelessWidget {
         return QCheckButton(
           selectedIcon: Icons.check_box_rounded,
           icon: Icons.square,
-          label: ans.label,
+          label: ans.label?.toJson()[Localizations.localeOf(context).languageCode],
           isSelected: selectedAnswers?.contains(ans.id) == true,
           onSelected: () {
             print(selectedAnswers);
@@ -187,7 +223,7 @@ class SliderHAnsewrComponent extends StatelessWidget {
         ),
         Expanded(
           child: Text(
-            answerLabel,
+            answerLabel?.toJson()[Localizations.localeOf(context).languageCode],
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Color(0xFF2970FE),
@@ -204,7 +240,7 @@ class SliderHAnsewrComponent extends StatelessWidget {
             min: 1,
             divisions: answers.length,
             max: answers.length.toDouble(),
-            label: answerLabel,
+            label: answerLabel?.toJson()[Localizations.localeOf(context).languageCode],
             value: (sliderValue > -1 ? sliderValue.toDouble() : 0) + 1,
             onChanged: (nvalue) {
               onAnswerSelected(answers[nvalue.ceil() - 1].id);
@@ -253,7 +289,7 @@ class SliderVAnsewrComponent extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  answerLabel,
+                  answerLabel?.toJson()[Localizations.localeOf(context).languageCode],
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Color(0xFF2970FE),

@@ -80,6 +80,7 @@ class UserInfo {
   }
 }
 
+
 final userProvider = StreamProvider(
   (ref) => FirebaseAuth.instance.authStateChanges(),
 );

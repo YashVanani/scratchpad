@@ -1,5 +1,6 @@
 import 'package:clarified_mobile/consts/colors.dart';
 import 'package:clarified_mobile/model/school.dart';
+import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:clarified_mobile/services/notification.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,6 +43,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
       if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'parent') {
         _notificationService.updateTokenOnLogin('parent',ref);
+        ref.read(myCurrentChild.notifier).state=null;
+        ref.refresh(userListProvider);
         GoRouter.of(context).goNamed("parents-home");
       }
       if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'student') {
