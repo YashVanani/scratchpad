@@ -75,7 +75,7 @@ class SubjectItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child:Image.network(subject.iconImage,width: 25,height: 25,),
+                child:Image.network(subject.iconImage,width: 72,height: 72,),
                 // child: SvgPicture.asset(
                 //   "assets/svg/subjects/science.svg",
                 //      height: 25,
@@ -95,8 +95,8 @@ class SubjectItem extends StatelessWidget {
                 // child:Image.network(subject.iconImage),
                 child: SvgPicture.asset(
                   "assets/svg/subjects/science.svg",
-                     height: 25,
-                width: 25,
+                     height: 72,
+                width: 72,
                   fit: BoxFit.contain,
                 ),
               ),
