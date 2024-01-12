@@ -67,6 +67,7 @@ class Subject {
   final String bannerImage;
   final List<Topic> topics;
   final String teacherId;
+  final String iconImage;
 
   const Subject({
     required this.id,
@@ -74,6 +75,7 @@ class Subject {
     required this.bannerImage,
     required this.topics,
     required this.teacherId,
+    required this.iconImage
   });
 
   factory Subject.fromMap(Map<String, dynamic> data) {
@@ -83,6 +85,7 @@ class Subject {
       name: data["name"],
       topics: List.from(data["topics"]).map((e) => Topic.fromMap(e)).toList(),
       teacherId: data["teacherId"]??"",
+      iconImage:data['iconImage']??""
     );
   }
 }

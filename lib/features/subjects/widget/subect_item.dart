@@ -66,7 +66,7 @@ class SubjectItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SizedBox.square(
+            subject.iconImage.isNotEmpty?SizedBox.square(
               child: Container(
              
                 decoration: ShapeDecoration(
@@ -75,6 +75,24 @@ class SubjectItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
+                child:Image.network(subject.iconImage,width: 25,height: 25,),
+                // child: SvgPicture.asset(
+                //   "assets/svg/subjects/science.svg",
+                //      height: 25,
+                // width: 25,
+                //   fit: BoxFit.contain,
+                // ),
+              ),
+            ):SizedBox.square(
+              child: Container(
+             
+                decoration: ShapeDecoration(
+                  color: theme.border,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                // child:Image.network(subject.iconImage),
                 child: SvgPicture.asset(
                   "assets/svg/subjects/science.svg",
                      height: 25,

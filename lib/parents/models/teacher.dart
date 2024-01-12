@@ -98,7 +98,7 @@ Future<Subject> getSubjectInfo(String id,WidgetRef ref)async{
     return Subject.fromMap((data as Map<String,dynamic>)??{});
     // return Classroom(clazz: data.get('clazz'), section: data?['section'], id: data?['id']);
   }else{
-    return Subject(name: '',id: '',bannerImage: '',teacherId: '',topics: []);
+    return Subject(name: '',id: '',bannerImage: '',teacherId: '',topics: [],iconImage: '');
   }
    
 }
