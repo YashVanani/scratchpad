@@ -23,6 +23,7 @@ import 'package:clarified_mobile/parents/features/report/screen/p_report.dart';
 import 'package:clarified_mobile/parents/features/survey/screen/survey_parent_screen.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:clarified_mobile/teachers/features/home/t_home.dart';
+import 'package:clarified_mobile/teachers/features/myspace/myspace.dart';
 import 'package:clarified_mobile/teachers/features/playbook/playbook.dart';
 import 'package:clarified_mobile/teachers/features/playbook/playbook_detail.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -66,6 +67,9 @@ String getInitialRoute(email) {
     return "/";
   }
   if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'teacher') {
+    return "/t_home";
+  }
+  if (email.split('')[0].toLowerCase() == 't') {
     return "/t_home";
   }
   return "/login";
@@ -309,6 +313,12 @@ GoRouter initRouter() {
         name: "teachers-playbook",
         builder: (context, state) => PlaybookTeacherScreen(),
       ),
+      
+      GoRoute(
+        path: '/t_my_space',
+        name: "teachers-my-space",
+        builder: (context, state) => MySpaceScreen(),),
+      
       GoRoute(
         path: '/t_playbook_detail',
         name: "teachers-playbook-detail",

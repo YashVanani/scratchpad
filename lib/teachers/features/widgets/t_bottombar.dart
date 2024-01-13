@@ -22,7 +22,7 @@ const List<TabItem> pItems = [
    TabItem(
     icon: Icons.av_timer,
     title: 'My Space',
-    key: 'parents-playbooks',
+    key: 'teachers-my-space',
   ),
   TabItem(
     icon: Icons.account_circle,

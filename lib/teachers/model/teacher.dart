@@ -79,7 +79,7 @@ final teacherDocProvider = FutureProvider((ref) {
   final teacherStream = ref.watch(teacherProvider);
   return baseDoc
       .collection("staffs")
-      .doc(teacherStream.value?.uid.split(":").first);
+      .doc('T0000');
 });
 
 final teacherProfileProvider = StreamProvider<TeacherInfo>((ref) {
@@ -87,6 +87,7 @@ final teacherProfileProvider = StreamProvider<TeacherInfo>((ref) {
 
   return teacherDoc.value?.snapshots().where((ev) => ev.exists).map(
             (v){
+              print("++++TEACHER");
              TeacherInfo teacherInfo = TeacherInfo.fromMap(v.data()!);
               ref.read(teacherSurveyInbox.notifier).state = teacherInfo.surveyInbox;
              return teacherInfo;

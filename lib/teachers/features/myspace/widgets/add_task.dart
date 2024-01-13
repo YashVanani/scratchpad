@@ -1,21 +1,26 @@
 import 'package:clarified_mobile/consts/colors.dart';
+import 'package:clarified_mobile/parents/models/playbook.dart';
+import 'package:clarified_mobile/teachers/features/playbook/widgets/apply_success.dart';
+import 'package:clarified_mobile/teachers/model/myspace.dart';
+import 'package:clarified_mobile/teachers/model/playbook.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PlayBookApply extends ConsumerStatefulWidget {
-  PlayBookApply({super.key, required this.classId});
+class AddTaskDialog extends ConsumerStatefulWidget {
+  AddTaskDialog({super.key, required this.classId,});
 
   List<String> classId;
   
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>_PlayBookApplyState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>_AddTaskDialogState();
 
 }
 
-class _PlayBookApplyState extends ConsumerState<PlayBookApply> {
+class _AddTaskDialogState extends ConsumerState<AddTaskDialog> {
   DateTime? selectedDate = null;
   String? selectedClass = null;
   TextEditingController messageController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +52,7 @@ class _PlayBookApplyState extends ConsumerState<PlayBookApply> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Apply Strategy',
+                        'Add Task',
                         style: TextStyle(color: greenTextColor),
                       ),
                       InkWell(
@@ -63,6 +68,36 @@ class _PlayBookApplyState extends ConsumerState<PlayBookApply> {
               ),
               SizedBox(
                 height: 20,
+              ),
+               Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  "Title",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+               SizedBox(
+                height: 4,
+              ),
+                Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                    
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey.shade400, width: 1),
+                    ),
+                    child:TextField(
+                      maxLines: 1,
+                      controller: titleController,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Type your message",
+                      ),
+                    )),
+             SizedBox(
+                height: 8,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -172,48 +207,20 @@ class _PlayBookApplyState extends ConsumerState<PlayBookApply> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    
                     InkWell(
-                      onTap: () {
-                        // state(() {
-                        //   selectedEffortLevel ='All';
-                        //   selectedDevelopmentalStage='All';
-                        //   selectedDomain='All';
-                        // });
-                      },
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        decoration: BoxDecoration(
-                            color: Color(0xffFECDCA).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(10),
-                            border:
-                                Border.all(color: Color(0xffF04438), width: 1)),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.filter_alt,
-                              color: Color(0xffF04438),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Reset",
-                              style: TextStyle(
-                                  color: Color(0xffF04438),
-                                  fontWeight: FontWeight.w500),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
+                      onTap: ()async {
+                        bool res = await saveTask(ref: ref,title: titleController.text??"",time: selectedDate??DateTime.now(),message:messageController.text,classId: selectedClass??"" );
                         Navigator.pop(
                           context,
                         );
+                        if(true){
+                          await showDialog(context: context, builder: (context){
+                            return ApplySuccessPop();
+                          });
+                        }
                       },
                       child: Container(
                         padding:
@@ -226,14 +233,15 @@ class _PlayBookApplyState extends ConsumerState<PlayBookApply> {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.sort_sharp,
+                              Icons.edit,
                               color: whiteColor,
+                              size: 18,
                             ),
                             SizedBox(
                               width: 10,
                             ),
                             Text(
-                              "Apply",
+                              "Save",
                               style: TextStyle(
                                   color: whiteColor,
                                   fontWeight: FontWeight.w500),
@@ -252,8 +260,8 @@ class _PlayBookApplyState extends ConsumerState<PlayBookApply> {
     );
   }
 }
-// class PlayBookApply extends StatelessWidget {
-//   PlayBookApply({
+// class AddTaskDialog extends StatelessWidget {
+//   AddTaskDialog({
 //     super.key,
 //     required this.classId
 //   });

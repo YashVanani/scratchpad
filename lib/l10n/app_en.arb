@@ -233,5 +233,11 @@
   "community_post_3":"3. Derogatory language is strictly prohibited.",
   "why_this_work":"Why this work",
   "read_detail":"Read details",
-  "no_dashboard":"No Dashboards"
+  "no_dashboard":"No Dashboards",
+  "activities_applied_msg":"The strategy has successfully added. \n You can find it in your calendar.",
+  "remender_and_notes":"Reminder & Notes",
+  "lesson_plan":"Lesson Plan",
+  "assignment":"Assignment",
+  "my_activity":"My Activities",
+  "no_result_found":"No Results found"
 }
