@@ -604,229 +604,231 @@ class _QuizViewState extends ConsumerState<QuizView> {
     return Scaffold(
       backgroundColor: const Color(0xFFF2F4F7),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              // color: Colors.white,
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 4,
-              ),
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(4.0),
-                    child: Text(
-                      AppLocalizations.of(context)!.playing_quiz,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF475467),
-                        fontSize: 22,
-                        fontFamily: 'Lexend',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  TimerProgressBar(
-                    shouldPause: pauseTimer,
-                    total: Duration(seconds: widget.quiz.duration),
-                    emitter: emitter,
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      text: AppLocalizations.of(context)!.total_question,
-                      children: [
-                        TextSpan(
-                          text: "${activeQuestions.length}",
-                          style: const TextStyle(
-                            color: Color(0xFF1D2939),
-                            fontSize: 12,
-                            fontFamily: 'Lexend',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: AppLocalizations.of(context)!.answered,
-                      children: [
-                        TextSpan(
-                          text: "${(answers.keys.length).clamp(0, answers.keys.length)}",
-                          style: const TextStyle(
-                            color: Color(0xFF087343),
-                            fontSize: 12,
-                            fontFamily: 'Lexend',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      text: AppLocalizations.of(context)!.remaining,
-                      children: [
-                        TextSpan(
-                          text: "${(activeQuestions.length - answers.keys.length).clamp(0, activeQuestions.length)}",
-                          style: const TextStyle(
-                            color: Color(0xFFCA8403),
-                            fontSize: 12,
-                            fontFamily: 'Lexend',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              constraints: const BoxConstraints(
-                minHeight: 150,
-              ),
-              decoration: ShapeDecoration(
-                gradient: const SweepGradient(
-                  colors: [Color(0xffecd9d9), Color(0xffd2e9fb), Color(0xffede9db)],
-                  stops: [0.25, 0.55, 0.87],
-                  center: Alignment.topRight,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: Padding(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                // color: Colors.white,
+                margin: const EdgeInsets.all(16),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("${AppLocalizations.of(context)!.question} ${currentQuestion + 1}"),
-                    Text(
-                      ques.questionText,
-                      // textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontFamily: 'Lexend',
-                        fontWeight: FontWeight.w400,
+                    Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: Text(
+                        AppLocalizations.of(context)!.playing_quiz,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color(0xFF475467),
+                          fontSize: 22,
+                          fontFamily: 'Lexend',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    TimerProgressBar(
+                      shouldPause: pauseTimer,
+                      total: Duration(seconds: widget.quiz.duration),
+                      emitter: emitter,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.total_question,
+                        children: [
+                          TextSpan(
+                            text: "${activeQuestions.length}",
+                            style: const TextStyle(
+                              color: Color(0xFF1D2939),
+                              fontSize: 12,
+                              fontFamily: 'Lexend',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Text.rich(
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.answered,
+                        children: [
+                          TextSpan(
+                            text: "${(answers.keys.length).clamp(0, answers.keys.length)}",
+                            style: const TextStyle(
+                              color: Color(0xFF087343),
+                              fontSize: 12,
+                              fontFamily: 'Lexend',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Text.rich(
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.remaining,
+                        children: [
+                          TextSpan(
+                            text: "${(activeQuestions.length - answers.keys.length).clamp(0, activeQuestions.length)}",
+                            style: const TextStyle(
+                              color: Color(0xFFCA8403),
+                              fontSize: 12,
+                              fontFamily: 'Lexend',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: SCQAnsewrComponentQuiz(
-                  answers: tanswers,
-                  selectedAnswer: answers[ques.id]?.answer,
-                  onAnswerSelected: (submittedAnswer) => setState(() {
-                    answers[ques.id] = (answer: submittedAnswer, extra: submittedAnswer, isCorrect: submittedAnswer == ques.answer);
-                  }),
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: const Color(0xFF04686E),
+                constraints: const BoxConstraints(
+                  minHeight: 150,
+                ),
+                decoration: ShapeDecoration(
+                  gradient: const SweepGradient(
+                    colors: [Color(0xffecd9d9), Color(0xffd2e9fb), Color(0xffede9db)],
+                    stops: [0.25, 0.55, 0.87],
+                    center: Alignment.topRight,
+                  ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  side: const BorderSide(
-                    width: 1,
-                    color: Color(0xFF04686E),
-                  ),
-                  elevation: 3,
                 ),
-                onPressed: () async {
-                  if (answers[ques.id]?.answer == null) {
-                    Fluttertoast.showToast(
-                      msg: AppLocalizations.of(context)!.please_select_an_answer,
-                    );
-                    return;
-                  }
-
-                  saveCurrentAnswers(isLastQuestion);
-                  if (isLastQuestion) {
-                    emitter.on("timier:stopped", null, (ev, context) {
-                      //ev.data as string
-                    });
-                    emitter.emit("stop:timer");
-                    setState(() => pauseTimer = true);
-                  }
-
-                  await (() async {
-                    await showModalBottomSheet(
-                        context: context,
-                        enableDrag: false,
-                        isDismissible: false,
-                        shape: const ContinuousRectangleBorder(
-                          side: BorderSide.none,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("${AppLocalizations.of(context)!.question} ${currentQuestion + 1}"),
+                      Text(
+                        ques.questionText,
+                        // textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontFamily: 'Lexend',
+                          fontWeight: FontWeight.w400,
                         ),
-                        builder: (ctx) {
-                          final correctCount = answers.values.where((e) => e.isCorrect).length / activeQuestions.length;
-
-                          return SubmittedAnswer(
-                            question: ques,
-                            answer: answers[ques.id]!.answer,
-                            isLastQuestion: isLastQuestion,
-                            correctCount: correctCount,
-                            pointGained: "${widget.quiz.points}",
-                            startTime: startAt,
-                          );
-                        });
-                  })();
-
-                  if (isLastQuestion) return;
-
-                  setState(() {
-                    currentQuestion = currentQuestion + 1;
-                  });
-                },
-                child: Text(
-                  AppLocalizations.of(context)!.submit,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'Lexend',
-                    fontWeight: FontWeight.w400,
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-          ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SCQAnsewrComponentQuiz(
+                    answers: tanswers,
+                    selectedAnswer: answers[ques.id]?.answer,
+                    onAnswerSelected: (submittedAnswer) => setState(() {
+                      answers[ques.id] = (answer: submittedAnswer, extra: submittedAnswer, isCorrect: submittedAnswer == ques.answer);
+                    }),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: const Color(0xFF04686E),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    side: const BorderSide(
+                      width: 1,
+                      color: Color(0xFF04686E),
+                    ),
+                    elevation: 3,
+                  ),
+                  onPressed: () async {
+                    if (answers[ques.id]?.answer == null) {
+                      Fluttertoast.showToast(
+                        msg: AppLocalizations.of(context)!.please_select_an_answer,
+                      );
+                      return;
+                    }
+          
+                    saveCurrentAnswers(isLastQuestion);
+                    if (isLastQuestion) {
+                      emitter.on("timier:stopped", null, (ev, context) {
+                        //ev.data as string
+                      });
+                      emitter.emit("stop:timer");
+                      setState(() => pauseTimer = true);
+                    }
+          
+                    await (() async {
+                      await showModalBottomSheet(
+                          context: context,
+                          enableDrag: false,
+                          isDismissible: false,
+                          shape: const ContinuousRectangleBorder(
+                            side: BorderSide.none,
+                          ),
+                          builder: (ctx) {
+                            final correctCount = answers.values.where((e) => e.isCorrect).length / activeQuestions.length;
+          
+                            return SubmittedAnswer(
+                              question: ques,
+                              answer: answers[ques.id]!.answer,
+                              isLastQuestion: isLastQuestion,
+                              correctCount: correctCount,
+                              pointGained: "${widget.quiz.points}",
+                              startTime: startAt,
+                            );
+                          });
+                    })();
+          
+                    if (isLastQuestion) return;
+          
+                    setState(() {
+                      currentQuestion = currentQuestion + 1;
+                    });
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.submit,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontFamily: 'Lexend',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: const PageButtomSlug(),
