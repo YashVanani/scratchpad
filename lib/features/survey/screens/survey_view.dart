@@ -213,99 +213,102 @@ class _SurveyWizardPageState extends ConsumerState<SurveyWizardPage> {
                       );
                     },
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: ques.type == QuestionType.scq
-                          ? SCQAnsewrComponent(
-                              answers: tanswers,
-                              selectedAnswer: answers[ques.id]?.answer,
-                              onAnswerSelected: (answerId) => setState(() {
-                                answers[ques.id] = ProvidedAnswer(
-                                  answer: answerId,
-                                  extra: ques.answers
-                                      .firstWhere((f) => f.id == answerId)
-                                      .value,
-                                );
-                              }),
-                            )
-                          : ques.type == QuestionType.mcq
-                              ? MCQAnsewrComponent(
-                                  answers: tanswers,
-                                  selectedAnswers: answers[ques.id]?.answer,
-                                  onAnswerSelected: (answerIds) => setState(
-                                    () {
-                                      answers[ques.id] = ProvidedAnswer(
-                                        answer: answerIds,
-                                        extra: answerIds
-                                            .map((answerId) => ques.answers
-                                                .firstWhere(
-                                                  (f) => f.id == answerId,
-                                                )
-                                                .value)
-                                            .toList(),
-                                      );
-                                    },
-                                  ),
-                                )
-                              : ques.type == QuestionType.slider_h
-                                  ? SliderHAnsewrComponent(
-                                      answers: tanswers,
-                                      selectedAnswer: answers[ques.id]?.answer,
-                                      onAnswerSelected: (answerId) => setState(
-                                        () {
-                                          answers[ques.id] = ProvidedAnswer(
-                                            answer: answerId,
-                                            extra: "",
-                                          );
-                                        },
-                                      ),
-                                    )
-                                  : ques.type == QuestionType.slider_v
-                                      ? SliderVAnsewrComponent(
-                                          answers: tanswers,
-                                          selectedAnswer:
-                                              answers[ques.id]?.answer,
-                                          onAnswerSelected: (answerId) =>
-                                              setState(
-                                            () {
-                                              answers[ques.id] = ProvidedAnswer(
-                                                answer: answerId,
-                                                extra: "",
-                                              );
-                                            },
-                                          ),
-                                        )
-                                      : ques.type == QuestionType.boolean
-                                          ? BoolAnsewrComponent(
-                                              selectedAnswer:
-                                                  answers[ques.id]?.answer,
-                                              onAnswerSelected:
-                                                  (answerId, comment) => setState(
-                                                () {
-                                                  answers[ques.id] =
-                                                      ProvidedAnswer(
-                                                    answer: answerId,
-                                                    extra: comment,
-                                                  );
-                                                },
-                                              ),
-                                            )
-                                          : BoolAnsewrComponent(
-                                              hasComment: true,
-                                              selectedAnswer:
-                                                  answers[ques.id]?.answer,
-                                              onAnswerSelected:
-                                                  (answerId, comment) => setState(
-                                                () {
-                                                  answers[ques.id] =
-                                                      ProvidedAnswer(
-                                                    answer: answerId,
-                                                    extra: comment,
-                                                  );
-                                                },
-                                              ),
+                  SizedBox(
+                       height: MediaQuery.of(context).size.height*0.5,
+                    child: Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: ques.type == QuestionType.scq
+                            ? SCQAnsewrComponent(
+                                answers: tanswers,
+                                selectedAnswer: answers[ques.id]?.answer,
+                                onAnswerSelected: (answerId) => setState(() {
+                                  answers[ques.id] = ProvidedAnswer(
+                                    answer: answerId,
+                                    extra: ques.answers
+                                        .firstWhere((f) => f.id == answerId)
+                                        .value,
+                                  );
+                                }),
+                              )
+                            : ques.type == QuestionType.mcq
+                                ? MCQAnsewrComponent(
+                                    answers: tanswers,
+                                    selectedAnswers: answers[ques.id]?.answer,
+                                    onAnswerSelected: (answerIds) => setState(
+                                      () {
+                                        answers[ques.id] = ProvidedAnswer(
+                                          answer: answerIds,
+                                          extra: answerIds
+                                              .map((answerId) => ques.answers
+                                                  .firstWhere(
+                                                    (f) => f.id == answerId,
+                                                  )
+                                                  .value)
+                                              .toList(),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : ques.type == QuestionType.slider_h
+                                    ? SliderHAnsewrComponent(
+                                        answers: tanswers,
+                                        selectedAnswer: answers[ques.id]?.answer,
+                                        onAnswerSelected: (answerId) => setState(
+                                          () {
+                                            answers[ques.id] = ProvidedAnswer(
+                                              answer: answerId,
+                                              extra: "",
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    : ques.type == QuestionType.slider_v
+                                        ? SliderVAnsewrComponent(
+                                            answers: tanswers,
+                                            selectedAnswer:
+                                                answers[ques.id]?.answer,
+                                            onAnswerSelected: (answerId) =>
+                                                setState(
+                                              () {
+                                                answers[ques.id] = ProvidedAnswer(
+                                                  answer: answerId,
+                                                  extra: "",
+                                                );
+                                              },
                                             ),
+                                          )
+                                        : ques.type == QuestionType.boolean
+                                            ? BoolAnsewrComponent(
+                                                selectedAnswer:
+                                                    answers[ques.id]?.answer,
+                                                onAnswerSelected:
+                                                    (answerId, comment) => setState(
+                                                  () {
+                                                    answers[ques.id] =
+                                                        ProvidedAnswer(
+                                                      answer: answerId,
+                                                      extra: comment,
+                                                    );
+                                                  },
+                                                ),
+                                              )
+                                            : BoolAnsewrComponent(
+                                                hasComment: true,
+                                                selectedAnswer:
+                                                    answers[ques.id]?.answer,
+                                                onAnswerSelected:
+                                                    (answerId, comment) => setState(
+                                                  () {
+                                                    answers[ques.id] =
+                                                        ProvidedAnswer(
+                                                      answer: answerId,
+                                                      extra: comment,
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                      ),
                     ),
                   ),
                   Padding(

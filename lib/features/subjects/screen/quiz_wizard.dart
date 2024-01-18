@@ -43,7 +43,7 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
   }
   @override
   Widget build(BuildContext context) {
-    final quizAttempted = ref.watch(quizAttemptProvider);
+    final quizAttempted = ref.refresh(quizAttemptProvider);
     final quiz = ref.watch(
       quizProvider(
         (
@@ -96,20 +96,24 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                           ),
                         ),
                       ),
-                      Expanded(
+                      quizAttempted.when(data: (d)=>Expanded(
                         child: SPChecker(
                           items: [
-                            (quizAttempted.asData?.value ?? []).any((element) => (element['id'] == widget.topicId && element['level'].contains('easy')))
+                            (d ?? []).any((element) => (element['id'] == widget.topicId && element['level'].contains('easy')))
                                 ? (label: "Easy", onClicked: () => setState(() => selectedLevel = "easy"), isCompleted: true)
                                 : quiz.asData?.value?.levels.contains('easy')??false?(label: "Easy", onClicked: () => setState(() => selectedLevel = "easy"), isCompleted: false):(label: "Easy", onClicked: () => setState(() => selectedLevel = "easy"), isCompleted: true),
-                            (quizAttempted.asData?.value ?? []).any((element) => (false))
+                            (d ?? []).any((element) => (false))
                                 ? (label: "Medium ", onClicked: () => setState(() => selectedLevel = "medium"), isCompleted: true)
                                 : quiz.asData?.value?.levels.contains('medium')??false?(label: "Medium", onClicked: () => setState(() => selectedLevel = "medium"), isCompleted: false):(label: "Medium", onClicked: () => setState(() => selectedLevel = "medium"), isCompleted: true),
-                             (quizAttempted.asData?.value ?? []).any((element) => element['id'] == widget.topicId && element['level'].contains('hard'))
+                             (d ?? []).any((element) => element['id'] == widget.topicId && element['level'].contains('hard'))
                                 ? (label: "Hard", onClicked: () => setState(() => selectedLevel = "hard"), isCompleted: true)
                            : quiz.asData?.value?.levels.contains('hard')??false?(label: "Hard", onClicked: () => setState(() => selectedLevel = "hard"), isCompleted: false):(label: "Hard", onClicked: () => setState(() => selectedLevel = "hard"), isCompleted: true),],
                         ),
                       ),
+                      error: (e,s)=>Text(e.toString()),
+                      loading: ()=>Text(""),
+                      ),
+                      
                       Visibility(
                         visible: ref.read(isQuizLevelAvaliable.notifier).state,
                         child: TextButton(
@@ -745,15 +749,18 @@ class _QuizViewState extends ConsumerState<QuizView> {
                   ),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: SCQAnsewrComponentQuiz(
-                    answers: tanswers,
-                    selectedAnswer: answers[ques.id]?.answer,
-                    onAnswerSelected: (submittedAnswer) => setState(() {
-                      answers[ques.id] = (answer: submittedAnswer, extra: submittedAnswer, isCorrect: submittedAnswer == ques.answer);
-                    }),
+              SizedBox(
+                height: MediaQuery.of(context).size.height*0.5,
+                child: Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: SCQAnsewrComponentQuiz(
+                      answers: tanswers,
+                      selectedAnswer: answers[ques.id]?.answer,
+                      onAnswerSelected: (submittedAnswer) => setState(() {
+                        answers[ques.id] = (answer: submittedAnswer, extra: submittedAnswer, isCorrect: submittedAnswer == ques.answer);
+                      }),
+                    ),
                   ),
                 ),
               ),

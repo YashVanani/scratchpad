@@ -1,5 +1,6 @@
 import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
+import 'package:clarified_mobile/teachers/model/playbook.dart';
 import 'package:clarified_mobile/teachers/model/teacher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,20 +71,21 @@ class PlayBookTeacherCard extends ConsumerWidget{
                         SizedBox(width: 10,),
                     InkWell(
                       onTap:(){
-                           if( ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false){
+                           if( ref.read(teacherFavoriteActivityState.notifier).state.contains(playbook.id)??false){
                               
                               print("+++Re=mpved");
-                               ref.read(favoriteActivityState.notifier).state.remove(playbook.id);
+                               ref.read(teacherFavoriteActivityState.notifier).state.remove(playbook.id);
                             }else{
                               print("+++ADDED");
-                               ref.read(favoriteActivityState.notifier).state.add(playbook.id??"");
+                               ref.read(teacherFavoriteActivityState.notifier).state.add(playbook.id??"");
                             }
-                            ref.refresh(updatedFavoriteActivityProvider);
-                            
+                            ref.refresh(updatedFavoriteActivityTeacherProvider);
+                             ref.refresh(teacherPlaybookProvider);
+                          
                       },
                       child:Icon(
                       Icons.star,
-                      color:ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false?Colors.yellow: Colors.grey,
+                      color:ref.read(teacherFavoriteActivityState.notifier).state.contains(playbook.id)??false?Colors.yellow: Colors.grey,
                     )
                     ),],)
                   ]),
@@ -134,9 +136,9 @@ class PlayBookTeacherCard extends ConsumerWidget{
                     ),
                     Row(
                       children: [
-                          Icon(Icons.crisis_alert,color: playbook.effortLevel=='Easy'?Color(0xff16B364):playbook.effortLevel=='Medium'?Colors.orange:Colors.red,size: 16,),
+                          Icon(Icons.crisis_alert,color: playbook.effortLevel?.en=='Easy'?Color(0xff16B364):playbook.effortLevel?.en=='Medium'?Colors.orange:Colors.red,size: 16,),
                           SizedBox(width: 5,),
-                          Text(playbook.effortLevel?.toJson()[Localizations.localeOf(context).languageCode]??"Easy",style: TextStyle(color: playbook.effortLevel=='Easy'?Color(0xff16B364):playbook.effortLevel=='Medium'?Colors.orange:Colors.red),),
+                          Text(playbook.effortLevel?.toJson()[Localizations.localeOf(context).languageCode]??"Easy",style: TextStyle(color: playbook.effortLevel?.en=='Easy'?Color(0xff16B364):playbook.effortLevel?.en=='Medium'?Colors.orange:Colors.red),),
                           ],)
                   ],
                 )),
@@ -166,3 +168,6 @@ class PlayBookTeacherCard extends ConsumerWidget{
   }
 
  }
+
+// 
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {}); 

@@ -133,7 +133,7 @@ class SurveyAnswerSaverParent extends AutoDisposeAsyncNotifier<void> {
         .doc(userProfile.value!.id);
 
     final answerOpt = SetOptions(
-      mergeFields: ["status", "answers", "updated_at"],
+      mergeFields: ["status", "answers", "updated_at","student_id"],
     );
 
     final data = {

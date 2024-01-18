@@ -114,8 +114,22 @@ final teacherDashboardPlaybookListProvider =
 });
 
 final teacherFavoriteActivityProvider = StreamProvider<List<Playbook>>((ref) {
+  ref.refresh(teacherProfileProvider);
   final playbookDocs = ref.watch(playbookColProvider);
   final playbookIds = ref.watch(teacherFavoriteActivityState.notifier).state;
+  print("++++PLAYBOOK SAVED ${playbookIds}");
+  return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
+            (v) => v.docs
+                .map((doc) => Playbook.fromJson(doc.data()))
+                .where((playbook) => (playbookIds).contains(playbook.id))
+                .toList(),
+          ) ??
+      const Stream.empty();
+});
+
+final teacherAppliedActivityProvider = StreamProvider<List<Playbook>>((ref) {
+  final playbookDocs = ref.watch(playbookColProvider);
+  final playbookIds = ref.watch(teacherAppliedActivityState.notifier).state;
   print("++++PLAYBOOK SAVED ${playbookIds}");
   return playbookDocs.value?.snapshots().where((ev) => ev.docs.isNotEmpty).map(
             (v) => v.docs
@@ -167,6 +181,7 @@ Future<bool> applyStrategy(
 }
 
 final teacherFavoriteActivityState = StateProvider<List<String>>((ref) => []);
+final teacherAppliedActivityState = StateProvider<List<String>>((ref) => []);
 final teacherPlaybookIdsState = StateProvider<List<String>>((ref) => []);
 final teacherSearchPlaybookState = StateProvider((_) => '');
 final teacherFilterProvider = StateProvider((_) => {});

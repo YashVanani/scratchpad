@@ -145,6 +145,7 @@ final quizAttemptProvider = StreamProvider((ref) {
   if (!user.hasValue) {
     return Stream.value([{}]);
   }
+  print("QUIZ ATTEMPTED");
 
   return user.value!
       .collection("quiz_answers")
@@ -160,6 +161,7 @@ final quizAttemptProvider = StreamProvider((ref) {
 
               topicId = '';
             }
+            print({'id': topicId ?? '', 'level': level ?? ''});
             return {'id': topicId ?? '', 'level': level ?? ''};
           }).toList());
 });

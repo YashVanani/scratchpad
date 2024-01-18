@@ -1,4 +1,7 @@
 import 'package:clarified_mobile/model/school.dart';
+import 'package:clarified_mobile/parents/features/profile/screen/p_profile.dart';
+import 'package:clarified_mobile/teachers/model/playbook.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,7 +62,7 @@ class TeacherInfo {
       childrens: (data["childrens"] ?? []).cast<String>(),
       inAppNotification: data['inAppNotification']??true,
       appUpdateNotification: data['appUpdateNotification']??true,
-      activitiesFavorites:( data['activitiesFavorites']??[]).cast<String>(),
+      activitiesFavorites:( data['favoriteActivities']??[]).cast<String>(),
       activityRating:data['activityRating'],
       appliedActivities:( data['appliedActivities']??[]).cast<String>(),
       dashboardFavorites: ( data['dashboardFavorites']??[]).cast<String>(),
@@ -90,16 +93,36 @@ final teacherProfileProvider = StreamProvider<TeacherInfo>((ref) {
               print("++++TEACHER");
              TeacherInfo teacherInfo = TeacherInfo.fromMap(v.data()!);
               ref.read(teacherSurveyInbox.notifier).state = teacherInfo.surveyInbox;
+              ref.read(teacherAppliedActivityState.notifier).state = teacherInfo.appliedActivities;
+              ref.read(teacherFavoriteActivityState.notifier).state = teacherInfo.activitiesFavorites;
+
              return teacherInfo;
             },
           ) ??
       const Stream.empty();
 });
 
+final updatedFavoriteActivityTeacherProvider =
+    FutureProvider((ref) async {
+  final teacherDoc = ref.watch(teacherDocProvider);
+  var a =ref.read(teacherFavoriteActivityState.notifier).state.length;
+  print("++++++LENGTH ${a}");
+  if (teacherDoc.value != null) {
+    await teacherDoc.value!.set({
+      'favoriteActivities':  ref.read(teacherFavoriteActivityState.notifier).state,    },SetOptions(merge: true));
+    ScaffoldMessenger.of(ref.read(navigatorKeyProvider).currentContext!)
+        .showSnackBar(
+      const SnackBar(
+        content: Text("Done."),
+      ),
+    );
+  }
+});
+
 Future<void> updateStudentTokenProvider (String value, WidgetRef ref) async {
-  final parentDoc = ref.watch(teacherDocProvider);
-  if (parentDoc.value != null) {
-    await parentDoc.value!.update({
+  final teacherDoc = ref.watch(teacherDocProvider);
+  if (teacherDoc.value != null) {
+    await teacherDoc.value!.update({
       'token': value,    });
   }
 }

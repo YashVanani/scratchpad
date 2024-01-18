@@ -20,6 +20,7 @@ class SCQAnsewrComponentQuiz extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+      physics: NeverScrollableScrollPhysics(),
       itemCount: answers.length,
       separatorBuilder: (BuildContext context, int index) {
         return const SizedBox(
@@ -54,6 +55,7 @@ class SCQAnsewrComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+        physics: NeverScrollableScrollPhysics(),
       itemCount: answers.length,
       separatorBuilder: (BuildContext context, int index) {
         return const SizedBox(
@@ -159,6 +161,7 @@ class MCQAnsewrComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
+        physics: NeverScrollableScrollPhysics(),
       itemCount: answers.length,
       separatorBuilder: (BuildContext context, int index) {
         return const SizedBox(
@@ -354,6 +357,7 @@ class _BoolAnsewrComponentState extends State<BoolAnsewrComponent> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+        physics: NeverScrollableScrollPhysics(),
       children: [
         Row(
           mainAxisSize: MainAxisSize.min,

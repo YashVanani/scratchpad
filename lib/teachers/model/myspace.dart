@@ -72,8 +72,10 @@ class Calender {
 
 final calenderProvider =
     StreamProvider<List<Calender>>((ref) {
-  final teacherDoc = ref.watch(teacherDocProvider);
+ try{
+   final teacherDoc = ref.watch(teacherDocProvider);
   ref.read(taskListProvider.notifier).state.clear();
+  print("++++++CALENDER PROVIDER");
   // var e = await teacherDoc.value?.collection('calendars').where('date',isGreaterThan:DateTime(ref.read(teacherCalenderDateProvider.notifier).state.year,ref.read(teacherCalenderDateProvider.notifier).state.month,ref.read(teacherCalenderDateProvider.notifier).state.day-1) ).where('date',isLessThan:DateTime(ref.read(teacherCalenderDateProvider.notifier).state.year,ref.read(teacherCalenderDateProvider.notifier).state.month,ref.read(teacherCalenderDateProvider.notifier).state.day+1)).where((ev) => ev.docs.isNotEmpty).count();
   // print("+++++>>TEST${}");
   return teacherDoc.value?.collection('calendars').where('date',isGreaterThan:DateTime(ref.read(teacherCalenderDateProvider.notifier).state.year,ref.read(teacherCalenderDateProvider.notifier).state.month,ref.read(teacherCalenderDateProvider.notifier).state.day-1) ).where('date',isLessThan:DateTime(ref.read(teacherCalenderDateProvider.notifier).state.year,ref.read(teacherCalenderDateProvider.notifier).state.month,ref.read(teacherCalenderDateProvider.notifier).state.day+1)).snapshots().where((ev) => ev.docs.isNotEmpty).map(
@@ -89,6 +91,10 @@ final calenderProvider =
                 .toList(),
           ) ??
        Stream.value([]);
+ }catch(e){
+  print(e);
+  return Stream.value([]);
+ }
 });
 
 Future<bool> saveTask(
@@ -128,4 +134,5 @@ Future<bool> saveTask(
 }
 
 final teacherCalenderDateProvider = StateProvider<DateTime>((_) => DateTime.now());
+final myActivityTabProvider = StateProvider<bool>((_) => false);
 final taskListProvider = StateProvider<List<Calender>>((ref) => []);
