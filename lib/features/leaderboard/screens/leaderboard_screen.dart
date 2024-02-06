@@ -19,6 +19,12 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
   bool leaderGraph = true;
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {getClassId(ref);});
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final profile = ref.watch(profileProvider);
     final studentList = ref.watch(

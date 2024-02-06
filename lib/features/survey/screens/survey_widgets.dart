@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 typedef TAnswer = ({dynamic id, LocalizedValue<String>? label});
+typedef TAnswerFeedback = ({dynamic id, String? label});
 typedef TAnswerQuiz = ({dynamic id, String label});
 
 class SCQAnsewrComponentQuiz extends StatelessWidget {
@@ -400,6 +401,150 @@ class _BoolAnsewrComponentState extends State<BoolAnsewrComponent> {
               ),
             ),
           )
+      ],
+    );
+  }
+}
+
+class SCQAnsewrFeedbackComponent extends StatelessWidget {
+  final List<TAnswerFeedback> answers;
+  final String? selectedAnswer;
+  final Function(String) onAnswerSelected;
+
+  const SCQAnsewrFeedbackComponent({
+    super.key,
+    required this.answers,
+    required this.selectedAnswer,
+    required this.onAnswerSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        physics: NeverScrollableScrollPhysics(),
+      itemCount: answers.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(
+          height: 10,
+        );
+      },
+      itemBuilder: (BuildContext context, int index) {
+        final ans = answers[index];
+
+        return QCheckButton(
+          onSelected: () => onAnswerSelected(ans.id),
+          label: ans.label??"",
+          isSelected: ans.id == selectedAnswer,
+        );
+      },
+    );
+  }
+}
+
+class MCQAnsewrComponentFeedback extends StatelessWidget {
+  final List<TAnswerFeedback> answers;
+  final Set<String>? selectedAnswers;
+  final Function(Set<String>) onAnswerSelected;
+
+  const MCQAnsewrComponentFeedback({
+    super.key,
+    required this.answers,
+    required this.selectedAnswers,
+    required this.onAnswerSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        physics: NeverScrollableScrollPhysics(),
+      itemCount: answers.length,
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(
+          height: 10,
+        );
+      },
+      itemBuilder: (BuildContext context, int index) {
+        final ans = answers[index];
+
+        return QCheckButton(
+          selectedIcon: Icons.check_box_rounded,
+          icon: Icons.square,
+          label: ans.label??"",
+          isSelected: selectedAnswers?.contains(ans.id) == true,
+          onSelected: () {
+            print(selectedAnswers);
+            print("+HERE ${ans.id} ${selectedAnswers?.contains(ans.id)}");
+            if (selectedAnswers?.contains(ans.id) == true) {
+              print("MATCHED");
+              selectedAnswers!.remove(ans.id);
+              onAnswerSelected(selectedAnswers!);
+              return;
+            }
+            print("ANSWER SELECTED ${<String>{...(selectedAnswers ?? []), ans.id}}");
+            onAnswerSelected(<String>{...(selectedAnswers ?? []), ans.id});
+          },
+        );
+      },
+    );
+  }
+}
+
+class SliderHAnsewrComponentFeedback extends StatelessWidget {
+  final List<TAnswerFeedback> answers;
+  final String? selectedAnswer;
+  final Function(String) onAnswerSelected;
+
+  const SliderHAnsewrComponentFeedback({
+    super.key,
+    required this.answers,
+    required this.selectedAnswer,
+    required this.onAnswerSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final sliderValue = answers.indexWhere((e) => e.id == selectedAnswer);
+    final answerLabel = answers
+        .firstWhere(
+          (e) => e.id == selectedAnswer,
+          orElse: () => (
+            id: answers.first.id as String,
+            label: answers.first.label,
+          ),
+        )
+        .label;
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(AppLocalizations.of(context)!.select_your_option),
+        ),
+        Expanded(
+          child: Text(
+            answerLabel??"",
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xFF2970FE),
+              fontSize: 30,
+              fontFamily: 'Lexend',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Slider(
+            thumbColor: const Color(0xFF155EEF),
+            activeColor: const Color(0xFF155EEF),
+            min: 1,
+            divisions: answers.length,
+            max: answers.length.toDouble(),
+            label: answerLabel??"",
+            value: (sliderValue > -1 ? sliderValue.toDouble() : 0) + 1,
+            onChanged: (nvalue) {
+              onAnswerSelected(answers[nvalue.ceil() - 1].id);
+            },
+          ),
+        )
       ],
     );
   }

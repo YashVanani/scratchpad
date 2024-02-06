@@ -241,5 +241,8 @@
   "lesson_plan":"पाठ योजना",
   "assignment":"असाइनमेंट",
   "my_activity":"मेरी गतिविधियाँ",
-  "no_result_found":"कोई परिणाम नहीं मिला"
+  "no_result_found":"कोई परिणाम नहीं मिला",
+  "forget_password":"पासवर्ड भूल गए?",
+  "remember_me":"मुझे याद करो",
+  "ok_send_email":"ठीक है ईमेल भेजें"
 }

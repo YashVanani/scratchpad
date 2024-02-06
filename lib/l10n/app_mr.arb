@@ -241,5 +241,8 @@
   "lesson_plan":"धडा योजना",
   "assignment":"असाईनमेंट",
   "my_activity":"माझे उपक्रम",
-  "no_result_found":"कोणतेही परिणाम आढळले नाहीत"
+  "no_result_found":"कोणतेही परिणाम आढळले नाहीत",
+  "forget_password":"पासवर्ड भूल गए?",
+  "remember_me":"पासवर्ड विसरा",
+  "ok_send_email":"ठीक आहे ईमेल पाठवा"
 }

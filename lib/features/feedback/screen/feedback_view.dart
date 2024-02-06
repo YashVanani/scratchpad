@@ -1,4 +1,5 @@
 import 'package:clarified_mobile/consts/colors.dart';
+import 'package:clarified_mobile/consts/localisedModel.dart';
 import 'package:clarified_mobile/features/feedback/model/feedback.dart';
 import 'package:clarified_mobile/features/peers/model/peers_model.dart';
 import 'package:clarified_mobile/features/peers/screens/peer_intro.dart';
@@ -510,63 +511,63 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
               ),
             ),
             //  // TODO : UNCOMMENT THIS
-            // Expanded(
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(8),
-            //     child: ques.type == QuestionType.scq
-            //         ? SCQAnsewrComponent(
-            //             answers: tanswers,
-            //             selectedAnswer: answers[ques.id]?.answer,
-            //             onAnswerSelected: (answerId) => setState(() {
-            //               answers[ques.id] = (answer: answerId, extra: "");
-            //             }),
-            //           )
-            //         : ques.type == QuestionType.mcq
-            //             ? MCQAnsewrComponent(
-            //                 answers: tanswers,
-            //                 selectedAnswers: answers[ques.id]?.answer,
-            //                 onAnswerSelected: (answerIds) => setState(
-            //                   () {
-            //                     answers[ques.id] =
-            //                         (answer: answerIds, extra: "");
-            //                   },
-            //                 ),
-            //               )
-            //             : ques.type == QuestionType.sliding
-            //                 ? SliderHAnsewrComponent(
-            //                     answers: tanswers,
-            //                     selectedAnswer: answers[ques.id]?.answer,
-            //                     onAnswerSelected: (answerId) => setState(
-            //                       () {
-            //                         answers[ques.id] =
-            //                             (answer: answerId, extra: "");
-            //                       },
-            //                     ),
-            //                   )
-            //                 : ques.type == QuestionType.boolean
-            //                     ? BoolAnsewrComponent(
-            //                         selectedAnswer: answers[ques.id]?.answer,
-            //                         onAnswerSelected: (answerId, comment) =>
-            //                             setState(
-            //                           () {
-            //                             answers[ques.id] =
-            //                                 (answer: answerId, extra: comment);
-            //                           },
-            //                         ),
-            //                       )
-            //                     : BoolAnsewrComponent(
-            //                         hasComment: true,
-            //                         selectedAnswer: answers[ques.id]?.answer,
-            //                         onAnswerSelected: (answerId, comment) =>
-            //                             setState(
-            //                           () {
-            //                             answers[ques.id] =
-            //                                 (answer: answerId, extra: comment);
-            //                           },
-            //                         ),
-            //                       ),
-            //   ),
-            // ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: ques.type == QuestionType.scq
+                    ? SCQAnsewrFeedbackComponent(
+                        answers: tanswers,
+                        selectedAnswer: answers[ques.id]?.answer,
+                        onAnswerSelected: (answerId) => setState(() {
+                          answers[ques.id] = (answer: answerId, extra: "");
+                        }),
+                      )
+                    : ques.type == QuestionType.mcq
+                        ? MCQAnsewrComponentFeedback(
+                            answers: tanswers,
+                            selectedAnswers: answers[ques.id]?.answer,
+                            onAnswerSelected: (answerIds) => setState(
+                              () {
+                                answers[ques.id] =
+                                    (answer: answerIds, extra: "");
+                              },
+                            ),
+                          )
+                        : ques.type == QuestionType.sliding
+                            ? SliderHAnsewrComponentFeedback(
+                                answers: tanswers,
+                                selectedAnswer: answers[ques.id]?.answer,
+                                onAnswerSelected: (answerId) => setState(
+                                  () {
+                                    answers[ques.id] =
+                                        (answer: answerId, extra: "");
+                                  },
+                                ),
+                              )
+                            : ques.type == QuestionType.boolean
+                                ? BoolAnsewrComponent(
+                                    selectedAnswer: answers[ques.id]?.answer,
+                                    onAnswerSelected: (answerId, comment) =>
+                                        setState(
+                                      () {
+                                        answers[ques.id] =
+                                            (answer: answerId, extra: comment);
+                                      },
+                                    ),
+                                  )
+                                : BoolAnsewrComponent(
+                                    hasComment: true,
+                                    selectedAnswer: answers[ques.id]?.answer,
+                                    onAnswerSelected: (answerId, comment) =>
+                                        setState(
+                                      () {
+                                        answers[ques.id] =
+                                            (answer: answerId, extra: comment);
+                                      },
+                                    ),
+                                  ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(

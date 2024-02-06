@@ -238,6 +238,7 @@ class _LessonPlanState extends State<_LessonPlan> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -294,13 +295,16 @@ class _LessonPlanState extends State<_LessonPlan> {
                           ),
                         ),
                       ),
-                      Text(
-                        widget.topic.topic,
-                        style: const TextStyle(
-                          color: Color(0xFF1D2939),
-                          fontSize: 16,
-                          fontFamily: 'Lexend',
-                          fontWeight: FontWeight.w400,
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width*0.75,
+                        child: Text(
+                          widget.topic.topic,
+                          style: const TextStyle(
+                            color: Color(0xFF1D2939),
+                            fontSize: 16,
+                            fontFamily: 'Lexend',
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ],

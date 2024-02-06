@@ -1,4 +1,5 @@
 import 'package:clarified_mobile/consts/colors.dart';
+import 'package:clarified_mobile/features/auth/screens/widgets/forgetPassword.dart';
 import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:clarified_mobile/services/notification.dart';
@@ -7,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -22,6 +23,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   bool showPassword = false;
   bool isBusy = false;
   bool isLoading = false;
+  bool remember_me = true;
   
   final NotificationService _notificationService = NotificationService();
 
@@ -63,6 +65,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       isLoading = false;
     });
     }
+  }
+
+  @override
+  void initState() {
+    getInit();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  getInit()async{
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+    //  prefs.clear();
+     loginIdController.text= prefs.getString('email')??"";
+      passwordController.text = prefs.getString('password')??"";
   }
 
   @override
@@ -187,6 +203,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                           ),
                         ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(children: [
+                          Checkbox(value: remember_me, onChanged: (v){
+                           setState(() {
+                              remember_me = v??false;
+                           });
+                          }),
+                          Text(AppLocalizations.of(context)!.remember_me),
+                          Spacer(),
+                          InkWell(onTap: (){
+                              showDialog(
+            context: context,
+            builder: (context) {
+              return  ForgetPasswordPop();
+            });
+                          },child: Text(AppLocalizations.of(context)!.forget_password,style: TextStyle(color: Colors.red),))
+                        ],),
                         const SizedBox(
                           height: 20,
                         ),
@@ -194,10 +229,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           children: [
                             Expanded(
                               child: TextButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (loginFormKey.currentState?.validate() ==
                                       true) {
                                     attemptLogin();
+                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                            
+                                    if(remember_me==true){
+                                      prefs.setString('email', loginIdController.text);
+                              prefs.setString('password', passwordController.text);
+                                    }else{
+        prefs.setString('email', "");
+                              prefs.setString('password', "");
+                            
+                                    }
                                   }
                                 },
                                 child: Container(

@@ -1,4 +1,5 @@
 import 'package:clarified_mobile/consts/colors.dart';
+import 'package:clarified_mobile/features/auth/screens/widgets/forgetPassword.dart';
 import 'package:clarified_mobile/features/shared/widgets/app_buttombar.dart';
 import 'package:clarified_mobile/features/shared/widgets/profile_photo_widget.dart';
 import 'package:clarified_mobile/features/subjects/model/quiz_model.dart';
@@ -22,7 +23,11 @@ class StudentProfile extends ConsumerWidget {
         title: Text(AppLocalizations.of(context)!.profile),
         actions: [
           TextButton(
-            onPressed: () => GoRouter.of(context).pushNamed("profile-passwd"),
+            onPressed: () =>showDialog(
+            context: context,
+            builder: (context) {
+              return  ForgetPasswordPop();
+            }),
             child: Text(AppLocalizations.of(context)!.change_password_small),
           )
         ],

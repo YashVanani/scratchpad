@@ -239,5 +239,8 @@
   "lesson_plan":"Lesson Plan",
   "assignment":"Assignment",
   "my_activity":"My Activities",
-  "no_result_found":"No Results found"
+  "no_result_found":"No Results found",
+  "forget_password":"Forget Password?",
+  "remember_me":"Remember Me",
+  "ok_send_email":"Ok Send Email"
 }

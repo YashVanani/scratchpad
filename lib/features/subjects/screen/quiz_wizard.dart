@@ -32,18 +32,20 @@ class QuizWizardPage extends ConsumerStatefulWidget {
 
 class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
   int next = 0;
-  String selectedLevel = "easy";
+  String selectedLevel = "";
   bool startQuiz = false;
 
 @override
   void initState() {
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => ref.read(isQuizLevelAvaliable.notifier).state=false);
+    selectedLevel='';
+    // WidgetsBinding.instance
+    //     .addPostFrameCallback((_) => ref.read(isQuizLevelAvaliable.notifier).state=false);
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
     final quizAttempted = ref.refresh(quizAttemptProvider);
+    final isAvaliable = ref.watch(isQuizLevelAvaliable);
     final quiz = ref.watch(
       quizProvider(
         (
@@ -86,13 +88,16 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 8.0, bottom: 16),
-                        child: Text(
-                          AppLocalizations.of(context)!.select_difficulty_level,
-                          style: TextStyle(
-                            color: Color(0xFF1D2939),
-                            fontSize: 20,
-                            fontFamily: 'Lexend',
-                            fontWeight: FontWeight.w400,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width*0.85,
+                          child: Text(
+                            AppLocalizations.of(context)!.select_difficulty_level,
+                            style: TextStyle(
+                              color: Color(0xFF1D2939),
+                              fontSize: 20,
+                              fontFamily: 'Lexend',
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
                       ),
@@ -115,7 +120,7 @@ class _QuizWizardPageState extends ConsumerState<QuizWizardPage> {
                       ),
                       
                       Visibility(
-                        visible: ref.read(isQuizLevelAvaliable.notifier).state,
+                        visible: selectedLevel.isNotEmpty,
                         child: TextButton(
                           style: TextButton.styleFrom(
                             splashFactory: NoSplash.splashFactory,
@@ -329,8 +334,9 @@ class SPChecker extends ConsumerStatefulWidget {
 }
 
 class _SPCheckerState extends ConsumerState<SPChecker> {
-  int selected = 0;
+  int selected = -1;
   bool isAvaliable = false;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((a)=>getQuizAvailiable());
@@ -345,13 +351,18 @@ class _SPCheckerState extends ConsumerState<SPChecker> {
           ref.read(isQuizLevelAvaliable.notifier).state = true;
         }
     }
+    setState(() {
+      
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+   var avaliable = ref.watch(isQuizLevelAvaliable);
     return Column(
       children: [
-        Visibility(visible: !isAvaliable,child: Text("All levels are completed.")),
+        
+        Visibility(visible: !avaliable,child: Text("All levels are completed.")),
         ListView.separated(
           shrinkWrap: true,
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -410,15 +421,13 @@ class _SPCheckerState extends ConsumerState<SPChecker> {
                       Icons.cell_tower_sharp,
                     ),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        item.label,
-                        style: const TextStyle(
-                          color: Color(0xFF045E63),
-                          fontSize: 16,
-                          fontFamily: 'Lexend',
-                          fontWeight: FontWeight.w400,
-                        ),
+                    Text(
+                      item.label,
+                      style: const TextStyle(
+                        color: Color(0xFF045E63),
+                        fontSize: 16,
+                        fontFamily: 'Lexend',
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -751,16 +760,14 @@ class _QuizViewState extends ConsumerState<QuizView> {
               ),
               SizedBox(
                 height: MediaQuery.of(context).size.height*0.5,
-                child: Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: SCQAnsewrComponentQuiz(
-                      answers: tanswers,
-                      selectedAnswer: answers[ques.id]?.answer,
-                      onAnswerSelected: (submittedAnswer) => setState(() {
-                        answers[ques.id] = (answer: submittedAnswer, extra: submittedAnswer, isCorrect: submittedAnswer == ques.answer);
-                      }),
-                    ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SCQAnsewrComponentQuiz(
+                    answers: tanswers,
+                    selectedAnswer: answers[ques.id]?.answer,
+                    onAnswerSelected: (submittedAnswer) => setState(() {
+                      answers[ques.id] = (answer: submittedAnswer, extra: submittedAnswer, isCorrect: submittedAnswer == ques.answer);
+                    }),
                   ),
                 ),
               ),
