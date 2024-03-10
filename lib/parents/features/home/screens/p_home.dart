@@ -441,7 +441,7 @@ class ParentsHome extends ConsumerWidget {
                                     );
                                   }),
                             ),
-                        error: (e, j) => Text(AppLocalizations.of(context)!.no_dashboard),
+                        error: (e, j) => Text(j.toString()),
                         loading: () => SizedBox()),
                     const SizedBox(height: 20),
                     Container(

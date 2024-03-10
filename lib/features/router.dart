@@ -72,6 +72,10 @@ String getInitialRoute(email) {
   if (email.split('')[0].toLowerCase() == 't') {
     return "/t_home";
   }
+  if(FirebaseAuth.instance.currentUser!=null){
+    return "/parents-home";
+  }
+
   return "/login";
   }catch(e){
     print("++++++++++>>>>>$e");

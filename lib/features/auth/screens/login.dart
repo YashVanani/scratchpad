@@ -57,6 +57,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           _notificationService.updateTokenOnLogin('teacher',ref);
         GoRouter.of(context).goNamed("teachers-home");
       }
+      GoRouter.of(context).goNamed("parents-home");
     } catch (e) {
       print(e);
       var snackBar = SnackBar(content: Text(e.toString()));

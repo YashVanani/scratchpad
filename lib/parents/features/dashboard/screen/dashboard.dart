@@ -87,7 +87,8 @@ class DashboardScreen extends ConsumerWidget{
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 0.8,
                       child: TabBarView(children: [
-                        dashboard.when(data: (d)=>InAppWebView(initialUrlRequest: URLRequest(url: WebUri(d)),), error: (e,j)=>Column(mainAxisAlignment: MainAxisAlignment.center,children: [Text(AppLocalizations.of(context)!.no_dashboard)]), loading: ()=>Text(''),),
+                       
+                       dashboard.when(data: (d)=>InAppWebView(initialUrlRequest: URLRequest(url: WebUri((d?.url)??"")),), error: (e,j)=>Column(mainAxisAlignment: MainAxisAlignment.center,children: [Text(AppLocalizations.of(context)!.no_dashboard)]), loading: ()=>Text(''),),
                         SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +107,7 @@ class DashboardScreen extends ConsumerWidget{
                               const SizedBox(
                                 height: 10,
                               ),
-                              Container(
+                               dashboard.when(data: ( d)=>    Container(
                                 height: 200 ,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 00, vertical: 2),
@@ -114,8 +115,9 @@ class DashboardScreen extends ConsumerWidget{
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: dashboardReport.tips?.length??0,
+                                  itemCount: d.recommendation?.length??0,
                                   itemBuilder: (context, index) {
+                                    Recommendation dashboardReportModel = (d.recommendation[index]);
                                     return Container(
                                       width: 230,
                                       margin: EdgeInsets.only(left: 10),
@@ -136,14 +138,14 @@ class DashboardScreen extends ConsumerWidget{
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                   (dashboardReport.tips?[index].title?.toJson()[Localizations.localeOf(context).languageCode] ?? ''),
+                                                   (dashboardReportModel.title?.toJson()[Localizations.localeOf(context).languageCode] ?? ''),
                                                     style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
                                                   ),
                                                   const SizedBox(
                                                     height: 6,
                                                   ),
                                                   Text(
-                                                       dashboardReport.tips?[index].text?.toJson()[Localizations.localeOf(context).languageCode] ?? "",
+                                                       dashboardReportModel.text?.toJson()[Localizations.localeOf(context).languageCode] ?? "",
                                                     // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
                                                     style: TextStyle(fontSize: 12),
                                                   ),
@@ -155,7 +157,14 @@ class DashboardScreen extends ConsumerWidget{
                                   },
                                 ),
                               ),
-                           Padding(
+                          error: (e,j)=>Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(mainAxisAlignment: MainAxisAlignment.center,children: [Text(AppLocalizations.of(context)!.no_result_found)]),
+                            ],
+                          ), loading: ()=>Text(''),),
+                      
+                            Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 16.0, vertical: 10),
                                 child: Text(

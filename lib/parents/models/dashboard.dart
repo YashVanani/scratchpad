@@ -10,6 +10,68 @@ import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+
+// To parse this JSON data, do
+//
+//     final studentDashboardReportModel = studentDashboardReportModelFromJson(jsonString);
+
+import 'dart:convert';
+
+StudentDashboardReportModel studentDashboardReportModelFromJson(String str) => StudentDashboardReportModel.fromJson(json.decode(str));
+
+String studentDashboardReportModelToJson(StudentDashboardReportModel data) => json.encode(data.toJson());
+
+class StudentDashboardReportModel {
+    String? studentId;
+    List<Recommendation>? recommendation;
+    String? url;
+
+    StudentDashboardReportModel({
+        this.studentId,
+        this.recommendation,
+        this.url,
+    });
+
+    factory StudentDashboardReportModel.fromJson(Map<String, dynamic> json) => StudentDashboardReportModel(
+        studentId: json["studentId"],
+        recommendation: json["recommendation"] == null ? [] : List<Recommendation>.from(json["recommendation"]!.map((x) => Recommendation.fromJson(x))),
+        url: json["url"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "studentId": studentId,
+        "recommendation": recommendation == null ? [] : List<dynamic>.from(recommendation!.map((x) => x.toJson())),
+        "url": url,
+    };
+}
+
+class Recommendation {
+    String? id;
+    LocalizedValue<String>? text;
+   LocalizedValue<String>? title;
+
+    Recommendation({
+        this.id,
+        this.text,
+        this.title,
+    });
+
+    factory Recommendation.fromJson(Map<String, dynamic> json) => Recommendation(
+        id: json["id"],
+        text: json["text"] == null ? null : LocalizedValue.fromJson(json["title"]),
+        title: json["title"] == null ? null :LocalizedValue.fromJson(json["title"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "text": text?.toJson(),
+        "title": title?.toJson(),
+    };
+}
+
+
+
+
 DashboardReport dashboardReportFromJson(String str) => DashboardReport.fromJson(json.decode(str));
 
 String dashboardReportToJson(DashboardReport data) => json.encode(data.toJson());
@@ -44,7 +106,7 @@ class DashboardReport {
         type: json["type"],
         title: LocalizedValue.fromJson(json["title"]),
         url: json["url"],
-        tips: json["tips"] == null ? [] : List<Tip>.from(json["tips"]!.map((x) => Tip.fromJson(x))),
+        // tips: json["tips"] == null ? [] : List<Tip>.from(json["tips"]!.map((x) => Tip.fromJson(x))),
         desc: LocalizedValue.fromJson(json["desc"]),
         imageUrl: json['imageUrl']??""
     );
@@ -123,6 +185,7 @@ final reportDashboardProvider = StreamProvider((ref) {
       .where('isActive',isEqualTo: true)
       .snapshots()
       .map((event) {
+        print("***DASH**");
         print(event.docs[0].data());
      return event.docs.map((e) => DashboardReport.fromJson(e.data())).toList();
   });
@@ -138,14 +201,29 @@ final reportDashboardProviderParent = StreamProvider((ref) {
    print("++REPORT DASHBOARD++");
   final baseDoc = ref.watch(schoolDocProvider);
   final parentDoc = ref.watch(parentDocProvider);
+  final profile = ref.watch(parentProfileProvider);
+   final currentChild = ref.watch(myCurrentChild);
   return baseDoc
       .collection("dashboards")
       .doc(ref.read(selectedDashboardProvider.notifier).state)
       .collection('reports')
-      .doc(parentDoc.asData?.value.id)
+      .doc(profile.asData?.value.id)
       .snapshots()
       .map((event) {
-        print(event.get('url'));
+        List l = [];
+        try{
+          print((event.data()?['childrens']));
+          l =event.data()?['childrens'];
+        }catch(e){
+          print(e);
+        }
+        print("898");
+    Map<String, dynamic>? resultObject = getObjectByStudentId(l, currentChild?.id??"");
+
+        print("${resultObject} =====+==");
+        if(resultObject!=null){
+          return StudentDashboardReportModel.fromJson(resultObject);
+        }
         return event.get('url');
   });
  }catch(e){
@@ -154,5 +232,15 @@ final reportDashboardProviderParent = StreamProvider((ref) {
   return const Stream.empty();
  }
 });
+
+ Map<String, dynamic>? getObjectByStudentId(List list, String studentId) {
+    for (var obj in list) {
+      print('obj["studentId"]');
+      if (obj["studentId"] == studentId) {
+        return obj;
+      }
+    }
+    return null;
+  }
 
     final selectedDashboardProvider = StateProvider((String) => '');

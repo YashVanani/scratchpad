@@ -145,7 +145,6 @@ final parentProfileProvider = StreamProvider<ParentInfo>((ref) {
             (v){
              ParentInfo parentInfo = ParentInfo.fromMap(v.data()!);
               ref.read(parentSurveyInbox.notifier).state = parentInfo.surveyInbox;
-              print("++++++++++++++++>>>${parentInfo.surveyInbox[0]?.inbox}");
               ref.read(favoriteActivityState.notifier).state = parentInfo.favoriteActivities;
                ref.refresh(favoriteActivityProvider);
               
