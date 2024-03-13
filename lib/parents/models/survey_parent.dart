@@ -66,6 +66,7 @@ final surveyInboxParentProvider = StreamProvider((ref) {
   if(ref.read(myCurrentChild.notifier).state?.id==null){
     ref.watch(userListProvider);
   }
+  
  List<ParentSurveyInbox?>? survey = userProfile.value?.surveyInbox.where((element) => element?.studentId==ref.read(myCurrentChild.notifier).state?.id).toList();
   print(survey);
   print(ref.read(myCurrentChild.notifier).state?.id);

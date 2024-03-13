@@ -64,7 +64,7 @@ class ParentsReport extends ConsumerWidget {
                               return SizedBox();
                           return availbleDashboards(context, d[index],ref );
                         });
-                      }, error: (e,j)=>Text(e.toString()), loading: ()=>CircularProgressIndicator()),
+                      }, error: (e,j)=>SizedBox(), loading: ()=>CircularProgressIndicator()),
                       // SizedBox(height: 15),
                       // availbleDashboards(context, Color(0xFF81F2BC),
                       //     Color(0xFF48B990), ImageRes.manImage),

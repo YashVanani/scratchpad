@@ -29,7 +29,7 @@ class School {
   }
 }
 
-final schoolIdProvider = Provider((ref) => "vC30yCugzfDNAMgFUD01");
+final schoolIdProvider = Provider((ref) => "zbr5eC3fJ5wmtnpSljzw");
 final schoolDocProvider = Provider((ref) {
   final schoolId = ref.watch(schoolIdProvider);
 

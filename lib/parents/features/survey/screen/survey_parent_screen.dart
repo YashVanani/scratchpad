@@ -101,7 +101,8 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
           title: Text(survey!.name?.toJson()[Localizations.localeOf(context).languageCode]),
         ),
          body: SafeArea(
-          child: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height, 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -135,8 +136,7 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height*0.50,
+                Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8),
                     child: ques.type == QuestionType.scq

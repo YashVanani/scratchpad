@@ -441,7 +441,7 @@ class ParentsHome extends ConsumerWidget {
                                     );
                                   }),
                             ),
-                        error: (e, j) => Text(j.toString()),
+                        error: (e, j) =>SizedBox(),
                         loading: () => SizedBox()),
                     const SizedBox(height: 20),
                     Container(
