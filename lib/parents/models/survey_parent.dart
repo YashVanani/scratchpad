@@ -22,6 +22,7 @@ class ParentSurvey {
   final String cardImage;
   final LocalizedValue<String>? cardDesc;
   final String thumbnail;
+  final String cardColor;
   const ParentSurvey({
     required this.id,
     required this.name,
@@ -33,7 +34,8 @@ class ParentSurvey {
     required this.purpose,
     required this.cardImage,
     required this.thumbnail,
-    required this.cardDesc
+    required this.cardDesc,
+    required this.cardColor
   });
 
   factory ParentSurvey.fromMap(Map<String, dynamic> data) {
@@ -51,6 +53,7 @@ class ParentSurvey {
       cardImage: data['card_image']??"",
       thumbnail: data['thumbnail']??"",
       cardDesc: LocalizedValue.fromJson(data['card_desc']??""),
+      cardColor: data['card_color']??"",
     );
   }
 }

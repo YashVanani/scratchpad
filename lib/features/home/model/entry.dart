@@ -82,6 +82,7 @@ class Survey {
   final String? thumbnail;
   final String? cardImage;
   final LocalizedValue<String>?  cardDesc;
+  final String? cardColor;
   const Survey(
       {required this.id,
       required this.name,
@@ -92,11 +93,14 @@ class Survey {
       required this.questions,
       required this.thumbnail,
       required this.cardImage,
-      required this.cardDesc});
+      required this.cardDesc,
+      required this.cardColor
+      });
 
   factory Survey.fromMap(Map<String, dynamic> data) {
     return Survey(
         id: data["id"],
+         cardColor: data['card_color'] ?? "",
         name: LocalizedValue.fromJson(data["name"] ?? ""),
         desc: LocalizedValue.fromJson(data["desc"] ?? ""),
         reward: data["reward"] ?? 0,
@@ -107,7 +111,9 @@ class Survey {
             .toList(),
         thumbnail: data['thumbnail'] ?? "",
         cardImage: data['card_image'] ?? "",
-        cardDesc: LocalizedValue.fromJson(data['card_desc'] ?? ""));
+        cardDesc: LocalizedValue.fromJson(data['card_desc'] ?? "",
+       
+        ));
   }
 }
 

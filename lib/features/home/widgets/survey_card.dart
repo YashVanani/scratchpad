@@ -106,7 +106,7 @@ class SurveyCard extends ConsumerWidget {
           }
           return Container(
             height: 170,
-            decoration: ShapeDecoration(
+            decoration:survey.cardColor?.isEmpty??true? ShapeDecoration(
               gradient: const LinearGradient(
                 begin: Alignment(0.00, -1.00),
                 end: Alignment(0, 1),
@@ -115,6 +115,11 @@ class SurveyCard extends ConsumerWidget {
                   Color(0xFFB84848),
                 ],
               ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ):ShapeDecoration(
+              color: survey.cardColor?.isEmpty??true?const Color(0xFFF28181):Color(int.parse(survey.cardColor!)),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
