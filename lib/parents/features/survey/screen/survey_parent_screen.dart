@@ -4,6 +4,7 @@ import 'package:clarified_mobile/consts/imageRes.dart';
 import 'package:clarified_mobile/features/home/model/entry.dart';
 import 'package:clarified_mobile/features/shared/widgets/page_buttom_slug.dart';
 import 'package:clarified_mobile/features/survey/screens/survey_widgets.dart';
+import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:clarified_mobile/parents/models/survey_parent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SurveyWizardParentPage extends ConsumerStatefulWidget {
   final String surveyId;
@@ -60,11 +62,11 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
                   return const SizedBox();
                 }
 
-                return const Column(
+                return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CircularProgressIndicator(),
-                    Text("Submitting Answers"),
+                    Text(AppLocalizations.of(context)!.submitting_answers),
                   ],
                 );
               },
@@ -96,11 +98,11 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
 
       return Scaffold(
         appBar: AppBar(
-          title: Text(survey!.name),
+          title: Text(survey!.name?.toJson()[Localizations.localeOf(context).languageCode]),
         ),
          body: SafeArea(
           child: Container(
-           
+            height: MediaQuery.of(context).size.height, 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -124,7 +126,7 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 24,vertical: 16),
                   child: Text(
-                    ques.questionText,
+                    ques.questionText?.toJson()[Localizations.localeOf(context).languageCode],
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: Color(0xFF344054),
@@ -256,8 +258,8 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
                                   currentQuesIndex = currentQuesIndex - 1;
                                 }),
                         icon: const Icon(Icons.chevron_left),
-                        label: const Text(
-                          "Back",
+                        label: Text(
+                          AppLocalizations.of(context)!.back,
                           style: TextStyle(
                             color: Color(0xFF1D2939),
                             fontSize: 16,
@@ -281,14 +283,14 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
                         onPressed: () {
                           if (answers[ques.id]?.answer == null) {
                             Fluttertoast.showToast(
-                              msg: "Please Select an Answer",
+                              msg: AppLocalizations.of(context)!.please_select_an_answer,
                             );
                             return;
                           }
-
+            
                           saveCurrentAnswers(isLastQuestion);
                           if (isLastQuestion) return;
-
+            
                           setState(() {
                             currentQuesIndex = currentQuesIndex + 1;
                           });
@@ -296,7 +298,7 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
                         child: Row(
                           children: [
                             Text(
-                              isLastQuestion ? "Submit" : "Next",
+                              isLastQuestion ? AppLocalizations.of(context)!.submit : AppLocalizations.of(context)!.next,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -316,7 +318,7 @@ class _SurveyWizardParentPageState extends ConsumerState<SurveyWizardParentPage>
                   ),
                 ),
                 Text(
-                  "QUESTION ${currentQuesIndex + 1} OF ${survey?.questions.length}",
+                  "${AppLocalizations.of(context)!.question} ${currentQuesIndex + 1} ${AppLocalizations.of(context)!.of_text} ${survey?.questions.length}",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Color(0xFF98A1B2),
@@ -355,8 +357,8 @@ class SurveyCompletedParentPage extends StatelessWidget {
             Spacer(),
             SvgPicture.asset("assets/svg/star.svg"),
             SizedBox(height: 40,),
-            const Text(
-              'Thank You!',
+            Text(
+              AppLocalizations.of(context)!.thank_you,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Color(0xff2970FF),
@@ -369,8 +371,8 @@ class SurveyCompletedParentPage extends StatelessWidget {
             Text.rich(
               TextSpan(
                 children: [
-                  const TextSpan(
-                    text: 'Your valuable feedback will help us improve.',
+                   TextSpan(
+                    text: AppLocalizations.of(context)!.parents_feedback_message,
                     style: TextStyle(
                       color: Color(0xFF1D2939),
                       fontSize: 14,
@@ -399,8 +401,8 @@ class SurveyCompletedParentPage extends StatelessWidget {
               onPressed: () {
                 GoRouter.of(context).goNamed("parents-home");
               },
-              child: const Text(
-                "GO TO HOME",
+              child: Text(
+                AppLocalizations.of(context)!.go_to_home,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -417,7 +419,7 @@ class SurveyCompletedParentPage extends StatelessWidget {
   }
 }
 
-class SurveyIntro extends StatelessWidget {
+class SurveyIntro extends ConsumerWidget {
   const SurveyIntro({
     super.key,
     required this.survey,
@@ -427,11 +429,13 @@ class SurveyIntro extends StatelessWidget {
   final Function onStartSurvey;
   final ParentSurvey? survey;
 
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+     final currentChild = ref.watch(myCurrentChild);
     return Scaffold(
       appBar: AppBar(
-        title: Text(survey!.name),
+        title: Text(survey!.name?.toJson()[Localizations.localeOf(context).languageCode]),
       ),
       body: SafeArea(
         child: Container(
@@ -445,34 +449,54 @@ class SurveyIntro extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),  
                               gradient: LinearGradient(colors: [purpleColor, blueColor], begin: Alignment.topLeft, end: Alignment.bottomRight),
                             ),
-                    padding: const EdgeInsets.only(bottom: 15, top: 5),
+                    padding: const EdgeInsets.only(bottom: 15, top: 15),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: purpleColor,
-                            backgroundImage: AssetImage(ImageRes.profileImage),
-                          ),
-                        ),
-                        SizedBox(width: 15),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Arjun Gupta", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold)),
-                              Text("Class VII B", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 12, color: greyTextColor)),
-                            ],
-                          ),
-                        ),
+                        SizedBox(width: 15,),
+                      CircleAvatar(
+                                     radius: 22,
+                                     backgroundColor: purpleColor,
+                                     backgroundImage:
+                                         NetworkImage(currentChild?.profileUrl??"",),
+                                   ),
+                                    const SizedBox(width: 15),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(currentChild?.name,
+                                              style: CommonStyle
+                                                  .lexendMediumStyle
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                          FutureBuilder(
+                                              future: getClassroom(
+                                                  currentChild?.currentClassId??"", ref),
+                                              builder: ((context, snapshot) => Text(
+                                                  snapshot.data?.name ?? "",
+                                                  style: CommonStyle
+                                                      .lexendMediumStyle
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 12,
+                                                          color:
+                                                              greyTextColor)))),
+                                        ],
+                                      ),
+                                    ),
+                                   
                        
                       ],
                     ),
                   ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                child: Text("Survey Purpose",style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w500)),
+                child: Text(AppLocalizations.of(context)!.survey_purpose,style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w500)),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -483,7 +507,7 @@ class SurveyIntro extends StatelessWidget {
                   itemBuilder: (context,index){
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical:5.0),
-                    child: Text("\u2022 ${survey?.purpose[index]??""}",style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w400, fontSize: 14, color: greyTextColor)),
+                    child: Text("\u2022 ${survey?.purpose[index]?.toJson()[Localizations.localeOf(context).languageCode]??""}",style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w400, fontSize: 14, color: greyTextColor)),
                   );
                 }),
               ),
@@ -499,8 +523,8 @@ class SurveyIntro extends StatelessWidget {
                     ),
                   ),
                   onPressed: () => onStartSurvey?.call(),
-                  child: const Text(
-                    "CONTINUE",
+                  child: Text(
+                    AppLocalizations.of(context)!.continue_text,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -550,7 +574,7 @@ class QuestionDescriptionParent extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Question Description',
+                AppLocalizations.of(context)!.question_description,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Color(0xFF0E9384),
@@ -591,8 +615,8 @@ class QuestionDescriptionParent extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).maybePop(),
-                  child: const Text(
-                    "CLOSE DESCRIPTION",
+                  child: Text(
+                    AppLocalizations.of(context)!.close_description,
                     style: TextStyle(
                       color: Color(0xFFD92C20),
                       fontSize: 12,

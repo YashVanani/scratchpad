@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const _defaultBannerHash =
     r'|BQ7%Ztn@KTC.oz;.sVxq|pNN=Ivr]xwkXrcrveZ.zExP2xbX%#;Ttr?t2_x%hPSM_RhMfjEoeXMD5ZhxUTKTexat7kSo}[eKPOqz?nipBTDs,V@-TxusDM|NFs*OER%o0,*vNVbpFb^NfaOk;TJyDw5n7XQV@X8THS0aK';
@@ -32,7 +33,7 @@ class SubjectDetail extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(rez.subject?.name ?? 'Not Loaded'),
+        title: Text(rez.subject?.name ?? AppLocalizations.of(context)!.not_loaded),
       ),
       body: Container(
         color: const Color(0xFFF9FAFB),
@@ -73,9 +74,9 @@ class SubjectDetail extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const Expanded(
+                  Expanded(
                     // flex: 8,
-                    child: Text("Teacher Name: "),
+                    child: Text(AppLocalizations.of(context)!.teacher_name),
                   ),
                   Expanded(
                     // flex: 4,
@@ -88,7 +89,7 @@ class SubjectDetail extends ConsumerWidget {
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: const Text("Lesson Plan"),
+              child: Text(AppLocalizations.of(context)!.lesson_plan),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -105,7 +106,7 @@ class SubjectDetail extends ConsumerWidget {
 
                   final lockRecord =
                       idx > -1 ? unlockdedItems.value![idx] : null;
-
+                  print(idx > -1 ? unlockdedItems.value![idx] : null);
                   return _LessonPlan(
                     index: index + 1,
                     topic: rez.topics[index],
@@ -129,6 +130,7 @@ class SubjectDetail extends ConsumerWidget {
                                 "topicId": topic.id,
                                 "topicName": topic.name,
                                 "subjectName": rez.subject?.name ?? "",
+                                
                               },
                             );
                             return;
@@ -159,7 +161,7 @@ class SubjectDetail extends ConsumerWidget {
                       }
 
                       if (cost > profile.value!.balance.current) {
-                        Fluttertoast.showToast(msg: "Not Enough balance");
+                        Fluttertoast.showToast(msg: AppLocalizations.of(context)!.not_enough_balance);
                         return;
                       }
 
@@ -167,10 +169,10 @@ class SubjectDetail extends ConsumerWidget {
                         context: context,
                         builder: (ctx) => UnlockPopUp(
                           message:
-                              'Are you sure you want to spend $cost XP to unlock this $artifact?',
+                              '${AppLocalizations.of(context)!.are_you_sure_you_want_to_spend} $cost ${AppLocalizations.of(context)!.xp_to_unlock_this} $artifact?',
                           onConfirmed: () async {
                             if (cost > profile.value!.xpBalance) {
-                              Fluttertoast.showToast(msg: "Not Enough balance");
+                              Fluttertoast.showToast(msg: AppLocalizations.of(context)!.not_enough_balance);
                               return;
                             }
 
@@ -178,6 +180,8 @@ class SubjectDetail extends ConsumerWidget {
                               topic: topic,
                               subjectId: subjectId,
                               artifact: artifact,
+                              context: context,
+                              ref: ref
                             );
                           },
                         ),
@@ -234,6 +238,7 @@ class _LessonPlanState extends State<_LessonPlan> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -290,13 +295,16 @@ class _LessonPlanState extends State<_LessonPlan> {
                           ),
                         ),
                       ),
-                      Text(
-                        widget.topic.topic,
-                        style: const TextStyle(
-                          color: Color(0xFF1D2939),
-                          fontSize: 16,
-                          fontFamily: 'Lexend',
-                          fontWeight: FontWeight.w400,
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width*0.75,
+                        child: Text(
+                          widget.topic.topic,
+                          style: const TextStyle(
+                            color: Color(0xFF1D2939),
+                            fontSize: 16,
+                            fontFamily: 'Lexend',
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ],
@@ -328,11 +336,11 @@ class _LessonPlanState extends State<_LessonPlan> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text("Start Quiz"),
+                        Text(AppLocalizations.of(context)!.start_quiz),
                         if (!widget.unlocked &&
                             widget.unlockedAssets.contains('quiz') != true)
                           Text(
-                            "Use ${widget.baseTopic.cost.quiz} XP",
+                            "${AppLocalizations.of(context)!.use} ${widget.baseTopic.cost.quiz} ${AppLocalizations.of(context)!.xp}",
                             style: const TextStyle(
                               color: Color(0xFFDC6803),
                               fontSize: 10,
@@ -360,12 +368,12 @@ class _LessonPlanState extends State<_LessonPlan> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text("Case Study"),
+                        Text(AppLocalizations.of(context)!.case_study),
                         if (!widget.unlocked &&
                             widget.unlockedAssets.contains('case-study') !=
                                 true)
                           Text(
-                            "Use ${widget.baseTopic.cost.caseStudy} XP",
+                            "${AppLocalizations.of(context)!.use} ${widget.baseTopic.cost.caseStudy} ${AppLocalizations.of(context)!.xp}",
                             style: const TextStyle(
                               color: Color(0xFFDC6803),
                               fontSize: 10,
@@ -393,11 +401,11 @@ class _LessonPlanState extends State<_LessonPlan> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Text("Study Material"),
+                        Text(AppLocalizations.of(context)!.study_material),
                         if (!widget.unlocked &&
                             widget.unlockedAssets.contains('materials') != true)
                           Text(
-                            "Use ${widget.baseTopic.cost.materials} XP",
+                            "${AppLocalizations.of(context)!.use} ${widget.baseTopic.cost.materials} ${AppLocalizations.of(context)!.xp}",
                             style: const TextStyle(
                               color: Color(0xFFDC6803),
                               fontSize: 10,
@@ -451,7 +459,7 @@ class _LessonPlanTag extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            locked ? 'Locked' : 'Unlocked',
+            locked ? AppLocalizations.of(context)!.locked : AppLocalizations.of(context)!.unlocked,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: locked ? const Color(0xFFCA8403) : const Color(0xFF039754),

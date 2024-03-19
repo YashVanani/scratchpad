@@ -54,7 +54,7 @@ class Topic {
       cost: (
         quiz: data["cost"]["quiz"],
         caseStudy: data["cost"]["case_study"],
-        materials: data["cost"]["materials"]
+        materials: data["cost"]["materials"]??0
       ),
     );
   }
@@ -66,12 +66,16 @@ class Subject {
   final String name;
   final String bannerImage;
   final List<Topic> topics;
+  final String teacherId;
+  final String iconImage;
 
   const Subject({
     required this.id,
     required this.name,
     required this.bannerImage,
     required this.topics,
+    required this.teacherId,
+    required this.iconImage
   });
 
   factory Subject.fromMap(Map<String, dynamic> data) {
@@ -80,6 +84,8 @@ class Subject {
       bannerImage: data["bannerImage"] ?? "",
       name: data["name"],
       topics: List.from(data["topics"]).map((e) => Topic.fromMap(e)).toList(),
+      teacherId: data["teacherId"]??"",
+      iconImage:data['iconImage']??""
     );
   }
 }
@@ -240,3 +246,5 @@ final teacherInfo = FutureProvider.family((ref, String teacherId) {
       .get()
       .then((rec) => rec.exists ? Teacher.fromMap(rec.data()!) : null);
 });
+
+final isQuizLevelAvaliable = StateProvider<bool>((_) => false);

@@ -1,6 +1,8 @@
 import 'package:clarified_mobile/model/clazz.dart';
+import 'package:clarified_mobile/model/school.dart';
 import 'package:clarified_mobile/model/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 typedef RecentTopicRecord = ({
@@ -101,12 +103,15 @@ class TopicStateUpdatedManager extends AutoDisposeAsyncNotifier<void> {
   Future<void> build() async {
     // The logic we previously had in our FutureProvider is now in the build method.
   }
-  Future<void> purchaseTopicArtifact({
-    required Topic topic,
-    required String subjectId,
-    required String artifact,
-  }) async {
+  Future<void> purchaseTopicArtifact(
+      {required Topic topic,
+      required String subjectId,
+      required String artifact,
+      required BuildContext context,
+      required WidgetRef ref
+      }) async {
     final userDoc = ref.read(userDocProvider);
+    final schoolDoc = ref.read(schoolDocProvider);
 
     final costMap = {
       'case-study': topic.cost.caseStudy,
@@ -118,7 +123,21 @@ class TopicStateUpdatedManager extends AutoDisposeAsyncNotifier<void> {
       return;
     }
 
-    final price = costMap[artifact]!;
+    int price = costMap[artifact]!;
+
+    var artifactDocs = await schoolDoc
+        .collection('subjects')
+        .doc(subjectId)
+        .collection('assets')
+        .where('type', isEqualTo: artifact)
+        .where('topicId',isEqualTo:topic.id)
+        .where('subjectId',isEqualTo: subjectId)
+        .get();
+    if (artifactDocs.docs.isEmpty) {
+      var snackBar = SnackBar(content: Text("no material available"));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
     return FirebaseFirestore.instance.runTransaction((trx) async {
       trx
           .update(userDoc.value!, {
@@ -150,6 +169,7 @@ class TopicStateUpdatedManager extends AutoDisposeAsyncNotifier<void> {
             "module": "topic-item",
             "message": "$artifact for ${topic.name} unlocked"
           });
+      createStudentNotification('Unlocked Resource', "$artifact for ${topic.name} unlocked", 'Resource', ref);    
     });
   }
 }

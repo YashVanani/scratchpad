@@ -1,16 +1,21 @@
+import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class PlayBookCard extends StatelessWidget {
-  PlayBookCard({
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+class PlayBookCard extends ConsumerWidget{
+   PlayBookCard({
     super.key,
     required this.playbook,
   });
   Playbook playbook;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+     var profile = ref.watch(parentProfileProvider);
     return InkWell(
       onTap: () {
      GoRouter.of(context).pushNamed("parents-playbook-detail",extra: playbook);
@@ -35,19 +40,58 @@ class PlayBookCard extends StatelessWidget {
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(playbook.title ?? "",
-                        style: TextStyle(fontWeight: FontWeight.w500)),
-                    Icon(
-                      Icons.star,
-                      color:playbook.isActive??false?Colors.yellow: Colors.grey,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width*0.6,
+                      child: Text(playbook.title?.toJson()[Localizations.localeOf(context).languageCode] ?? "",
+                          maxLines: 2,
+                          style: TextStyle(fontWeight: FontWeight.w500)),
                     ),
+                      Row(children: [  
+                    //     InkWell(
+                    //       onTap: (){
+                    //         print("++++${playbook.id}");
+                    //         if( ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false){
+                              
+                    //           print("+++Re=mpved");
+                    //            ref.read(favoriteActivityState.notifier).state.remove(playbook.id);
+                    //         }else{
+                    //           print("+++ADDED");
+                    //            ref.read(favoriteActivityState.notifier).state.add(playbook.id??"");
+                    //         }
+                    //         ref.refresh(updatedFavoriteActivityProvider);
+                            
+                    //       },
+                    //       child: Icon(
+                    //   Icons.favorite,
+                    //   color:ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false?Colors.red: Colors.grey,
+                    // ),
+                    //     ),
+                        SizedBox(width: 10,),
+                    InkWell(
+                      onTap:(){
+                           if( ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false){
+                              
+                              print("+++Re=mpved");
+                               ref.read(favoriteActivityState.notifier).state.remove(playbook.id);
+                            }else{
+                              print("+++ADDED");
+                               ref.read(favoriteActivityState.notifier).state.add(playbook.id??"");
+                            }
+                            ref.refresh(updatedFavoriteActivityProvider);
+                            
+                      },
+                      child:Icon(
+                      Icons.star,
+                      color:ref.read(favoriteActivityState.notifier).state.contains(playbook.id)??false?Colors.yellow: Colors.grey,
+                    )
+                    ),],)
                   ]),
             ),
             Padding(
               padding:
                   EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Text(
-                 playbook.desc ?? "",maxLines: 7,overflow:TextOverflow.ellipsis,),
+                 playbook.desc?.toJson()[Localizations.localeOf(context).languageCode] ?? "",maxLines: 7,overflow:TextOverflow.ellipsis,),
             ),
             Divider(
               thickness: 1,
@@ -58,16 +102,23 @@ class PlayBookCard extends StatelessWidget {
                     EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Focus area",
+                      AppLocalizations.of(context)!.focus_area,
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
-                    Row(
-                      children: [
-                        ...(playbook.focusAreas??[]).take(2).map((e) => Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text(e,style: TextStyle(fontSize: 12),))).toList(),
-                        ((playbook.focusAreas??[]).length - 2)!=0?Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text('+${(playbook.focusAreas??[]).length - 2}')):SizedBox(),
-                    ],)
+                    SizedBox(
+                       width: MediaQuery.of(context).size.width*0.49,
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        runSpacing: 5,
+                        spacing: 5,
+                        children: [
+                          ...(playbook.focusAreas??[]).take(2).map((e) => Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text(e?.toJson()[Localizations.localeOf(context).languageCode],style: TextStyle(fontSize: 12),))).toList(),
+                          ((playbook.focusAreas??[]).length - 2)>0?Container(padding: EdgeInsets.symmetric(horizontal: 7,vertical: 4),margin: EdgeInsets.only(left: 5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: Color(0xffEAECF0)),child: Text('+${(playbook.focusAreas??[]).length - 2}')):SizedBox(),
+                      ],),
+                    )
                   ],
                 )),
                 Padding(
@@ -77,14 +128,14 @@ class PlayBookCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Effort level:",
+                      AppLocalizations.of(context)!.effort_level,
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                     Row(
                       children: [
                           Icon(Icons.crisis_alert,color: playbook.effortLevel=='Easy'?Color(0xff16B364):playbook.effortLevel=='Medium'?Colors.orange:Colors.red,size: 16,),
                           SizedBox(width: 5,),
-                          Text(playbook.effortLevel??"Easy",style: TextStyle(color: playbook.effortLevel=='Easy'?Color(0xff16B364):playbook.effortLevel=='Medium'?Colors.orange:Colors.red),),
+                          Text(playbook.effortLevel?.toJson()[Localizations.localeOf(context).languageCode]??"Easy",style: TextStyle(color: playbook.effortLevel=='Easy'?Color(0xff16B364):playbook.effortLevel=='Medium'?Colors.orange:Colors.red),),
                           ],)
                   ],
                 )),
@@ -102,7 +153,7 @@ class PlayBookCard extends StatelessWidget {
                       children: [
                         Icon(Icons.play_arrow,color: Colors.white,),
                         SizedBox(width: 5,),
-                        Text("READ DETAIL",style: TextStyle(color: Colors.black),),
+                        Text(AppLocalizations.of(context)!.read_detail,style: TextStyle(color: Colors.black),),
                       ],
                     ),
                   ),
@@ -112,4 +163,5 @@ class PlayBookCard extends StatelessWidget {
       ),
     );
   }
+
 }

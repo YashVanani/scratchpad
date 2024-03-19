@@ -1,18 +1,23 @@
 import 'package:clarified_mobile/parents/features/playbook/screen/widgets/playbook_card.dart';
+import 'package:clarified_mobile/parents/models/dashboard.dart';
+import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class DashboardScreen extends StatefulWidget {
+class DashboardScreen extends ConsumerWidget{
+  const DashboardScreen({Key? key, required this.dashboardReport}) : super(key: key);
+  final DashboardReport dashboardReport;
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends State<DashboardScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dashboard = ref.watch(reportDashboardProviderParent);
+    final playbook = ref.watch(dashboardPlaybookListProvider);
+    ref.refresh(dashboardPlaybookListProvider);
+     return Scaffold(
         appBar: AppBar(
-          title: const Text('Dashboard'),
+          title: Text(AppLocalizations.of(context)!.dashboard),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -28,20 +33,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(
               height: 20,
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                "Social Awareness",
+                (dashboardReport.title?.toJson()[Localizations.localeOf(context).languageCode] ?? '').replaceAll('-', ' ').toUpperCase(),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(
               height: 10,
             ),
-            const Padding(
+             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
+                  dashboardReport.desc?.toJson()[Localizations.localeOf(context).languageCode]??"",),
+                  // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
             ),
             const SizedBox(
               height: 20,
@@ -49,7 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             DefaultTabController(
                 length: 2,
                 child: Column(children: [
-                  const TabBar(
+                   TabBar(
                     labelColor: Colors.black,
                     unselectedLabelColor: Colors.grey,
                     indicatorColor: Colors.black,
@@ -62,7 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               SizedBox(
                                 width: 5,
                               ),
-                              Text("Dashboard")
+                              Text(AppLocalizations.of(context)!.dashboard)
                             ]),
                       ),
                       Tab(
@@ -73,7 +79,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               SizedBox(
                                 width: 5,
                               ),
-                              Text("Activities")
+                              Text(AppLocalizations.of(context)!.activities)
                             ]),
                       ),
                     ],
@@ -81,7 +87,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 0.8,
                       child: TabBarView(children: [
-                        const Placeholder(),
+                       
+                       dashboard.when(data: (d)=>InAppWebView(initialUrlRequest: URLRequest(url: WebUri((d?.url)??"")),), error: (e,j)=>Column(mainAxisAlignment: MainAxisAlignment.center,children: [Text(AppLocalizations.of(context)!.no_dashboard)]), loading: ()=>Text(''),),
                         SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,28 +96,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               const SizedBox(
                                 height: 20,
                               ),
-                              const Padding(
+                              Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 16.0, vertical: 0),
                                 child: Text(
-                                  "Recommendations",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                  AppLocalizations.of(context)!.recommendations,
+                                  style: TextStyle(fontWeight: FontWeight.w500,fontSize: 17),
                                 ),
                               ),
                               const SizedBox(
                                 height: 10,
                               ),
-                              Container(
-                                height: 280,
+                               dashboard.when(data: ( d)=>    Container(
+                                height: 200 ,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 00, vertical: 2),
                                 width: MediaQuery.of(context).size.width,
                                 child: ListView.builder(
+                                  shrinkWrap: true,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: 5,
+                                  itemCount: d.recommendation?.length??0,
                                   itemBuilder: (context, index) {
+                                    Recommendation dashboardReportModel = (d.recommendation[index]);
                                     return Container(
-                                      width: 280,
+                                      width: 230,
                                       margin: EdgeInsets.only(left: 10),
                                       decoration: BoxDecoration(
                                           color: Colors.white,
@@ -120,45 +129,59 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 24.0, vertical: 24),
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "Tips name",
-                                                style: TextStyle(fontSize: 11),
-                                              ),
-                                              const SizedBox(
-                                                height: 6,
-                                              ),
-                                              Text(
-                                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
-                                                style: TextStyle(fontSize: 14),
-                                              ),
-                                            ]),
+                                        child: Scrollbar(
+                                           thumbVisibility: true,
+                                          child: SingleChildScrollView(
+                                            
+                                            child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                   (dashboardReportModel.title?.toJson()[Localizations.localeOf(context).languageCode] ?? ''),
+                                                    style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 6,
+                                                  ),
+                                                  Text(
+                                                       dashboardReportModel.text?.toJson()[Localizations.localeOf(context).languageCode] ?? "",
+                                                    // "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniamLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                                                    style: TextStyle(fontSize: 12),
+                                                  ),
+                                                ]),
+                                          ),
+                                        ),
                                       ),
                                     );
                                   },
                                 ),
                               ),
-                           const Padding(
+                          error: (e,j)=>Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(mainAxisAlignment: MainAxisAlignment.center,children: [Text(AppLocalizations.of(context)!.no_result_found)]),
+                            ],
+                          ), loading: ()=>Text(''),),
+                      
+                            Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 16.0, vertical: 10),
                                 child: Text(
-                                  "Activities",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                  AppLocalizations.of(context)!.activities,
+                                  style: TextStyle(fontWeight: FontWeight.w500,fontSize: 17),
                                 ),
                               ),
-                                ListView(
+                              playbook.when(data: (d)=>ListView(
                                       shrinkWrap: true,
                                       physics: NeverScrollableScrollPhysics(),
-                                      children: [
-                                        // PlayBookCard(),
-                                        // PlayBookCard(),
-                                        // PlayBookCard(),
-                                        // PlayBookCard(),
-                                      ],
-                                    )
+                                      children:d.map((e) => PlayBookCard(playbook: e)).toList(),
+                                    ),
+                                    error: (e,j)=>Text(''),
+                                    loading: ()=>Center(child: CircularProgressIndicator(),),
+                                     ),
+                                     SizedBox(height: 30,)
+                                
                                  
                             ],
                           ),
@@ -167,5 +190,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ]))
           ]),
         ));
+  
   }
+
 }
+

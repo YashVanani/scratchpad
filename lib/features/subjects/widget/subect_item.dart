@@ -2,6 +2,7 @@ import 'package:clarified_mobile/model/clazz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final Map<String, ({Color bg, Color shadow, Color border})> subjectThemeList = {
   "bluedark": (
@@ -31,8 +32,8 @@ class SubjectItem extends StatelessWidget {
     return Container(
       clipBehavior: Clip.antiAlias,
       padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 20,
+        horizontal: 8,
+        vertical: 15,
       ),
       decoration: ShapeDecoration(
         color: theme.bg,
@@ -63,35 +64,51 @@ class SubjectItem extends StatelessWidget {
         },
         child: Column(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Expanded(
-              child: SizedBox.square(
-                child: Container(
-                  decoration: ShapeDecoration(
-                    color: theme.border,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+            subject.iconImage.isNotEmpty?SizedBox.square(
+              child: Container(
+             
+                decoration: ShapeDecoration(
+                  color: theme.border,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: SvgPicture.asset(
-                    "assets/svg/subjects/science.svg",
-                    fit: BoxFit.contain,
+                ),
+                child:Image.network(subject.iconImage,width: 72,height: 72,),
+                // child: SvgPicture.asset(
+                //   "assets/svg/subjects/science.svg",
+                //      height: 25,
+                // width: 25,
+                //   fit: BoxFit.contain,
+                // ),
+              ),
+            ):SizedBox.square(
+              child: Container(
+             
+                decoration: ShapeDecoration(
+                  color: theme.border,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
+                ),
+                // child:Image.network(subject.iconImage),
+                child: SvgPicture.asset(
+                  "assets/svg/subjects/science.svg",
+                     height: 72,
+                width: 72,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
             Text(
               subject.name
-                  .substring(
-                    0,
-                    subject.name.length > 7 ? 7 : subject.name.length,
-                  )
+                  
                   .toUpperCase(),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFF1D2939),
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w400,
               ),
             ),

@@ -1,9 +1,11 @@
 import 'package:clarified_mobile/features/home/model/entry.dart';
 import 'package:clarified_mobile/parents/models/survey_parent.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'package:flutter/material.dart';
 
 class SurveyCardParent extends ConsumerWidget {
   const SurveyCardParent({super.key});
@@ -11,7 +13,7 @@ class SurveyCardParent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final surveyData = ref.watch(surveyInboxParentProvider);
-
+    // return CircularProgressIndicator();
     return SizedBox(
       child: surveyData.when(
         data: (survey) {
@@ -57,8 +59,8 @@ class SurveyCardParent extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (survey == null)
-                            const Text(
-                              'No Survey',
+                            Text(
+                              AppLocalizations.of(context)!.no_survey,
                               style: TextStyle(
                                 color: Color(0xFF1D2939),
                                 fontSize: 16,
@@ -67,8 +69,9 @@ class SurveyCardParent extends ConsumerWidget {
                               ),
                             )
                           else ...[
-                            const Text(
-                              'Your next quest awaits!',
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .your_next_quest_awaits,
                               style: TextStyle(
                                 color: Color(0xFF1D2939),
                                 fontSize: 16,
@@ -85,7 +88,7 @@ class SurveyCardParent extends ConsumerWidget {
                                 SvgPicture.asset("assets/svg/clock.svg"),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'See you on : ${survey.startAt.toString().split(" ").first}',
+                                  '${AppLocalizations.of(context)!.see_you_on} ${survey.startAt.toString().split(" ").first}',
                                   style: const TextStyle(
                                     color: Color(0xFF027A48),
                                     fontSize: 12,
@@ -106,7 +109,7 @@ class SurveyCardParent extends ConsumerWidget {
           }
           return Container(
             height: 170,
-            decoration: ShapeDecoration(
+            decoration: survey.cardColor.isEmpty? ShapeDecoration(
               gradient: const LinearGradient(
                 begin: Alignment(0.00, -1.00),
                 end: Alignment(0, 1),
@@ -115,6 +118,12 @@ class SurveyCardParent extends ConsumerWidget {
                   Color(0xFFB84848),
                 ],
               ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ):
+            ShapeDecoration(
+              color: survey.cardColor.isEmpty?const Color(0xFFF28181):Color(int.parse(survey.cardColor)),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -135,7 +144,7 @@ class SurveyCardParent extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          survey.name,
+                          survey.name?.toJson()[Localizations.localeOf(context).languageCode],
                           style: const TextStyle(
                             color: Color(0xFFF9FAFB),
                             fontSize: 20,
@@ -144,7 +153,7 @@ class SurveyCardParent extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          survey.desc,
+                          survey.cardDesc?.toJson()[Localizations.localeOf(context).languageCode],
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Color(0xFFEAECF0),
@@ -171,8 +180,8 @@ class SurveyCardParent extends ConsumerWidget {
                               pathParameters: {"surveyId": survey.id},
                               extra: survey,
                             ),
-                            child: const Text(
-                              'Start Now',
+                            child: Text(
+                              AppLocalizations.of(context)!.start_now,
                               style: TextStyle(
                                 color: Color(0xFF1D2939),
                                 fontSize: 14,
@@ -215,9 +224,15 @@ class SurveyCardParent extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      SvgPicture.asset(
-                        "assets/svg/survey_insight.svg",
-                      ),
+                      (survey.cardImage != null &&
+                              (survey.cardImage?.isNotEmpty ?? false))
+                          ? Image.network(
+                              survey.cardImage ?? "",
+                              height: 120,
+                            )
+                          : SvgPicture.asset(
+                              "assets/svg/survey_insight.svg",
+                            ),
                     ],
                   ),
                 ),
@@ -227,7 +242,7 @@ class SurveyCardParent extends ConsumerWidget {
         },
         error: (err, st) {
           print([err, st]);
-          return const SizedBox();
+          return  Text(err.toString());
         },
         loading: () => const SizedBox(),
       ),

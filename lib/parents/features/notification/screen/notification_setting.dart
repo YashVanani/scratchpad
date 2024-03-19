@@ -1,19 +1,18 @@
+import 'package:clarified_mobile/parents/models/parents.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class NotificationSettingsScreen extends StatefulWidget {
+class NotificationSettingsScreen extends ConsumerWidget {
   const NotificationSettingsScreen({super.key});
-
   @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
-}
-
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    
+    final profile = ref.watch(parentProfileProvider);
     return Scaffold(
-       appBar: AppBar(
-        title: const Text('Notifications setting'),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.notifications_setting),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -21,48 +20,82 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             // Add your onPressed code here!
           },
         ),
-      
-      centerTitle: true,
+        centerTitle: true,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal:10.0,vertical: 10),
-              child: Text('In this section, you will be able to manage notifications. We will continue to  send you notifications for security reasons.',textAlign: TextAlign.center,),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+              child: Text(
+                AppLocalizations.of(context)!.in_this_section,
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal:16.0,vertical: 10),
-              child: Row(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-              SizedBox(width: MediaQuery.of(context).size.width*0.7,child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('In App Notifications',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
-                  Text('You will receive a notification inside the application.',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14),),
-                ],
-              ),),
-              Switch(value: true, onChanged: (value){},activeColor: Color(0xff34C759),)
-            ],),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.in_app_notifications,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        AppLocalizations.of(context)!
+                            .inside_application_notifications,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(value: profile.asData?.value.inAppNotification??true, onChanged: (value){
+                   updateParentInAppNotificationProvider(value,ref);
+                   
+              },activeColor: Color(0xff34C759),)
+              ],
+            ),
           ),
-
-           Padding(
-            padding: const EdgeInsets.symmetric(horizontal:16.0,vertical: 10),
-              child: Row(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-              SizedBox(width: MediaQuery.of(context).size.width*0.7,child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Update Application',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
-                  Text('You will receive a notification about update application.',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14),),
-                ],
-              ),),
-              Switch(value: false, onChanged: (value){},activeColor: Color(0xff34C759),)
-            ],),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.update_application,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      Text(
+                        AppLocalizations.of(context)!
+                            .update_application_notifications,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+                Switch(value: profile.asData?.value.appUpdateNotification??true, onChanged: (value){
+               print(value);
+               updateParentAppUpdateNotification(value,ref);
+              },activeColor: Color(0xff34C759),)
+              ],
+            ),
           )
         ],
       ),

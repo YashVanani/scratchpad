@@ -1,14 +1,19 @@
+import 'package:clarified_mobile/features/notification/screen/notification.dart';
 import 'package:clarified_mobile/features/profiles/screens/profile_password.dart';
 import 'package:clarified_mobile/features/subjects/screen/case_study_view.dart';
 import 'package:clarified_mobile/features/subjects/screen/quiz_wizard.dart';
 import 'package:clarified_mobile/features/subjects/screen/study_materials.dart';
+import 'package:clarified_mobile/model/clazz.dart';
 import 'package:clarified_mobile/parents/features/community/screen/community.dart';
 import 'package:clarified_mobile/parents/features/community/screen/create_post.dart';
 import 'package:clarified_mobile/parents/features/community/screen/my_post.dart';
+import 'package:clarified_mobile/parents/features/community/screen/post_detail.dart';
 import 'package:clarified_mobile/parents/features/dashboard/screen/dashboard.dart';
 import 'package:clarified_mobile/parents/features/doubt/screen/doubt_detail_screen.dart';
 import 'package:clarified_mobile/parents/features/doubt/screen/doubt_screen.dart';
+import 'package:clarified_mobile/parents/features/home/screens/p_favorite.dart';
 import 'package:clarified_mobile/parents/features/home/screens/p_home.dart';
+import 'package:clarified_mobile/parents/features/community/loading.dart';
 import 'package:clarified_mobile/parents/features/notification/screen/notification.dart';
 import 'package:clarified_mobile/parents/features/notification/screen/notification_setting.dart';
 import 'package:clarified_mobile/parents/features/playbook/screen/playbook_detail_view.dart';
@@ -17,6 +22,11 @@ import 'package:clarified_mobile/parents/features/profile/screen/p_profile.dart'
 import 'package:clarified_mobile/parents/features/report/screen/p_report.dart';
 import 'package:clarified_mobile/parents/features/survey/screen/survey_parent_screen.dart';
 import 'package:clarified_mobile/parents/models/playbook.dart';
+import 'package:clarified_mobile/teachers/features/home/t_home.dart';
+import 'package:clarified_mobile/teachers/features/myspace/myspace.dart';
+import 'package:clarified_mobile/teachers/features/playbook/playbook.dart';
+import 'package:clarified_mobile/teachers/features/playbook/playbook_detail.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
@@ -32,6 +42,7 @@ import 'package:clarified_mobile/features/subjects/screen/complete_topic_list.da
 import 'package:clarified_mobile/features/subjects/screen/subject_view.dart';
 import 'package:clarified_mobile/features/auth/screens/login.dart';
 import 'package:clarified_mobile/features/home/screens/home.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class _authStateChanged with ChangeNotifier {
   User? user;
@@ -49,13 +60,22 @@ String getInitialRoute(email) {
    String email =  FirebaseAuth.instance.currentUser?.email??"";
      print("++++++++++>>>GET>>${email}");
    // final authWatcher = _authStateChanged();
-  if(email.split('')[0].toUpperCase()=='P'){
+   if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'parent') {
     return "/p_home";
   }
-   if(email.split('')[0].toUpperCase()=='S'){
+  if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'student') {
     return "/";
   }
-  print(email.split('')[0].toUpperCase());
+  if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'teacher') {
+    return "/t_home";
+  }
+  if (email.split('')[0].toLowerCase() == 't') {
+    return "/t_home";
+  }
+  if(FirebaseAuth.instance.currentUser!=null){
+    return "/parents-home";
+  }
+
   return "/login";
   }catch(e){
     print("++++++++++>>>>>$e");
@@ -63,24 +83,44 @@ String getInitialRoute(email) {
   }
   //return authWatcher.user?.uid.isNotEmpty == true ? "/home" : "/login";
 }
+bool isDeepLink = false;
+String postId = '';
 
 GoRouter initRouter() {
   final authWatcher = _authStateChanged();
 
   return GoRouter(
-    redirect: (ctx, state) {
-     
+    routerNeglect: false,
+    redirect: (ctx, state) async{
      // return authWatcher.user?.uid.isNotEmpty == true ? state.path : "/p_login";
        return authWatcher.user?.uid.isNotEmpty == true ? state.path : "/login";
     },
+    errorBuilder: (context, state)  {
+      if(state.uri.path.isNotEmpty){
+        print(state.uri.queryParametersAll);
+        return LoadingPage();
+      }
+      return Scaffold(
+        body: Center(
+          child: Text(AppLocalizations.of(context)!.page_not_found),
+        ),
+      );
+    },
+   
     initialLocation: getInitialRoute(authWatcher.user?.email),
     refreshListenable: authWatcher,
     routes: [
+     
       GoRoute(
         path: '/',
         name: "home",
-        builder: (context, state) => const HomePage(),
+        builder: (context, state) => HomePage(),
       ),
+      //  GoRoute(
+      //   path: 'https://clarified.page.link/:postId',
+      //   name: "post-detail",
+      //     builder: (context, state) => PostDetailScreen(postId:state.pathParameters['id']??"",),
+      // ),
       GoRoute(
         path: '/subjects',
         name: "subject",
@@ -104,6 +144,7 @@ GoRouter initRouter() {
         builder: (context, state) => TopicFeedbackView(
           subjectId: state.pathParameters["subjectId"]!,
           topicId: state.pathParameters["topicId"]!,
+          
           data: state.uri.queryParameters,
         ),
       ),
@@ -168,6 +209,16 @@ GoRouter initRouter() {
         name: 'profile-notification',
         builder: (context, state) => const NotificationsPage(),
       ),
+        GoRoute(
+        path: '/student-notification',
+        name: 'student-notification',
+        builder: (context, state) => const StudentNotificationScreen(),
+      ),
+       GoRoute(
+        path: '/student-notification-settings',
+        name: 'student-notification-settings',
+        builder: (context, state) => const StudentNotificationScreen(),
+      ),
       GoRoute(
         path: '/survey/:surveyId',
         name: "survey-wizard",
@@ -197,7 +248,7 @@ GoRouter initRouter() {
       GoRoute(
         path: '/p_report',
         name: "parents-report",
-        builder: (context, state) => const ParentsReport(),
+        builder: (context, state) =>  ParentsReport(),
       ),
       GoRoute(
         path: '/p_playbook',
@@ -224,10 +275,11 @@ GoRouter initRouter() {
         name: "parents-create-post",
         builder: (context, state) => CreatePostScreen(),
       ),
+      
       GoRoute(
-        path: '/p_dashboard',
-        name: "parents-dashboard",
-        builder: (context, state) => DashboardScreen(),
+        path: '/post-detail/:id',
+        name: "post-detail",
+        builder: (context, state) => PostDetailScreen(postId:state.pathParameters['id']??"",),
       ),
        GoRoute(
         path: '/p_notification',
@@ -239,20 +291,42 @@ GoRouter initRouter() {
         name: "parents-doubt",
         builder: (context, state) => DoubtScreen(),
       ),
-       GoRoute(
-        path: '/p_doubt',
-        name: "parents-doubt-details",
-        builder: (context, state) => DoubtDetailScreen(),
-      ),
+      
       GoRoute(
         path: '/p_notification_settings',
         name: "parents-notification-settings",
         builder: (context, state) => NotificationSettingsScreen(),
       ),
       GoRoute(
+        path: '/p_favorite_activity',
+        name: "parents-favorite-activity",
+        builder: (context, state) => FavoritePlaybookScreen(),
+      ),
+      GoRoute(
         path: '/p_profile',
         name: "parents-profile",
         builder: (context, state) => ParentProfile(),
+      ),
+       GoRoute(
+        path: '/t_home',
+        name: "teachers-home",
+        builder: (context, state) => TeacherHomeScreen(),
+      ),
+      GoRoute(
+        path: '/t_playbook',
+        name: "teachers-playbook",
+        builder: (context, state) => PlaybookTeacherScreen(),
+      ),
+      
+      GoRoute(
+        path: '/t_my_space',
+        name: "teachers-my-space",
+        builder: (context, state) => MySpaceScreen(),),
+      
+      GoRoute(
+        path: '/t_playbook_detail',
+        name: "teachers-playbook-detail",
+        builder: (context, state) => PlaybookTeacherDetailScreen(playbook:( state.extra! as Playbook),),
       ),
     ],
   );

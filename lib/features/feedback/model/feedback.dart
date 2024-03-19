@@ -30,11 +30,11 @@ class FeedbackQuestion {
 
   factory FeedbackQuestion.fromMap(Map<String, dynamic> data) {
     return FeedbackQuestion(
-      id: data['id'],
+      id: data['id']??"",
       type: QuestionType.values.firstWhere((e) => e.name == data['type']),
       note: data['note'] ?? "",
-      questionText: data['questionText'],
-      answers: List<String>.from(data['asnwers'] ?? []),
+      questionText: data['questionText']??"",
+      answers: List<String>.from(data['answers']??[] ),
     );
   }
 }
@@ -59,8 +59,8 @@ class Feedback {
       questions: List.from(data['questions'])
           .map((e) => FeedbackQuestion.fromMap({
                 ...e,
-                "id": e['id'] ??
-                    "${DateTime.now().millisecondsSinceEpoch}:${idx++}"
+                // "id": e['id'] ??
+                //     "${DateTime.now().millisecondsSinceEpoch}:${idx++}"
               }))
           .toList(),
     );
@@ -111,7 +111,7 @@ class FeedbackManager extends AutoDisposeFamilyAsyncNotifier<bool?,
         userDoc.value!.collection("topic_feedbacks").doc(arg.topicId);
 
     final answerOpt = SetOptions(
-      mergeFields: ["status", "answers", "updated_at"],
+      mergeFields: ["status", "answers", "updated_at", 'completedFeedback'],
     );
 
     final data = {
@@ -120,6 +120,7 @@ class FeedbackManager extends AutoDisposeFamilyAsyncNotifier<bool?,
       "created_at": Timestamp.now(),
       "updated_at": Timestamp.now(),
       "status": completed ? "submitted" : "pending",
+      "completedFeedback":false,
       "answers": Map.fromEntries(
         answers.entries.map(
           (e) => MapEntry(e.key, {
@@ -133,7 +134,6 @@ class FeedbackManager extends AutoDisposeFamilyAsyncNotifier<bool?,
     if (!completed) {
       return answerDoc.set(data, answerOpt);
     }
-
     return FirebaseFirestore.instance.runTransaction((trx) async {
       trx
           .set(
@@ -149,7 +149,8 @@ class FeedbackManager extends AutoDisposeFamilyAsyncNotifier<bool?,
               "completedFeedback": true,
             },
             SetOptions(merge: true),
-          );
+          )
+          ;
     });
   }
 }

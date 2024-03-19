@@ -1,8 +1,10 @@
 import 'package:clarified_mobile/features/subjects/model/quiz_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CaseStudyViewer extends ConsumerWidget {
   final String subjectId;
@@ -24,17 +26,13 @@ class CaseStudyViewer extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Case Study"),
+        title: Text(AppLocalizations.of(context)!.case_study_second),
       ),
-      body: SizedBox.expand(
-        child: Markdown(
-          data: caseStudyInfo.value?["content"] ?? "",
-          extensionSet: md.ExtensionSet(
-            md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-            <md.InlineSyntax>[
-              md.EmojiSyntax(),
-              ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes
-            ],
+      body: SingleChildScrollView(
+        child: SizedBox(
+          child: Html(
+            data: caseStudyInfo.value?["content"] ?? "",
+            
           ),
         ),
       ),

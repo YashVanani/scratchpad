@@ -2,46 +2,46 @@ import 'package:clarified_mobile/consts/colors.dart';
 import 'package:clarified_mobile/consts/commonStyle.dart';
 import 'package:clarified_mobile/consts/imageRes.dart';
 import 'package:clarified_mobile/features/shared/widgets/app_buttombar.dart';
+import 'package:clarified_mobile/parents/features/dashboard/screen/dashboard.dart';
 import 'package:clarified_mobile/parents/features/widgets/p_bottombar.dart';
+import 'package:clarified_mobile/parents/models/dashboard.dart';
+import 'package:clarified_mobile/parents/models/parents.dart';
+import 'package:clarified_mobile/parents/models/playbook.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class ParentsReport extends StatefulWidget {
+class ParentsReport extends ConsumerWidget {
   const ParentsReport({super.key});
-
   @override
-  State<ParentsReport> createState() => _ParentsReportState();
-}
-
-class _ParentsReportState extends State<ParentsReport> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+      final selectedMenu = ref.watch(myCurrentReportType);
+    final dashboard = ref.watch(reportDashboardProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: InkWell(
             onTap: () {
+              GoRouter.of(context).goNamed('parents-home');
               // Navigator.pop(context);
             },
             child: const Icon(Icons.arrow_back_ios, size: 20)),
         centerTitle: true,
         title: Text(
-          "Reports",
+          AppLocalizations.of(context)!.reports,
         ),
       ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _sectionTab(
-              menu: const [
-                (label: "Social Wellbeing", tag: "section"),
-                (label: "Emotional Wellbeing", tag: "section-all"),
-              ],
-              callback: (tag) => setState(() {
-                // leaderGraph = tag == 'section';
-              }),
-            ),
+            FutureBuilder(
+                future: getReportMenuType(ref),
+                builder: (context, snapshot) => _sectionTab(
+                      menu: snapshot.data ?? [],
+                      callback: (tag) => {},
+                    )),
             const Divider(color: whiteTextColor, thickness: 1.5),
             Expanded(
               child: SingleChildScrollView(
@@ -50,14 +50,31 @@ class _ParentsReportState extends State<ParentsReport> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("List of available dashboards", style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14)),
+                      Text(AppLocalizations.of(context)!.list_of_available_dashboards,
+                          style: CommonStyle.lexendMediumStyle
+                              .copyWith(fontSize: 14)),
                       SizedBox(height: 15),
-                      availbleDashboards(context,Color(0xFF81F2BC),Color(0xFF48B990),ImageRes.manImage),
-                      SizedBox(height: 15),
-                      availbleDashboards(context,Color(0xFFDB71F1),Color(0xFFA651ED),ImageRes.childersImage),
-                      SizedBox(height: 15),
-                      availbleDashboards(context,Color(0xFF81BBF2),Color(0xFF4882B9),ImageRes.frameImage),
-                      SizedBox(height: 15),
+                      dashboard.when(data: (d){
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: d.length,
+                          itemBuilder: (context,index){
+                            if((selectedMenu?.value!=d[index].type)&& selectedMenu !=null)
+                              return SizedBox();
+                          return availbleDashboards(context, d[index],ref );
+                        });
+                      }, error: (e,j)=>SizedBox(), loading: ()=>CircularProgressIndicator()),
+                      // SizedBox(height: 15),
+                      // availbleDashboards(context, Color(0xFF81F2BC),
+                      //     Color(0xFF48B990), ImageRes.manImage),
+                      // SizedBox(height: 15),
+                      // availbleDashboards(context, Color(0xFFDB71F1),
+                      //     Color(0xFFA651ED), ImageRes.childersImage),
+                      // SizedBox(height: 15),
+                      // availbleDashboards(context, Color(0xFF81BBF2),
+                      //     Color(0xFF4882B9), ImageRes.frameImage),
+                      // SizedBox(height: 15),
                     ],
                   ),
                 ),
@@ -72,16 +89,28 @@ class _ParentsReportState extends State<ParentsReport> {
     );
   }
 
-  availbleDashboards(BuildContext context,Color oneColor,Color twoColor,String image) {
+  availbleDashboards(
+      BuildContext context,DashboardReport report, WidgetRef ref) {
+        final selectedMenu = ref.watch(myCurrentReportType);
     return Container(
       width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.only(bottom: 15),
       decoration: ShapeDecoration(
         gradient: LinearGradient(
           begin: Alignment(0.00, -1.00),
           end: Alignment(0, 1),
-          colors: [
-            oneColor,
-            twoColor,
+          colors: report.type=='social'?[
+            Color(0xFF81F2BC),
+                          Color(0xFF48B990),
+          ]:report.type=='emotional'?[
+            Color(0xFFF28181),
+                          Color(0xFFB94848),
+          ]:report.type=='classroom-experience'?[
+            Color(0xFFDB71F1),
+                          Color(0xFF4A651ED),
+          ]:[
+            Color(0xFF81BBF2),
+                          Color(0xFF4882B9),
           ],
         ),
         shape: RoundedRectangleBorder(
@@ -99,18 +128,23 @@ class _ParentsReportState extends State<ParentsReport> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Social Awareness", style: CommonStyle.lexendMediumStyle.copyWith(fontWeight: FontWeight.w600, fontSize: 16, color: textMainColor)),
-                  Icon(
-                    Icons.star,
-                    color: whiteColor,
-                  )
+                  Text((report.title?.toJson()[Localizations.localeOf(context).languageCode] ?? ''),
+                      style: CommonStyle.lexendMediumStyle.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: textMainColor)),
+                  // Icon(
+                  //   Icons.star,
+                  //   color:report.isActive??false?yellowColor: whiteColor,
+                  // )
                 ],
               ),
             ),
             SizedBox(height: 15),
             Text(
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.",
-              style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 12, color: textMainColor),
+              report.desc?.toJson()[Localizations.localeOf(context).languageCode]  ?? '',
+              style: CommonStyle.lexendMediumStyle
+                  .copyWith(fontSize: 12, color: textMainColor),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -118,7 +152,11 @@ class _ParentsReportState extends State<ParentsReport> {
               children: [
                 InkWell(
                   onTap: () {
-                    GoRouter.of(context).pushNamed('parents-dashboard');
+                    
+                    ref.read(playbookIdsState.notifier).state = report.activities??[];
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> DashboardScreen(dashboardReport: report,)));
+                    // GoRouter.of(context).push
+                    // GoRouter.of(context).pushNamed('parents-dashboard');
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 16),
@@ -130,12 +168,14 @@ class _ParentsReportState extends State<ParentsReport> {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 8),
                         child: Row(
                           children: [
                             Text(
-                              'OPEN',
-                              style: CommonStyle.lexendMediumStyle.copyWith(fontSize: 14),
+                              AppLocalizations.of(context)!.open,
+                              style: CommonStyle.lexendMediumStyle
+                                  .copyWith(fontSize: 14),
                             ),
                             SizedBox(width: 7),
                             Icon(
@@ -151,7 +191,10 @@ class _ParentsReportState extends State<ParentsReport> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [Image.asset(image, height: 80)],
+                  children: [
+                    (report.imageUrl!=null && (report.imageUrl?.isNotEmpty??false))?Image.network(report.imageUrl??"",height: 80,):
+                     Image.asset(ImageRes.manImage, height: 80)
+                    ],
                 ),
               ],
             ),
@@ -162,8 +205,8 @@ class _ParentsReportState extends State<ParentsReport> {
   }
 }
 
-class _sectionTab extends StatefulWidget {
-  final List<({String label, String tag})> menu;
+class _sectionTab extends ConsumerWidget {
+  final List<MenuType> menu;
   final void Function(String currentTag) callback;
 
   const _sectionTab({
@@ -173,47 +216,36 @@ class _sectionTab extends StatefulWidget {
   });
 
   @override
-  State<_sectionTab> createState() => _sectionTabState();
-}
-
-class _sectionTabState extends State<_sectionTab> {
-  String selectedTag = "";
-
-  @override
-  void initState() {
-    super.initState();
-    selectedTag = widget.menu.firstOrNull?.tag ?? "";
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedMenu = ref.watch(myCurrentReportType);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Container(
-        padding: const EdgeInsets.all(7),
-        decoration: ShapeDecoration(
-          color: secondTextColor,
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(
-              width: 2,
-              color: whiteTextColor,
+          height: 60,
+          padding: const EdgeInsets.all(7),
+          decoration: ShapeDecoration(
+            color: secondTextColor,
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(
+                width: 2,
+                color: whiteTextColor,
+              ),
+              borderRadius: BorderRadius.circular(10),
             ),
-            borderRadius: BorderRadius.circular(10),
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: widget.menu
-              .map(
-                (e) => Expanded(
-                  child: InkWell(
-                    onTap: () => setState(() {
-                      selectedTag = e.tag;
-                      widget.callback(e.tag);
-                    }),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: menu
+                .map(
+                  (e) => InkWell(
+                    onTap: () {
+                      ref.read(myCurrentReportType.notifier).state = e;
+                    } // widget.callback(e.tag);
+                    ,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: selectedTag == e.tag
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 15),
+                      decoration: selectedMenu?.value == e.value
                           ? ShapeDecoration(
                               color: tabBarColor,
                               shape: RoundedRectangleBorder(
@@ -226,22 +258,25 @@ class _sectionTabState extends State<_sectionTab> {
                             )
                           : null,
                       child: Text(
-                        e.label,
+                        e.label ?? '',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: selectedTag == e.tag ? Colors.white : const Color(0xFF045E63),
+                          color: selectedMenu?.value == e.value
+                              ? Colors.white
+                              : const Color(0xFF045E63),
                           fontSize: 12,
                           fontFamily: 'Lexend',
-                          fontWeight: selectedTag == e.tag ? FontWeight.normal : FontWeight.w500,
+                          fontWeight: selectedMenu?.value == e.value
+                              ? FontWeight.normal
+                              : FontWeight.w500,
                         ),
                       ),
                     ),
                   ),
-                ),
-              )
-              .toList(),
-        ),
-      ),
+                )
+                .toList(),
+          )),
     );
+    ;
   }
 }

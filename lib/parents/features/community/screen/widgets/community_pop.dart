@@ -2,7 +2,9 @@ import 'package:clarified_mobile/consts/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
 class CommunityPop extends StatelessWidget {
   const CommunityPop({
     super.key,
@@ -34,24 +36,24 @@ class CommunityPop extends StatelessWidget {
                 height: 10,
               ),
               Text(
-                'Community Rules',
+                '${AppLocalizations.of(context)!.community_rules}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(
                 height: 10,
               ),
-              Text("""
-1. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.
-2. tempor incididunt ut labore et dolore magna aliqua.
-3. Ut enim ad minim veniamLorem ipsum dolor sit amet,
-4. consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
-"""),
+              Text( '${AppLocalizations.of(context)!.community_post_1}'),
+              Text( '${AppLocalizations.of(context)!.community_post_2}'),
+              Text( '${AppLocalizations.of(context)!.community_post_3}'),
+        
               const SizedBox(
                 height: 10,
               ),
               InkWell(
-                  onTap: () {
+                  onTap: () async {
+                     SharedPreferences prefs = await SharedPreferences.getInstance();
+                     prefs.setBool('communityPopShown', true);
                     context.pop();
                   },
                   child: Container(
@@ -63,7 +65,7 @@ class CommunityPop extends StatelessWidget {
                         color: greenTextColor,
                       ),
                       child: Text(
-                        "OK, GOT IT.",
+                        "${AppLocalizations.of(context)!.ok_got_it}",
                         style: TextStyle(color: Colors.white),
                         textAlign: TextAlign.center,
                       ))),

@@ -1,9 +1,14 @@
+import 'package:clarified_mobile/consts/colors.dart';
+import 'package:clarified_mobile/features/auth/screens/widgets/forgetPassword.dart';
 import 'package:clarified_mobile/model/school.dart';
+import 'package:clarified_mobile/parents/models/parents.dart';
+import 'package:clarified_mobile/services/notification.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
@@ -17,26 +22,64 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final loginFormKey = GlobalKey<FormState>();
   bool showPassword = false;
   bool isBusy = false;
+  bool isLoading = false;
+  bool remember_me = true;
+  
+  final NotificationService _notificationService = NotificationService();
 
   void attemptLogin() async {
     final schoolId = ref.read(schoolIdProvider);
     print("attempting school $schoolId");
-
+    
+    setState(() {
+      isLoading = true;
+    });
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email:
             "${loginIdController.text}@$schoolId.clarified-school.scratchpad.com",
         password: passwordController.text,
       );
-      if (loginIdController.text.split('')[0].toUpperCase() == 'P') {
+      setState(() {
+      isLoading = false;
+    });
+      if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'parent') {
+        _notificationService.updateTokenOnLogin('parent',ref);
+        ref.read(myCurrentChild.notifier).state=null;
+        ref.refresh(userListProvider);
         GoRouter.of(context).goNamed("parents-home");
       }
-      if (loginIdController.text.split('')[0].toUpperCase() == 'S') {
+      if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'student') {
+          _notificationService.updateTokenOnLogin('student',ref);
         GoRouter.of(context).goNamed("home");
       }
+       if (FirebaseAuth.instance.currentUser?.uid.split('@')[0].split(':').last.toLowerCase() == 'teacher') {
+          _notificationService.updateTokenOnLogin('teacher',ref);
+        GoRouter.of(context).goNamed("teachers-home");
+      }
+      GoRouter.of(context).goNamed("parents-home");
     } catch (e) {
       print(e);
+      var snackBar = SnackBar(content: Text(e.toString()));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      setState(() {
+      isLoading = false;
+    });
     }
+  }
+
+  @override
+  void initState() {
+    getInit();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  getInit()async{
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+    //  prefs.clear();
+     loginIdController.text= prefs.getString('email')??"";
+      passwordController.text = prefs.getString('password')??"";
   }
 
   @override
@@ -73,10 +116,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(bottom: 4.0),
                           child: Text(
-                            'Student ID',
+                            AppLocalizations.of(context)!.student_id,
                             style: TextStyle(
                               color: Color(0xFF344054),
                               fontSize: 16,
@@ -90,7 +133,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           keyboardType: TextInputType.text,
                           validator: (e) => e?.isNotEmpty == true
                               ? null
-                              : "Please provide ID",
+                              : AppLocalizations.of(context)!.please_provide_id,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
@@ -116,10 +159,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(bottom: 4.0),
                           child: Text(
-                            'Password',
+                            AppLocalizations.of(context)!.password,
                             style: TextStyle(
                               color: Color(0xFF344054),
                               fontSize: 16,
@@ -132,7 +175,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           controller: passwordController,
                           keyboardType: TextInputType.text,
                           validator: (e) =>
-                              e?.isNotEmpty == true ? null : "Please Password",
+                              e?.isNotEmpty == true ? null : AppLocalizations.of(context)!.please_password,
                           obscureText: !showPassword,
                           obscuringCharacter: '*',
                           autocorrect: false,
@@ -161,6 +204,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                           ),
                         ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(children: [
+                          Checkbox(value: remember_me, onChanged: (v){
+                           setState(() {
+                              remember_me = v??false;
+                           });
+                          }),
+                          Text(AppLocalizations.of(context)!.remember_me),
+                          Spacer(),
+                          InkWell(onTap: (){
+                              showDialog(
+            context: context,
+            builder: (context) {
+              return  ForgetPasswordPop();
+            });
+                          },child: Text(AppLocalizations.of(context)!.forget_password,style: TextStyle(color: Colors.red),))
+                        ],),
                         const SizedBox(
                           height: 20,
                         ),
@@ -168,10 +230,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           children: [
                             Expanded(
                               child: TextButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (loginFormKey.currentState?.validate() ==
                                       true) {
                                     attemptLogin();
+                                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                            
+                                    if(remember_me==true){
+                                      prefs.setString('email', loginIdController.text);
+                              prefs.setString('password', passwordController.text);
+                                    }else{
+        prefs.setString('email', "");
+                              prefs.setString('password', "");
+                            
+                                    }
                                   }
                                 },
                                 child: Container(
@@ -194,11 +266,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       )
                                     ],
                                   ),
-                                  child: const Center(
+                                  child: Center(
                                     child: Padding(
                                       padding: EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'LOGIN',
+                                      child: 
+                                      isLoading?SizedBox(width: 10,height: 10,child: CircularProgressIndicator(color: whiteColor,)):
+                                      Text(
+                                        // 'LOGIN',
+                                        AppLocalizations.of(context)!.login,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 18,
